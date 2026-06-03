@@ -9,11 +9,11 @@
 *   **本地数据持久化**：目前所有数据存储在项目根目录的 `./data` 文件夹下，方便个人备份与迁移。
 
 ## 🛠️ 技术栈 (Technology Stack)
-*   **前端框架**: [Nuxt 3](https://nuxt.com/) (Vue 3 + Vite + SSR)
-*   **UI 体系**: [Tailwind CSS](https://tailwindcss.com/) + [shadcn-vue](https://www.shadcn-vue.com/) (现代简约组件库)
-*   **状态管理**: [Pinia](https://pinia.vuejs.org/) (响应式数据同步)
-*   **后端逻辑**: Nuxt Server Routes (基于 Node.js 直接读写本地 JSON)
-*   **数据存储**: 文件系统 (JSON 存储于 `./data`)
+
+*   **前端**: Vue 3 (CDN 引入，无需构建)
+*   **后端**: Express (Node.js 本地服务器)
+*   **数据存储**: 本地 JSON 文件 (`./data/db.json`)
+*   **架构理念**: 前后端分离设计，API 层与 UI 解耦
 
 ## 📅 开发计划 (Roadmap)
 
@@ -22,8 +22,9 @@
 
 ### 🔧 基础设施 (Infrastructure) — 所有功能的基础
 
-- [ ] 项目初始化（最终目标 Nuxt 3，起步可简化）
-- [ ] 实现 `./data/` 本地 JSON 读写接口（服务端 API）
+- [x] 项目初始化（Express + Vue 3 CDN）
+- [x] 实现 `./data/` 本地 JSON 读写接口（`GET/POST /api/load & /api/save`）
+- [ ] 前端统一调用层（`composables/` 封装 `fetch`，组件不直接发起 API 请求）
 - [ ] 基础布局结构（侧边栏 / 导航栏 / 页面框架）
 
 ### 📋 功能一：智能待办模块 (Smart Todo)
@@ -50,11 +51,26 @@
 - [ ] 数据可视化图表（展示一周成长趋势）
 - [ ] 增加暗黑模式
 
+### 🏗️ 架构演进 (Architecture Evolution) — 为接入后端做准备
+
+> 当前使用 Nuxt Server Routes + 本地 JSON 作为"伪后端"。
+> 以下任务**不急**，待功能成熟后再按需推进。
+
+- [ ] **数据层升级**：将 `./data/*.json` 替换为 SQLite（用 `better-sqlite3` 或 `drizzle`）
+- [ ] **后端拆分**：从 Nuxt Server Routes 拆分为独立后端服务（Express / Hono / Fastify）
+- [ ] **API 规范化**：统一错误码、分页、鉴权中间件
+- [ ] **用户认证**：引入登录注册机制（session / JWT）
+- [ ] **云端部署**：后端容器化 + 前端静态部署
+
 ## 🚀 快速开始
+
 ```bash
 # 安装依赖
 npm install
 
-# 启动开发服务器
-npm run dev
+# 启动服务器
+node server.js
+
+# 浏览器打开
+# http://localhost:3000
 ```

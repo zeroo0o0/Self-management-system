@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>自我管理系统</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <h1>🌱 自我管理系统</h1>
+
+    <!-- 待办列表 -->
+    <section>
+      <h2>📋 待办事项</h2>
+      <div v-if="!editing">
+        <input v-model="newTodo" @keyup.enter="addTodo" placeholder="输入新任务...">
+        <button @click="addTodo">添加</button>
+      </div>
+      <ul>
+        <li v-for="(todo, i) in data.todos" :key="i">
+          <input type="checkbox" v-model="todo.done">
+          <span :class="{ done: todo.done }">{{ todo.text }}</span>
+          <button @click="deleteTodo(i)">✕</button>
+        </li>
+      </ul>
+      <p v-if="data.todos.length === 0">还没有任务，添加一个吧 🎯</p>
+    </section>
+
+    <!-- 数据持久化提示 -->
+    <footer>
+      <p>💾 数据自动保存到 <code>data/db.json</code></p>
+      <button @click="loadData">刷新数据</button>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
