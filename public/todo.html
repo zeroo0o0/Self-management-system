@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>待办事项</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <a class="back" href="index.html">← 返回首页</a>
+    <h1>📋 待办事项</h1>
+
+    <div class="input-row">
+      <input v-model="newTodo" @keyup.enter="addTodo" placeholder="输入新任务..." class="input-text">
+      <input type="number" v-model.number="newPriority" step="0.5" min="0" max="10" class="input-priority" placeholder="优先级">
+      <button @click="addTodo">添加</button>
+    </div>
+
+    <ul class="todo-list">
+      <li v-for="todo in data.todos" :key="todo._key" :class="{ done: todo.done, editing: editingKey === todo._key }">
+        <input type="checkbox" v-model="todo.done" @change="saveData">
+
+        <!-- 编辑模式：输入框 -->
+        <input v-if="editingKey === todo._key" v-model="editText" @keyup.enter="saveEdit(todo)" @blur="saveEdit(todo)" class="edit-input">
+        <!-- 查看模式：可点击的文字 -->
+        <span v-else class="todo-text" @dblclick="startEdit(todo)">{{ todo.text }}</span>
+
+        <span class="priority-control">
+          <button class="btn-prio" @click="changePriority(todo, -1)">−</button>
+          <input type="number" v-model.number="todo.priority" step="0.5" min="0" max="10" class="prio-input" @change="onPrioChange(todo)">
+          <button class="btn-prio" @click="changePriority(todo, 1)">+</button>
+        </span>
+        <button class="btn-icon" @click="deleteTodo(todo)">✕</button>
+      </li>
+    </ul>
+
+    <p v-if="data.todos.length === 0" class="empty">还没有任务，添加一个吧 🎯</p>
+
+    <footer>
+      <p>💾 数据自动保存</p>
+    </footer>
+  </div>
+
+  <script src="todo.js"></script>
+</body>
+</html>

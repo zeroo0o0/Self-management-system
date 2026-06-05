@@ -4,37 +4,44 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>自我管理系统</title>
-  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="app">
-    <h1>🌱 自我管理系统</h1>
+    <header>
+      <h1>🌱 自我管理系统</h1>
+      <p class="subtitle">今天也要好好成长 ✨</p>
+    </header>
 
-    <!-- 待办列表 -->
-    <section>
-      <h2>📋 待办事项</h2>
-      <div v-if="!editing">
-        <input v-model="newTodo" @keyup.enter="addTodo" placeholder="输入新任务...">
-        <button @click="addTodo">添加</button>
-      </div>
-      <ul>
-        <li v-for="(todo, i) in data.todos" :key="i">
-          <input type="checkbox" v-model="todo.done">
-          <span :class="{ done: todo.done }">{{ todo.text }}</span>
-          <button @click="deleteTodo(i)">✕</button>
-        </li>
-      </ul>
-      <p v-if="data.todos.length === 0">还没有任务，添加一个吧 🎯</p>
-    </section>
+    <div class="card-grid">
+      <a class="card" href="todo.html">
+        <span class="card-icon">📋</span>
+        <span class="card-title">待办事项</span>
+        <span class="card-desc">管理每日任务，按优先级排序</span>
+      </a>
 
-    <!-- 数据持久化提示 -->
+      <a class="card" href="rpg.html">
+        <span class="card-icon">⚔️</span>
+        <span class="card-title">属性成长</span>
+        <span class="card-desc">完成任务获得经验，提升等级与属性</span>
+      </a>
+
+      <a class="card" href="turntable.html">
+        <span class="card-icon">🎡</span>
+        <span class="card-title">幸运转盘</span>
+        <span class="card-desc">完成任务赢取抽奖机会，奖励自己</span>
+      </a>
+
+      <a class="card" href="stats.html">
+        <span class="card-icon">📊</span>
+        <span class="card-title">数据统计</span>
+        <span class="card-desc">查看一周成长趋势与完成情况</span>
+      </a>
+    </div>
+
     <footer>
-      <p>💾 数据自动保存到 <code>data/db.json</code></p>
-      <button @click="loadData">刷新数据</button>
+      <p>💾 数据存储在 <code>data/db.json</code> · 换设备拷贝即可迁移</p>
     </footer>
   </div>
-
-  <script src="app.js"></script>
 </body>
 </html>
