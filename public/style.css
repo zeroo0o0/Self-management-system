@@ -208,5 +208,36 @@ button:hover { opacity: .85; }
   padding: 48px 0;
   font-size: .95rem;
 }
-footer { text-align: center; font-size: .8rem; color: #999; padding: 24px 0; }
-footer code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: .75rem; }
+footer { text-align: center; padding: 32px 0 24px; }
+.footer-links { margin-bottom: 12px; }
+.repo-link {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: #f0f0f0;
+  text-decoration: none;
+  transition: background .15s;
+}
+.repo-link:hover {
+  background: #e8eaf6;
+}
+.repo-link span {
+  font-family: ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, monospace;
+  font-size: .82rem;
+  letter-spacing: -.01em;
+  background-image: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3, #54a0ff);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbow 4s linear infinite;
+}
+.repo-link:hover span {
+  animation-duration: 1.5s;
+}
+@keyframes rainbow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.footer-note { font-size: .8rem; color: #999; }
+.footer-note code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: .75rem; }
