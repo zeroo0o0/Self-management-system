@@ -20,7 +20,7 @@
 
     <ul class="todo-list">
       <li v-for="todo in data.todos" :key="todo._key" :class="{ done: todo.done, editing: editingKey === todo._key }">
-        <input type="checkbox" v-model="todo.done" @change="saveData">
+        <input type="checkbox" v-model="todo.done" @change="onTodoToggle(todo)">
 
         <!-- 编辑模式：输入框 -->
         <input v-if="editingKey === todo._key" v-model="editText" @keyup.enter="saveEdit(todo)" @blur="saveEdit(todo)" class="edit-input">

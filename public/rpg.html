@@ -10,8 +10,66 @@
 <body>
   <div id="app">
     <a class="back" href="index.html">← 返回首页</a>
-    <h1>⚔️ 属性成长</h1>
-    <p class="empty">开发中，敬请期待 🚧</p>
+
+    <div class="rpg-card">
+      <!-- 角色头部 -->
+      <div class="rpg-header">
+        <div class="rpg-avatar">⚔️</div>
+        <div class="rpg-title">
+          <h1>{{ title }}</h1>
+          <span class="rpg-class">{{ className }}</span>
+        </div>
+        <div class="rpg-level-badge">
+          <span class="rpg-level-num">{{ data.level ?? 1 }}</span>
+          <span class="rpg-level-label">LEVEL</span>
+        </div>
+      </div>
+
+      <!-- 经验条 -->
+      <div class="rpg-xp-section">
+        <div class="rpg-xp-header">
+          <span>经验值</span>
+          <span>{{ data.xp ?? 0 }} / {{ (data.level ?? 1) * 100 }}</span>
+        </div>
+        <div class="rpg-xp-bar">
+          <div class="rpg-xp-fill" :style="{ width: xpPercent + '%' }"></div>
+        </div>
+        <div class="rpg-xp-total">累计获得 {{ data.totalXPEarned ?? 0 }} XP</div>
+      </div>
+
+      <!-- 属性点 -->
+      <div class="rpg-points" v-if="(data.attributePoints ?? 0) > 0">
+        <span class="rpg-points-label">可用属性点</span>
+        <span class="rpg-points-value">{{ data.attributePoints }}</span>
+      </div>
+
+      <!-- 属性列表 -->
+      <div class="rpg-stats">
+        <div class="rpg-stat" v-for="stat in stats" :key="stat.key">
+          <div class="rpg-stat-header">
+            <span class="rpg-stat-icon">{{ stat.icon }}</span>
+            <span class="rpg-stat-name">{{ stat.label }}</span>
+            <span class="rpg-stat-val">{{ data.attributes[stat.key] ?? 0 }}</span>
+            <button class="rpg-stat-btn" @click="addAttr(stat.key)"
+                    :disabled="(data.attributePoints ?? 0) <= 0">+</button>
+          </div>
+          <div class="rpg-stat-bar">
+            <div class="rpg-stat-fill" :style="{ width: statPercent(stat.key) + '%', background: stat.color }"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 角色简介 -->
+      <div class="rpg-desc">
+        <p>{{ flavorText }}</p>
+      </div>
+    </div>
+
+    <footer>
+      <p class="footer-note">✅ 完成待办事项获得经验 · 升级获得属性点</p>
+    </footer>
   </div>
+
+  <script src="rpg.js"></script>
 </body>
 </html>

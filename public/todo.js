@@ -81,6 +81,26 @@ createApp({
       saveData()
     }
 
+    // ========== RPG 经验值联动 ==========
+    function gainXP(amount) {
+      data.value.xp = (data.value.xp ?? 0) + amount
+      data.value.totalXPEarned = (data.value.totalXPEarned ?? 0) + amount
+      const threshold = (data.value.level ?? 1) * 100
+      if (data.value.xp >= threshold) {
+        data.value.xp -= threshold
+        data.value.level = (data.value.level ?? 1) + 1
+        data.value.attributePoints = (data.value.attributePoints ?? 0) + 3
+      }
+    }
+
+    function onTodoToggle(todo) {
+      if (todo.done) {
+        const earned = Math.round((todo.priority ?? 5) * 10)
+        gainXP(earned)
+      }
+      saveData()
+    }
+
     onMounted(loadData)
 
     return {
@@ -88,7 +108,7 @@ createApp({
       editingKey, editText,
       addTodo, startEdit, saveEdit,
       changePriority, onPrioChange,
-      deleteTodo
+      deleteTodo, onTodoToggle
     }
   }
 }).mount('#app')
