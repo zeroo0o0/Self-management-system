@@ -97,6 +97,7 @@ createApp({
       if (todo.done) {
         const earned = Math.round((todo.priority ?? 5) * 10)
         gainXP(earned)
+        data.value.spins = (data.value.spins ?? 0) + 1
       }
       saveData()
     }

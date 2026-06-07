@@ -411,3 +411,197 @@ footer { text-align: center; padding: 32px 0 24px; }
   font-style: italic;
   line-height: 1.5;
 }
+
+/* ========== 幸运转盘 ========== */
+.wheel-spins {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: .9rem;
+  color: #888;
+  margin-bottom: 20px;
+}
+.wheel-spins-num {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #4f46e5;
+}
+
+.wheel-container {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  margin: 0 auto 20px;
+}
+.wheel-pointer {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.8rem;
+  color: #e53e3e;
+  z-index: 10;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,.3));
+}
+.wheel {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0,0,0,.15), inset 0 0 0 4px rgba(255,255,255,.4);
+  transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+  overflow: hidden;
+}
+.wheel-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  z-index: 2;
+}
+
+/* 图例 */
+.wheel-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 14px;
+  margin-top: 12px;
+  margin-bottom: 8px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .78rem;
+  color: #666;
+}
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.legend-icon { font-size: .9rem; line-height: 1; }
+
+.wheel-btn {
+  display: block;
+  margin: 0 auto 24px;
+  padding: 14px 40px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: opacity .15s, transform .15s;
+}
+.wheel-btn:hover:not(:disabled) {
+  opacity: .9;
+  transform: scale(1.03);
+}
+.wheel-btn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+/* 结果弹窗 */
+.wheel-result {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.result-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(4px);
+}
+.result-card {
+  position: relative;
+  background: #fff;
+  border-radius: 24px;
+  padding: 40px 36px 32px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,.2);
+  animation: pop-in .3s ease;
+  min-width: 220px;
+}
+@keyframes pop-in {
+  0% { transform: scale(.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.result-icon {
+  font-size: 3.5rem;
+  margin-bottom: 12px;
+}
+.result-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #333;
+  margin-bottom: 4px;
+}
+.result-sub {
+  font-size: .85rem;
+  color: #888;
+  margin-bottom: 20px;
+}
+.result-btn {
+  padding: 10px 32px;
+  border-radius: 30px;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  font-size: .9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.result-btn:hover { opacity: .85; }
+
+/* 抽奖记录 */
+.wheel-history {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 6px rgba(0,0,0,.06);
+  margin-bottom: 24px;
+}
+.wheel-history h3 {
+  font-size: .9rem;
+  color: #555;
+  margin-bottom: 12px;
+}
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .82rem;
+  color: #666;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: #fafafa;
+}
+.history-time {
+  margin-left: auto;
+  font-size: .72rem;
+  color: #aaa;
+}

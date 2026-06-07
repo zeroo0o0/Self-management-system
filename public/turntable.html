@@ -11,7 +11,62 @@
   <div id="app">
     <a class="back" href="index.html">← 返回首页</a>
     <h1>🎡 幸运转盘</h1>
-    <p class="empty">开发中，敬请期待 🚧</p>
+
+    <!-- 抽奖次数 -->
+    <div class="wheel-spins">
+      <span>剩余抽奖次数</span>
+      <span class="wheel-spins-num">{{ data.spins ?? 0 }}</span>
+    </div>
+
+    <!-- 转盘 -->
+    <div class="wheel-container">
+      <div class="wheel-pointer">▼</div>
+      <div class="wheel" :style="{ transform: 'rotate(' + wheelRotation + 'deg)', background: wheelBg }">
+        <div class="wheel-center">🎡</div>
+      </div>
+    </div>
+
+    <!-- 图例 -->
+    <div class="wheel-legend">
+      <div class="legend-item" v-for="(seg, i) in segments" :key="i">
+        <span class="legend-dot" :style="{ background: seg.color }"></span>
+        <span class="legend-icon">{{ seg.icon }}</span>
+        <span class="legend-label">{{ seg.label }}</span>
+      </div>
+    </div>
+
+    <button class="wheel-btn" @click="spin" :disabled="spinning || (data.spins ?? 0) <= 0">
+      {{ spinning ? '🎡 转动中...' : '🎯 抽奖' }}
+    </button>
+
+    <!-- 结果弹窗 -->
+    <div class="wheel-result" v-if="lastResult">
+      <div class="result-overlay" @click="lastResult = null"></div>
+      <div class="result-card">
+        <div class="result-icon">{{ lastResult.icon }}</div>
+        <div class="result-title">{{ lastResult.label }}</div>
+        <div class="result-sub">{{ lastResult.desc }}</div>
+        <button class="result-btn" @click="lastResult = null">太好了！</button>
+      </div>
+    </div>
+
+    <!-- 抽奖记录 -->
+    <div class="wheel-history" v-if="rewards.length > 0">
+      <h3>📜 抽奖记录</h3>
+      <div class="history-list">
+        <div class="history-item" v-for="(r, i) in rewards" :key="i">
+          <span>{{ r.icon }}</span>
+          <span>{{ r.label }}</span>
+          <span class="history-time">{{ r.time }}</span>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p class="footer-note">✅ 完成待办获得抽奖次数</p>
+    </footer>
   </div>
+
+  <script src="turntable.js"></script>
 </body>
 </html>
