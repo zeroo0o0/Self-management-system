@@ -1,4 +1,4 @@
-const { createApp, ref, onMounted, nextTick } = Vue
+const { createApp, ref, computed, onMounted, nextTick } = Vue
 
 createApp({
   setup() {
@@ -7,6 +7,10 @@ createApp({
     const newPriority = ref(5)
     const editingKey = ref(null)
     const editText = ref('')
+    const toasts = ref([])
+    let toastId = 0
+
+    const doneCount = computed(() => data.value.todos.filter(t => t.done).length)
 
     function sortTodos() {
       data.value.todos.sort((a, b) => {
@@ -81,6 +85,20 @@ createApp({
       saveData()
     }
 
+    function clearDone() {
+      data.value.todos = data.value.todos.filter(t => !t.done)
+      saveData()
+    }
+
+    function addToast(text) {
+      const id = ++toastId
+      toasts.value.push({ id, text })
+      setTimeout(() => {
+        const i = toasts.value.findIndex(t => t.id === id)
+        if (i !== -1) toasts.value.splice(i, 1)
+      }, 1600)
+    }
+
     // ========== RPG 经验值联动 ==========
     function gainXP(amount) {
       data.value.xp = (data.value.xp ?? 0) + amount
@@ -96,8 +114,13 @@ createApp({
     function onTodoToggle(todo) {
       if (todo.done) {
         const earned = Math.round((todo.priority ?? 5) * 10)
+        const oldLevel = data.value.level ?? 1
         gainXP(earned)
         data.value.spins = (data.value.spins ?? 0) + 1
+        addToast('✨ +' + earned + ' XP')
+        if ((data.value.level ?? 1) > oldLevel) {
+          addToast('🎉 升级！Lv.' + data.value.level + ' (+3 属性点)')
+        }
       }
       saveData()
     }
@@ -106,10 +129,11 @@ createApp({
 
     return {
       data, newTodo, newPriority,
-      editingKey, editText,
+      editingKey, editText, toasts,
+      doneCount,
       addTodo, startEdit, saveEdit,
       changePriority, onPrioChange,
-      deleteTodo, onTodoToggle
+      deleteTodo, clearDone, onTodoToggle
     }
   }
 }).mount('#app')

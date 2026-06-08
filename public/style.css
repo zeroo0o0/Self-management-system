@@ -115,6 +115,53 @@ button:hover { opacity: .85; }
 }
 .btn-icon:hover { color: #e53e3e; background: transparent; }
 
+/* ========== 工具条 ========== */
+.todo-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: .82rem;
+}
+.todo-stats { color: #888; }
+.btn-clear {
+  padding: 4px 12px;
+  font-size: .78rem;
+  background: transparent;
+  color: #999;
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+.btn-clear:hover { color: #e53e3e; border-color: #fcc; background: #fff5f5; }
+
+/* ========== XP 浮动提示 ========== */
+.xp-toast {
+  position: fixed;
+  left: 50%;
+  top: 40%;
+  transform: translateX(-50%);
+  z-index: 999;
+  pointer-events: none;
+}
+.xp-toast span {
+  display: inline-block;
+  padding: 10px 24px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 800;
+  box-shadow: 0 4px 20px rgba(102,126,234,.35);
+  animation: toast-up 1.6s ease forwards;
+}
+@keyframes toast-up {
+  0% { opacity: 0; transform: translateY(20px) scale(.7); }
+  15% { opacity: 1; transform: translateY(0) scale(1.05); }
+  25% { transform: translateY(0) scale(1); }
+  60% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-60px) scale(.9); }
+}
+
 /* ========== 待办列表 ========== */
 .todo-list {
   list-style: none;

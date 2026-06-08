@@ -18,6 +18,15 @@
       <button @click="addTodo">添加</button>
     </div>
 
+    <!-- 统计 & 操作栏 -->
+    <div class="todo-toolbar" v-if="data.todos.length > 0">
+      <span class="todo-stats">
+        ✅ {{ doneCount }} / {{ data.todos.length }}
+        <span v-if="(data.level ?? 1) > 1"> · Lv.{{ data.level }}</span>
+      </span>
+      <button class="btn-clear" v-if="doneCount > 0" @click="clearDone">🗑️ 清空已完成</button>
+    </div>
+
     <ul class="todo-list">
       <li v-for="todo in data.todos" :key="todo._key" :class="{ done: todo.done, editing: editingKey === todo._key }">
         <input type="checkbox" v-model="todo.done" @change="onTodoToggle(todo)">
@@ -38,8 +47,13 @@
 
     <p v-if="data.todos.length === 0" class="empty">还没有任务，添加一个吧 🎯</p>
 
+    <!-- XP 浮动动画 -->
+    <div class="xp-toast" v-for="toast in toasts" :key="toast.id">
+      <span>{{ toast.text }}</span>
+    </div>
+
     <footer>
-      <p>💾 数据自动保存</p>
+      <p class="footer-note">💾 完成自动保存 · 勾选任务获得 <strong>经验值</strong> 和 <strong>抽奖次数</strong></p>
     </footer>
   </div>
 
