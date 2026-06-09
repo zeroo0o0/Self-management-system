@@ -65,6 +65,11 @@ createApp({
       saveData()
     }
 
+    function cancelEdit() {
+      editingKey.value = null
+      editText.value = ''
+    }
+
     // 优先级调整
     function changePriority(todo, delta) {
       let v = (todo.priority ?? 5) + delta
@@ -131,7 +136,7 @@ createApp({
       data, newTodo, newPriority,
       editingKey, editText, toasts,
       doneCount,
-      addTodo, startEdit, saveEdit,
+      addTodo, startEdit, saveEdit, cancelEdit,
       changePriority, onPrioChange,
       deleteTodo, clearDone, onTodoToggle
     }

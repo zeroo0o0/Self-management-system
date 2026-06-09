@@ -162,6 +162,13 @@ button:hover { opacity: .85; }
   100% { opacity: 0; transform: translateY(-60px) scale(.9); }
 }
 
+/* ========== 列表项动画 ========== */
+.todo-enter-active { transition: all .3s ease; }
+.todo-leave-active { transition: all .25s ease; position: absolute; right: 0; left: 0; }
+.todo-enter-from { opacity: 0; transform: translateX(-30px) scale(.95); }
+.todo-leave-to { opacity: 0; transform: translateX(30px) scale(.95); }
+.todo-move { transition: transform .3s ease; }
+
 /* ========== 待办列表 ========== */
 .todo-list {
   list-style: none;

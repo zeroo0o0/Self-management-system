@@ -13,7 +13,7 @@
     <h1>📋 待办事项</h1>
 
     <div class="input-row">
-      <input v-model="newTodo" @keyup.enter="addTodo" placeholder="输入新任务..." class="input-text">
+      <input v-model="newTodo" @keyup.enter="addTodo" placeholder="输入新任务..." class="input-text" autofocus>
       <input type="number" v-model.number="newPriority" step="0.5" min="0" max="10" class="input-priority" placeholder="优先级">
       <button @click="addTodo">添加</button>
     </div>
@@ -27,12 +27,12 @@
       <button class="btn-clear" v-if="doneCount > 0" @click="clearDone">🗑️ 清空已完成</button>
     </div>
 
-    <ul class="todo-list">
+    <TransitionGroup tag="ul" class="todo-list" name="todo">
       <li v-for="todo in data.todos" :key="todo._key" :class="{ done: todo.done, editing: editingKey === todo._key }">
         <input type="checkbox" v-model="todo.done" @change="onTodoToggle(todo)">
 
         <!-- 编辑模式：输入框 -->
-        <input v-if="editingKey === todo._key" v-model="editText" @keyup.enter="saveEdit(todo)" @blur="saveEdit(todo)" class="edit-input">
+        <input v-if="editingKey === todo._key" v-model="editText" @keyup.enter="saveEdit(todo)" @keyup.escape="cancelEdit" @blur="saveEdit(todo)" class="edit-input">
         <!-- 查看模式：可点击的文字 -->
         <span v-else class="todo-text" @dblclick="startEdit(todo)">{{ todo.text }}</span>
 
@@ -43,7 +43,7 @@
         </span>
         <button class="btn-icon" @click="deleteTodo(todo)">✕</button>
       </li>
-    </ul>
+    </TransitionGroup>
 
     <p v-if="data.todos.length === 0" class="empty">还没有任务，添加一个吧 🎯</p>
 
