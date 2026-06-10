@@ -12,7 +12,50 @@
     <a class="back" href="index.html">← 返回首页</a>
     <h1>📋 待办事项</h1>
 
-    <div class="input-row">
+    <!-- 日期选择 & 操作栏 -->
+    <div class="date-bar">
+      <div class="date-picker-row">
+        <input type="date" v-model="selectedDate" @change="onDateChange" class="date-input">
+        <span class="date-label" v-if="isToday">📌 今天</span>
+        <span class="date-label past" v-else>📅 {{ formatDate(selectedDate) }}</span>
+        <button class="btn-carry" @click="carryOver" :disabled="!canCarryOver" v-if="isToday">
+          ↻ 从昨天继承
+        </button>
+      </div>
+      <div class="import-info" v-if="importedDailies">
+        📋 已自动导入日常任务
+      </div>
+    </div>
+
+    <!-- ====== 日常任务管理（仅今天显示） ====== -->
+    <details class="dailies-section" v-if="isToday" :open="dailiesOpen">
+      <summary class="dailies-summary">
+        <span>📆 日常任务</span>
+        <span class="dailies-count">{{ dailies.tasks.length }} 项</span>
+      </summary>
+      <div class="dailies-body">
+        <div class="input-row">
+          <input v-model="newDailyText" @keyup.enter="addDailyTask" placeholder="添加日常任务..." class="input-text">
+          <input type="number" v-model.number="newDailyPriority" step="0.5" min="0" max="10" class="input-priority" placeholder="优先级">
+          <button @click="addDailyTask">添加</button>
+        </div>
+        <p class="dailies-hint">每天首次打开待办页时自动导入到今日列表</p>
+        <ul class="dailies-list" v-if="dailies.tasks.length > 0">
+          <li v-for="(task, i) in dailies.tasks" :key="i">
+            <span class="dailies-text">{{ task.text }}</span>
+            <span class="dailies-prio">P{{ task.priority ?? 5 }}</span>
+            <button class="btn-icon" @click="deleteDailyTask(i)">✕</button>
+          </li>
+        </ul>
+        <p v-else class="dailies-empty">还没有日常任务，添加一些吧 🔄</p>
+        <button class="btn-import-dailies" @click="importDailiesNow" v-if="dailies.tasks.length > 0">
+          📥 立即导入到今日
+        </button>
+      </div>
+    </details>
+
+    <!-- ====== 今日待办 / 历史待办 ====== -->
+    <div class="input-row" v-if="isToday">
       <input v-model="newTodo" @keyup.enter="addTodo" placeholder="输入新任务..." class="input-text" autofocus>
       <input type="number" v-model.number="newPriority" step="0.5" min="0" max="10" class="input-priority" placeholder="优先级">
       <button @click="addTodo">添加</button>
@@ -22,30 +65,35 @@
     <div class="todo-toolbar" v-if="data.todos.length > 0">
       <span class="todo-stats">
         ✅ {{ doneCount }} / {{ data.todos.length }}
-        <span v-if="(data.level ?? 1) > 1"> · Lv.{{ data.level }}</span>
+        <span v-if="(globalData.level ?? 1) > 1"> · Lv.{{ globalData.level }}</span>
+        <span v-if="!isToday" class="readonly-hint">（只读查看）</span>
       </span>
-      <button class="btn-clear" v-if="doneCount > 0" @click="clearDone">🗑️ 清空已完成</button>
     </div>
 
     <TransitionGroup tag="ul" class="todo-list" name="todo">
       <li v-for="todo in data.todos" :key="todo._key" :class="{ done: todo.done, editing: editingKey === todo._key }">
-        <input type="checkbox" v-model="todo.done" @change="onTodoToggle(todo)">
+        <input type="checkbox" v-model="todo.done" @change="onTodoToggle(todo)" :disabled="!isToday">
 
-        <!-- 编辑模式：输入框 -->
+        <!-- 编辑模式 -->
         <input v-if="editingKey === todo._key" v-model="editText" @keyup.enter="saveEdit(todo)" @keyup.escape="cancelEdit" @blur="saveEdit(todo)" class="edit-input">
-        <!-- 查看模式：可点击的文字 -->
-        <span v-else class="todo-text" @dblclick="startEdit(todo)">{{ todo.text }}</span>
+        <!-- 查看模式 -->
+        <span v-else class="todo-text" @dblclick="isToday && startEdit(todo)">{{ todo.text }}</span>
 
-        <span class="priority-control">
+        <span class="priority-control" v-if="isToday">
           <button class="btn-prio" @click="changePriority(todo, -1)">−</button>
           <input type="number" v-model.number="todo.priority" step="0.5" min="0" max="10" class="prio-input" @change="onPrioChange(todo)">
           <button class="btn-prio" @click="changePriority(todo, 1)">+</button>
         </span>
-        <button class="btn-icon" @click="deleteTodo(todo)">✕</button>
+        <span class="priority-static" v-else>
+          <span class="prio-badge">P{{ todo.priority ?? 5 }}</span>
+        </span>
+        <button class="btn-icon" @click="isToday && deleteTodo(todo)" :class="{ disabled: !isToday }">✕</button>
       </li>
     </TransitionGroup>
 
-    <p v-if="data.todos.length === 0" class="empty">还没有任务，添加一个吧 🎯</p>
+    <p v-if="data.todos.length === 0" class="empty">
+      {{ isToday ? '还没有任务，添加一个吧 🎯' : '这一天没有待办 📭' }}
+    </p>
 
     <!-- XP 浮动动画 -->
     <div class="xp-toast" v-for="toast in toasts" :key="toast.id">

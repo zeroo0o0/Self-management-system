@@ -1,2 +1,4 @@
 node_modules/
 .npm-cache-tmp/
+data/db.json.bak
+data/db.json.migrated
