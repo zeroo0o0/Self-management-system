@@ -1,11 +1,22 @@
 {
-  "xp": 0,
-  "level": 1,
-  "attributes": { "strength": 0, "intelligence": 0, "endurance": 0, "spirit": 0 },
-  "totalXPEarned": 0,
-  "attributePoints": 0,
-  "spins": 0,
-  "rewards": [],
+  "xp": 50,
+  "level": 2,
+  "attributes": {
+    "strength": 0,
+    "intelligence": 0,
+    "endurance": 0,
+    "spirit": 0
+  },
+  "totalXPEarned": 150,
+  "attributePoints": 4,
+  "spins": 2,
+  "rewards": [
+    {
+      "icon": "🎯",
+      "label": "+1 属性",
+      "time": "06/12 00:08"
+    }
+  ],
   "history": [],
   "counter": 0
 }

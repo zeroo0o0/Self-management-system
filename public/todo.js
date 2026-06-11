@@ -1,13 +1,13 @@
 const { createApp, ref, computed, onMounted, nextTick } = Vue
 
 const CATEGORIES = [
-  { id: 'daily',      label: '日课',     icon: '📆', color: '#4CAF50', bg: '#E8F5E9', border: '#A5D6A7' },
+  { id: 'daily',      label: '日常任务', icon: '📆', color: '#4CAF50', bg: '#E8F5E9', border: '#A5D6A7' },
   { id: 'temporary',  label: '临时任务', icon: '⚡',  color: '#FF9800', bg: '#FFF3E0', border: '#FFCC80' },
   { id: 'longterm',   label: '长期任务', icon: '🌳',  color: '#2196F3', bg: '#E3F2FD', border: '#90CAF9' },
   { id: 'deadline',   label: '近期DDL',  icon: '🔥',  color: '#F44336', bg: '#FFEBEE', border: '#EF9A9A' },
 ]
 
-createApp({
+const app = createApp({
   setup() {
     // ====== 状态 ======
     const data = ref({ todos: [] })
@@ -326,6 +326,17 @@ createApp({
       clearDrag()
     }
 
+    // ====== 底部拖拽放置区 ======
+    function onDropZoneDragOver(e) {
+      if (!isToday.value) return
+      e.preventDefault()
+    }
+
+    function onDropZoneDrop(catId) {
+      if (!isToday.value) return
+      onDropToEnd(catId)
+    }
+
     function clearDrag() {
       dragKey.value = null
       dragOverKey.value = null
@@ -398,8 +409,19 @@ createApp({
       toggleCat, isEditing, addQuickTodo,
       onDragStart, onDragOver, onDragLeave, onModuleDragOver,
       onDrop, onDropToEnd, onDragEnd,
+      onDropZoneDragOver, onDropZoneDrop,
       addDailyTask, deleteDailyTask,
       carryOver, onTodoToggle
     }
   }
-}).mount('#app')
+})
+
+app.config.errorHandler = (err, instance, info) => {
+  console.error('Vue error:', err, info)
+  const div = document.createElement('div')
+  div.style.cssText = 'background:#fcc;padding:16px;margin:16px;border-radius:8px;font-size:14px;white-space:pre-wrap;border:2px solid #c00'
+  div.textContent = `❌ Vue Error: ${err.message}${info ? '\nInfo: ' + info : ''}`
+  document.body.prepend(div)
+}
+
+app.mount('#app')
