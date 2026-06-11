@@ -18,50 +18,27 @@
         <input type="date" v-model="selectedDate" @change="onDateChange" class="date-input">
         <span class="date-label" v-if="isToday">📌 今天</span>
         <span class="date-label past" v-else>📅 {{ formatDate(selectedDate) }}</span>
-        <button class="btn-carry" @click="carryOver" :disabled="!canCarryOver" v-if="isToday">
-          ↻ 从昨天继承
-        </button>
+        <button class="btn-carry" @click="carryOver" v-if="isToday">↻ 从昨天继承</button>
       </div>
-      <div class="import-info" v-if="importedDailies">
-        📋 已自动导入日常任务
+      <div class="import-info" v-if="importInfo">{{ importInfo }}</div>
+    </div>
+
+    <!-- ====== 添加新任务 ====== -->
+    <div class="add-section" v-if="isToday">
+      <div class="input-row">
+        <input v-model="newTodo" @keyup.enter="addTodo" placeholder="输入新任务..." class="input-text" autofocus>
+        <input type="number" v-model.number="newPriority" step="0.5" min="0" max="10" class="input-priority" placeholder="优先级">
+        <select v-model="newCategory" class="input-select">
+          <option v-for="cat in CATEGORIES" :key="cat.id" :value="cat.id">
+            {{ cat.icon }} {{ cat.label }}
+          </option>
+        </select>
+        <input type="date" v-model="newDueDate" class="date-input" v-if="isDeadlineCategory" title="截止日期">
+        <button @click="addTodo">添加</button>
       </div>
     </div>
 
-    <!-- ====== 日常任务管理（仅今天显示） ====== -->
-    <details class="dailies-section" v-if="isToday" :open="dailiesOpen">
-      <summary class="dailies-summary">
-        <span>📆 日常任务</span>
-        <span class="dailies-count">{{ dailies.tasks.length }} 项</span>
-      </summary>
-      <div class="dailies-body">
-        <div class="input-row">
-          <input v-model="newDailyText" @keyup.enter="addDailyTask" placeholder="添加日常任务..." class="input-text">
-          <input type="number" v-model.number="newDailyPriority" step="0.5" min="0" max="10" class="input-priority" placeholder="优先级">
-          <button @click="addDailyTask">添加</button>
-        </div>
-        <p class="dailies-hint">每天首次打开待办页时自动导入到今日列表</p>
-        <ul class="dailies-list" v-if="dailies.tasks.length > 0">
-          <li v-for="(task, i) in dailies.tasks" :key="i">
-            <span class="dailies-text">{{ task.text }}</span>
-            <span class="dailies-prio">P{{ task.priority ?? 5 }}</span>
-            <button class="btn-icon" @click="deleteDailyTask(i)">✕</button>
-          </li>
-        </ul>
-        <p v-else class="dailies-empty">还没有日常任务，添加一些吧 🔄</p>
-        <button class="btn-import-dailies" @click="importDailiesNow" v-if="dailies.tasks.length > 0">
-          📥 立即导入到今日
-        </button>
-      </div>
-    </details>
-
-    <!-- ====== 今日待办 / 历史待办 ====== -->
-    <div class="input-row" v-if="isToday">
-      <input v-model="newTodo" @keyup.enter="addTodo" placeholder="输入新任务..." class="input-text" autofocus>
-      <input type="number" v-model.number="newPriority" step="0.5" min="0" max="10" class="input-priority" placeholder="优先级">
-      <button @click="addTodo">添加</button>
-    </div>
-
-    <!-- 统计 & 操作栏 -->
+    <!-- ====== 统计 ====== -->
     <div class="todo-toolbar" v-if="data.todos.length > 0">
       <span class="todo-stats">
         ✅ {{ doneCount }} / {{ data.todos.length }}
@@ -70,29 +47,119 @@
       </span>
     </div>
 
-    <TransitionGroup tag="ul" class="todo-list" name="todo">
-      <li v-for="todo in data.todos" :key="todo._key" :class="{ done: todo.done, editing: editingKey === todo._key }">
-        <input type="checkbox" v-model="todo.done" @change="onTodoToggle(todo)" :disabled="!isToday">
+    <!-- ====== 四大分类模块 ====== -->
+    <div v-for="cat in CATEGORIES" :key="cat.id" class="cat-module"
+         @dragover="onModuleDragOver">
 
-        <!-- 编辑模式 -->
-        <input v-if="editingKey === todo._key" v-model="editText" @keyup.enter="saveEdit(todo)" @keyup.escape="cancelEdit" @blur="saveEdit(todo)" class="edit-input">
-        <!-- 查看模式 -->
-        <span v-else class="todo-text" @dblclick="isToday && startEdit(todo)">{{ todo.text }}</span>
-
-        <span class="priority-control" v-if="isToday">
-          <button class="btn-prio" @click="changePriority(todo, -1)">−</button>
-          <input type="number" v-model.number="todo.priority" step="0.5" min="0" max="10" class="prio-input" @change="onPrioChange(todo)">
-          <button class="btn-prio" @click="changePriority(todo, 1)">+</button>
+      <!-- 模块头部 -->
+      <div class="cat-header" :style="{ borderLeftColor: cat.color }"
+           @click="toggleCat(cat.id)">
+        <span class="cat-icon">{{ cat.icon }}</span>
+        <span class="cat-label">{{ cat.label }}</span>
+        <span class="cat-count" :style="{ background: cat.bg, color: cat.color }">
+          {{ grouped[cat.id].length }}
         </span>
-        <span class="priority-static" v-else>
-          <span class="prio-badge">P{{ todo.priority ?? 5 }}</span>
+        <span class="cat-actions">
+          <!-- 日课模板管理入口 -->
+          <span class="cat-gear" v-if="cat.id === 'daily' && isToday"
+                @click.stop="showDailiesEditor = !showDailiesEditor"
+                :title="showDailiesEditor ? '关闭模板' : '管理日常任务模板'">⚙️</span>
+          <span class="cat-toggle">{{ expanded[cat.id] ? '▲' : '▼' }}</span>
         </span>
-        <button class="btn-icon" @click="isToday && deleteTodo(todo)" :class="{ disabled: !isToday }">✕</button>
-      </li>
-    </TransitionGroup>
+      </div>
 
-    <p v-if="data.todos.length === 0" class="empty">
-      {{ isToday ? '还没有任务，添加一个吧 🎯' : '这一天没有待办 📭' }}
+      <!-- 日课模板编辑器（仅日课模块展开时显示） -->
+      <div class="dailies-editor" v-if="cat.id === 'daily' && showDailiesEditor && expanded[cat.id]">
+        <div class="dailies-editor-inner">
+          <div class="input-row">
+            <input v-model="newDailyText" @keyup.enter="addDailyTask" placeholder="添加日常模板任务..." class="input-text">
+            <input type="number" v-model.number="newDailyPriority" step="0.5" min="0" max="10" class="input-priority" placeholder="优先级">
+            <button @click="addDailyTask">添加</button>
+          </div>
+          <p class="dailies-hint">每天首次打开时自动导入「日课」模块</p>
+          <ul class="dailies-list" v-if="dailies.tasks.length > 0">
+            <li v-for="(task, i) in dailies.tasks" :key="i">
+              <span class="dailies-text">{{ task.text }}</span>
+              <span class="dailies-prio">P{{ task.priority ?? 5 }}</span>
+              <button class="btn-icon" @click="deleteDailyTask(i)">✕</button>
+            </li>
+          </ul>
+          <p v-else class="dailies-empty">还没有模板任务</p>
+        </div>
+      </div>
+
+      <!-- 模块内容 -->
+      <div class="cat-body" v-show="expanded[cat.id]">
+        <div v-for="todo in grouped[cat.id]" :key="todo._key"
+             :draggable="isToday ? 'true' : 'false'"
+             @dragstart="onDragStart(todo)"
+             @dragover="onDragOver($event, todo)"
+             @dragleave="onDragLeave"
+             @drop="onDrop(cat.id, todo)"
+             @dragend="onDragEnd"
+             class="todo-item"
+             :class="{
+               done: todo.done,
+               editing: isEditing(todo),
+               'drag-over': dragOverKey === todo._key,
+               'drag-source': dragKey === todo._key
+             }"
+             :style="dragOverKey === todo._key ? { borderTopColor: cat.color } : {}">
+
+          <input type="checkbox" v-model="todo.done" @change="onTodoToggle(todo)" :disabled="!isToday">
+
+          <!-- 编辑模式 -->
+          <template v-if="isEditing(todo)">
+            <input v-model="editText" @keyup.enter="saveEdit(todo)" @keyup.escape="cancelEdit" @blur="saveEdit(todo)" class="edit-input">
+            <input v-if="todo.category === 'deadline'" type="date" v-model="editDueDate" class="edit-date" title="截止日期">
+          </template>
+
+          <!-- 查看模式 -->
+          <template v-else>
+            <span class="todo-text" @dblclick="isToday && startEdit(todo)"
+                  :class="{ 'has-due': todo.category === 'deadline' && todo.dueDate }">
+              {{ todo.text }}
+            </span>
+            <span class="due-badge" v-if="todo.category === 'deadline' && todo.dueDate && !isEditing(todo)">
+              📅 {{ formatDueDate(todo.dueDate) }}
+            </span>
+          </template>
+
+          <!-- 优先级 & 操作 (仅今天) -->
+          <template v-if="isToday">
+            <span class="priority-control">
+              <button class="btn-prio" @click="changePriority(todo, -1)">−</button>
+              <input type="number" v-model.number="todo.priority" step="0.5" min="0" max="10" class="prio-input" @change="onPrioChange(todo)">
+              <button class="btn-prio" @click="changePriority(todo, 1)">+</button>
+            </span>
+            <button class="btn-icon" @click="deleteTodo(todo)">✕</button>
+          </template>
+          <template v-else>
+            <span class="priority-static">
+              <span class="prio-badge">P{{ todo.priority ?? 5 }}</span>
+            </span>
+          </template>
+        </div>
+
+        <!-- 空状态 -->
+        <div v-if="grouped[cat.id].length === 0" class="cat-empty">
+          {{ isToday ? '拖拽任务到这里，或在上方添加' : '暂无' }}
+        </div>
+
+        <!-- 底部拖拽放置区 -->
+        <div v-if="grouped[cat.id].length > 0"
+             class="drop-end"
+             @dragover.prevent="isToday"
+             @drop.prevent="isToday && onDropToEnd(cat.id)"
+             :class="{ 'drag-hover': dragKey && grouped[cat.id].length > 0 }">
+          <span>＋ 放下到此模块</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 无任务提示 -->
+    <p v-if="data.todos.length === 0 && !isToday" class="empty">
+      这一天没有待办 📭
     </p>
 
     <!-- XP 浮动动画 -->

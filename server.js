@@ -139,14 +139,22 @@ app.get('/api/todos/:date', (req, res) => {
       _key: Date.now() + '_' + Math.random(),
       text: t.text,
       done: false,
-      priority: t.priority ?? 5
+      priority: t.priority ?? 5,
+      category: 'daily'
     }))
+    console.log('[auto-import] writing', todos.length, 'todos with category daily')
     writeJSON(file, { todos })
     return res.json({ todos, importedFromDailies: true })
   }
 
   const data = readJSON(file, { todos: [] })
-  res.json({ todos: data.todos, importedFromDailies: false })
+  // 确保所有待办都有 category 字段
+  const todos = (data.todos || []).map(t => ({
+    ...t,
+    category: t.category || 'temporary',
+    dueDate: t.dueDate || ''
+  }))
+  res.json({ todos, importedFromDailies: false })
 })
 
 // 保存指定日期的待办
@@ -191,7 +199,9 @@ app.post('/api/carry-over', (req, res) => {
       _key: Date.now() + '_' + Math.random(),
       text: t.text,
       done: false,
-      priority: t.priority ?? 5
+      priority: t.priority ?? 5,
+      category: t.category || 'temporary',
+      dueDate: t.dueDate || ''
     }))
 
   todayData.todos.push(...toAdd)
