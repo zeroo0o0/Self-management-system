@@ -222,6 +222,29 @@ createApp({
       expanded.value[id] = !expanded.value[id]
     }
 
+    // ====== 每个模块的快速添加 ======
+    function addQuickTodo(catId) {
+      if (!isToday.value) return
+      const todo = {
+        _key: Date.now() + '_' + Math.random(),
+        text: '新建待办',
+        done: false,
+        priority: 5,
+        category: catId,
+        dueDate: ''
+      }
+      data.value.todos.push(todo)
+      saveTodos()
+      // 自动进入编辑模式
+      editingKey.value = todo._key
+      editText.value = todo.text
+      editDueDate.value = ''
+      nextTick(() => {
+        const el = document.querySelector('.edit-input')
+        if (el) { el.focus(); el.select() }
+      })
+    }
+
     // ====== 让编辑中的任务可见 ======
     function isEditing(todo) {
       return editingKey.value === todo._key
@@ -372,7 +395,7 @@ createApp({
       addTodo, startEdit, saveEdit, cancelEdit,
       changePriority, onPrioChange,
       deleteTodo, onDateChange,
-      toggleCat, isEditing,
+      toggleCat, isEditing, addQuickTodo,
       onDragStart, onDragOver, onDragLeave, onModuleDragOver,
       onDrop, onDropToEnd, onDragEnd,
       addDailyTask, deleteDailyTask,

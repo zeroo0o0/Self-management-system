@@ -60,6 +60,10 @@
           {{ grouped[cat.id].length }}
         </span>
         <span class="cat-actions">
+          <!-- 快速添加 -->
+          <span class="cat-quick-add" v-if="isToday"
+                @click.stop="addQuickTodo(cat.id)"
+                title="快速添加">＋</span>
           <!-- 日课模板管理入口 -->
           <span class="cat-gear" v-if="cat.id === 'daily' && isToday"
                 @click.stop="showDailiesEditor = !showDailiesEditor"
