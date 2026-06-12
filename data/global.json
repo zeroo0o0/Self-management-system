@@ -1,5 +1,5 @@
 {
-  "xp": 50,
+  "xp": 100,
   "level": 2,
   "attributes": {
     "strength": 0,
@@ -7,9 +7,9 @@
     "endurance": 0,
     "spirit": 0
   },
-  "totalXPEarned": 150,
+  "totalXPEarned": 200,
   "attributePoints": 4,
-  "spins": 2,
+  "spins": 3,
   "rewards": [
     {
       "icon": "🎯",

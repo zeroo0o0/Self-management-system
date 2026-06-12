@@ -28,6 +28,11 @@ const app = createApp({
     const importInfo = ref('')
     let toastId = 0
 
+    // ====== 子任务 modal ======
+    const showSubtaskModal = ref(false)
+    const subtaskTodo = ref(null)
+    const newSubtaskText = ref('')
+
     // ====== 计算属性 ======
     const isToday = computed(() => selectedDate.value === today.value)
 
@@ -94,7 +99,8 @@ const app = createApp({
       data.value.todos = (d.todos || []).map(t => ({
         ...t,
         category: t.category || 'temporary',
-        dueDate: t.dueDate || ''
+        dueDate: t.dueDate || '',
+        subtasks: t.subtasks || []
       }))
       if (d.importedFromDailies) {
         importInfo.value = '📋 已自动导入日常任务到「日课」'
@@ -126,7 +132,8 @@ const app = createApp({
         done: false,
         priority: p,
         category: newCategory.value,
-        dueDate: newCategory.value === 'deadline' ? newDueDate.value : ''
+        dueDate: newCategory.value === 'deadline' ? newDueDate.value : '',
+        subtasks: []
       }
       data.value.todos.push(todo)
       newTodo.value = ''
@@ -231,7 +238,8 @@ const app = createApp({
         done: false,
         priority: 5,
         category: catId,
-        dueDate: ''
+        dueDate: '',
+        subtasks: []
       }
       data.value.todos.push(todo)
       saveTodos()
@@ -248,6 +256,61 @@ const app = createApp({
     // ====== 让编辑中的任务可见 ======
     function isEditing(todo) {
       return editingKey.value === todo._key
+    }
+
+    // ====== 子任务 ======
+    function subtaskCount(todo) {
+      return (todo.subtasks || []).length
+    }
+
+    function subtaskDoneCount(todo) {
+      return (todo.subtasks || []).filter(s => s.done).length
+    }
+
+    function openSubtaskView(todo) {
+      subtaskTodo.value = todo
+      newSubtaskText.value = ''
+      showSubtaskModal.value = true
+      document.body.style.overflow = 'hidden'
+    }
+
+    function closeSubtaskModal() {
+      showSubtaskModal.value = false
+      subtaskTodo.value = null
+      newSubtaskText.value = ''
+      document.body.style.overflow = ''
+    }
+
+    function addSubtask() {
+      if (!subtaskTodo.value || !isToday.value) return
+      const text = newSubtaskText.value.trim()
+      if (!text) return
+      if (!subtaskTodo.value.subtasks) subtaskTodo.value.subtasks = []
+      subtaskTodo.value.subtasks.push({ text, done: false })
+      newSubtaskText.value = ''
+      saveTodos()
+    }
+
+    function removeSubtask(index) {
+      if (!subtaskTodo.value || !isToday.value) return
+      subtaskTodo.value.subtasks.splice(index, 1)
+      saveTodos()
+    }
+
+    function onSubtaskToggle() {
+      if (!subtaskTodo.value) return
+      saveTodos()
+      // 子任务全部完成 → 自动勾选父任务
+      const allDone = subtaskTodo.value.subtasks.length > 0 &&
+        subtaskTodo.value.subtasks.every(s => s.done)
+      if (allDone && !subtaskTodo.value.done) {
+        subtaskTodo.value.done = true
+        onTodoToggle(subtaskTodo.value)
+      } else if (!allDone && subtaskTodo.value.done) {
+        // 有子任务未完成 → 取消父任务勾选
+        subtaskTodo.value.done = false
+        saveTodos()
+      }
     }
 
     // ====== 拖拽 ======
@@ -349,7 +412,8 @@ const app = createApp({
       data.value.todos = (d.todos || []).map(t => ({
         ...t,
         category: t.category || 'temporary',
-        dueDate: t.dueDate || ''
+        dueDate: t.dueDate || '',
+        subtasks: t.subtasks || []
       }))
       if (d.added > 0) {
         addToast('↻ 已继承 ' + d.added + ' 项未完成任务')
@@ -401,12 +465,16 @@ const app = createApp({
       toasts, expanded, importInfo,
       dragKey, dragOverKey,
       showDailiesEditor, newDailyText, newDailyPriority,
+      showSubtaskModal, subtaskTodo, newSubtaskText,
       grouped, doneCount,
       formatDate, formatDueDate,
       addTodo, startEdit, saveEdit, cancelEdit,
       changePriority, onPrioChange,
       deleteTodo, onDateChange,
       toggleCat, isEditing, addQuickTodo,
+      subtaskCount, subtaskDoneCount,
+      openSubtaskView, closeSubtaskModal,
+      addSubtask, removeSubtask, onSubtaskToggle,
       onDragStart, onDragOver, onDragLeave, onModuleDragOver,
       onDrop, onDropToEnd, onDragEnd,
       onDropZoneDragOver, onDropZoneDrop,

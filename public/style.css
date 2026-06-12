@@ -1090,3 +1090,178 @@ footer { text-align: center; padding: 32px 0 24px; }
   padding: 8px 0;
   text-align: center;
 }
+
+/* ========== 子任务 Badge (列表中) ========== */
+.subtask-badge {
+  font-size: .7rem;
+  font-weight: 600;
+  color: #888;
+  background: #f3f3f3;
+  padding: 1px 7px;
+  border-radius: 8px;
+  line-height: 1.5;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+/* ========== 子任务 Modal ========== */
+.subtask-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: overlay-in .2s ease;
+}
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.subtask-modal {
+  background: #fff;
+  border-radius: 16px;
+  width: min(480px, 90vw);
+  max-height: min(600px, 85vh);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  animation: modal-in .25s ease;
+}
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.subtask-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 20px 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.subtask-modal-title {
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+  word-break: break-word;
+}
+.subtask-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #999;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all .15s;
+  flex-shrink: 0;
+}
+.subtask-close-btn:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+/* 进度条 */
+.subtask-progress {
+  padding: 12px 20px 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.subtask-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.subtask-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4f46e5, #7c3aed);
+  border-radius: 4px;
+  transition: width .3s ease;
+  min-width: 0;
+}
+.subtask-progress-text {
+  font-size: .78rem;
+  color: #888;
+  white-space: nowrap;
+}
+
+/* 子任务列表 */
+.subtask-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+  min-height: 60px;
+}
+.subtask-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  transition: background .1s;
+}
+.subtask-item:hover {
+  background: #f9f9f9;
+}
+.subtask-label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  min-width: 0;
+}
+.subtask-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.subtask-label span {
+  font-size: .9rem;
+  color: #444;
+  word-break: break-word;
+  line-height: 1.4;
+}
+.subtask-label .st-done {
+  text-decoration: line-through;
+  color: #bbb;
+}
+.subtask-item .btn-icon {
+  opacity: 0;
+  transition: opacity .15s;
+  flex-shrink: 0;
+}
+.subtask-item:hover .btn-icon {
+  opacity: 1;
+}
+
+/* 空状态 & 添加栏 & 底部 */
+.subtask-empty {
+  padding: 32px 20px;
+  text-align: center;
+  font-size: .82rem;
+  color: #ccc;
+}
+.subtask-add {
+  display: flex;
+  gap: 8px;
+  padding: 12px 20px;
+  border-top: 1px solid #f0f0f0;
+}
+.subtask-add .input-text {
+  flex: 1;
+}
+.subtask-footer {
+  padding: 12px 20px;
+  border-top: 1px solid #f0f0f0;
+  text-align: center;
+}

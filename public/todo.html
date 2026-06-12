@@ -122,8 +122,13 @@
           <!-- 查看模式 -->
           <template v-else>
             <span class="todo-text" @dblclick="isToday && startEdit(todo)"
+                  @click="openSubtaskView(todo)"
                   :class="{ 'has-due': todo.category === 'deadline' && todo.dueDate }">
               {{ todo.text }}
+            </span>
+            <span class="subtask-badge" v-if="subtaskCount(todo) > 0"
+                  :title="'子任务: ' + subtaskDoneCount(todo) + '/' + subtaskCount(todo)">
+              📋 {{ subtaskDoneCount(todo) }}/{{ subtaskCount(todo) }}
             </span>
             <span class="due-badge" v-if="todo.category === 'deadline' && todo.dueDate && !isEditing(todo)">
               📅 {{ formatDueDate(todo.dueDate) }}
@@ -170,6 +175,53 @@
     <!-- XP 浮动动画 -->
     <div class="xp-toast" v-for="toast in toasts" :key="toast.id">
       <span>{{ toast.text }}</span>
+    </div>
+
+    <!-- ====== 子任务 Modal ====== -->
+    <div class="subtask-overlay" v-if="showSubtaskModal" @click.self="closeSubtaskModal">
+      <div class="subtask-modal">
+        <div class="subtask-modal-header">
+          <span class="subtask-modal-title">{{ subtaskTodo.icon || '📋' }} {{ subtaskTodo.text }}</span>
+          <button class="subtask-close-btn" @click="closeSubtaskModal">✕</button>
+        </div>
+
+        <div class="subtask-progress" v-if="subtaskCount(subtaskTodo) > 0">
+          <div class="subtask-progress-bar">
+            <div class="subtask-progress-fill"
+                 :style="{ width: (subtaskDoneCount(subtaskTodo) / subtaskCount(subtaskTodo) * 100) + '%' }">
+            </div>
+          </div>
+          <span class="subtask-progress-text">
+            {{ subtaskDoneCount(subtaskTodo) }}/{{ subtaskCount(subtaskTodo) }} 已完成
+          </span>
+        </div>
+
+        <div class="subtask-list" v-if="subtaskCount(subtaskTodo) > 0">
+          <div v-for="(st, i) in subtaskTodo.subtasks" :key="i" class="subtask-item">
+            <label class="subtask-label">
+              <input type="checkbox" v-model="st.done" @change="onSubtaskToggle"
+                     :disabled="!isToday">
+              <span :class="{ 'st-done': st.done }">{{ st.text }}</span>
+            </label>
+            <button class="btn-icon" @click="removeSubtask(i)" v-if="isToday"
+                    title="删除子任务">✕</button>
+          </div>
+        </div>
+
+        <div class="subtask-empty" v-else>
+          还没有子任务，在下方添加
+        </div>
+
+        <div class="subtask-add" v-if="isToday">
+          <input v-model="newSubtaskText" @keyup.enter="addSubtask"
+                 placeholder="输入子任务..." class="input-text" autofocus>
+          <button @click="addSubtask">添加</button>
+        </div>
+
+        <div class="subtask-footer" v-if="!isToday">
+          <span class="readonly-hint">📌 只读查看</span>
+        </div>
+      </div>
     </div>
 
     <footer>
