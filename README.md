@@ -1,4 +1,4 @@
-# 🌱 Self-Management System (RPG 版自我管理系统)
+# 🌱 Self-Management System (RPG 版自我管理系统)1
 
 这是一个将"个人管理"游戏化的全栈 Web 应用。通过将任务管理、奖励机制与 RPG 属性树相结合，提升个人成就感。
 
