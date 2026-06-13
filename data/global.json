@@ -1,15 +1,15 @@
 {
-  "xp": 100,
-  "level": 2,
+  "xp": 382,
+  "level": 4,
   "attributes": {
     "strength": 0,
     "intelligence": 0,
     "endurance": 0,
     "spirit": 0
   },
-  "totalXPEarned": 200,
-  "attributePoints": 4,
-  "spins": 3,
+  "totalXPEarned": 982,
+  "attributePoints": 10,
+  "spins": 23,
   "rewards": [
     {
       "icon": "🎯",
@@ -18,5 +18,9 @@
     }
   ],
   "history": [],
-  "counter": 0
+  "counter": 0,
+  "scareDDL": {
+    "key": "1781258359322_0.8900947876822373",
+    "date": "2026-06-12"
+  }
 }

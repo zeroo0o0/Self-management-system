@@ -1,10 +1,10 @@
 const { createApp, ref, computed, onMounted, nextTick } = Vue
 
 const CATEGORIES = [
-  { id: 'daily',      label: '日常任务', icon: '📆', color: '#4CAF50', bg: '#E8F5E9', border: '#A5D6A7' },
-  { id: 'temporary',  label: '临时任务', icon: '⚡',  color: '#FF9800', bg: '#FFF3E0', border: '#FFCC80' },
-  { id: 'longterm',   label: '长期任务', icon: '🌳',  color: '#2196F3', bg: '#E3F2FD', border: '#90CAF9' },
-  { id: 'deadline',   label: '近期DDL',  icon: '🔥',  color: '#F44336', bg: '#FFEBEE', border: '#EF9A9A' },
+  { id: 'daily',      label: '日常任务',               icon: '📆', color: '#4CAF50', bg: '#E8F5E9', border: '#A5D6A7' },
+  { id: 'temporary',  label: '紧急不重要/无成长：抽空做', icon: '⚡',  color: '#FF9800', bg: '#FFF3E0', border: '#FFCC80' },
+  { id: 'deadline',   label: '近期DDL',                icon: '🔥',  color: '#F44336', bg: '#FFEBEE', border: '#EF9A9A' },
+  { id: 'longterm',   label: '长期任务/目标/想发展的点', icon: '🌳',  color: '#2196F3', bg: '#E3F2FD', border: '#90CAF9' },
 ]
 
 const app = createApp({
@@ -33,10 +33,86 @@ const app = createApp({
     const subtaskTodo = ref(null)
     const newSubtaskText = ref('')
 
+    // ====== 恐吓DDL ======
+    const scareDDLKey = ref(null)
+
+    const scareDDL = computed(() => {
+      if (!scareDDLKey.value) return null
+      return data.value.todos.find(t => t._key === scareDDLKey.value) || null
+    })
+
+    async function initScareDDL() {
+      const existing = globalData.value.scareDDL
+      if (existing && existing.date === today.value) {
+        // 验证该任务仍然存在
+        const found = data.value.todos.find(t => t._key === existing.key)
+        if (found) {
+          scareDDLKey.value = existing.key
+          return
+        }
+      }
+      await pickScareDDL()
+    }
+
+    async function pickScareDDL() {
+      const candidates = data.value.todos.filter(
+        t => t.category === 'deadline' && !t.done && t.dueDate
+      )
+      if (candidates.length === 0) {
+        scareDDLKey.value = null
+        return
+      }
+      const picked = candidates[Math.floor(Math.random() * candidates.length)]
+      scareDDLKey.value = picked._key
+      const scareObj = { key: picked._key, date: today.value }
+      await fetch('/api/global', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scareDDL: scareObj })
+      })
+      globalData.value.scareDDL = scareObj
+    }
+
+    // ====== 撤销/重做 ======
+    const undoStack = ref([])
+    const redoStack = ref([])
+    const MAX_UNDO = 50
+
+    function saveSnapshot() {
+      if (!isToday.value) return
+      undoStack.value.push(JSON.parse(JSON.stringify(data.value.todos)))
+      if (undoStack.value.length > MAX_UNDO) undoStack.value.shift()
+      redoStack.value = []
+    }
+
+    function undo() {
+      if (undoStack.value.length === 0) return
+      redoStack.value.push(JSON.parse(JSON.stringify(data.value.todos)))
+      data.value.todos = undoStack.value.pop()
+      saveTodos()
+      addToast('↩ 撤销')
+    }
+
+    function redo() {
+      if (redoStack.value.length === 0) return
+      undoStack.value.push(JSON.parse(JSON.stringify(data.value.todos)))
+      data.value.todos = redoStack.value.pop()
+      saveTodos()
+      addToast('↪ 重做')
+    }
+
     // ====== 计算属性 ======
     const isToday = computed(() => selectedDate.value === today.value)
 
     const doneCount = computed(() => data.value.todos.filter(t => t.done).length)
+
+    const todayProgress = computed(() => {
+      const todayCats = data.value.todos.filter(t => t.category === 'daily' || t.category === 'temporary')
+      return {
+        done: todayCats.filter(t => t.done).length,
+        total: todayCats.length
+      }
+    })
 
     // 按分类分组并排序
     const grouped = computed(() => {
@@ -50,6 +126,18 @@ const app = createApp({
       Object.values(groups).forEach(arr => {
         arr.sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0))
       })
+      // deadline 分类：优先级相同则按截止日期从近到远排序
+      if (groups.deadline) {
+        groups.deadline.sort((a, b) => {
+          const pa = a.priority ?? 0
+          const pb = b.priority ?? 0
+          if (pb !== pa) return pb - pa
+          // 优先级相同 → 按剩余天数升序（截止越近越靠前）
+          const da = a.dueDate ? daysUntil(a.dueDate) : 999
+          const db = b.dueDate ? daysUntil(b.dueDate) : 999
+          return da - db
+        })
+      }
       return groups
     })
 
@@ -69,6 +157,30 @@ const app = createApp({
       const m = String(d.getMonth() + 1).padStart(2, '0')
       const day = String(d.getDate()).padStart(2, '0')
       return `${m}-${day}`
+    }
+
+    function daysUntil(dateStr) {
+      if (!dateStr) return 999
+      const now = new Date(selectedDate.value + 'T00:00:00')
+      const target = new Date(dateStr + 'T00:00:00')
+      return Math.round((target - now) / (1000 * 60 * 60 * 24))
+    }
+
+    function daysLabel(dateStr) {
+      const d = daysUntil(dateStr)
+      if (d === 999) return ''
+      if (d < 0) return `（已逾期${Math.abs(d)}天）`
+      if (d === 0) return '（今天截止）'
+      return `（剩${d}天）`
+    }
+
+    function urgencyClass(dateStr) {
+      if (!dateStr) return ''
+      const d = daysUntil(dateStr)
+      if (d < 0) return 'overdue'
+      if (d === 0) return 'due-today'
+      if (d <= 3) return 'due-soon'
+      return ''
     }
 
     function addToast(text) {
@@ -106,6 +218,10 @@ const app = createApp({
         importInfo.value = '📋 已自动导入日常任务到「日课」'
         setTimeout(() => { importInfo.value = '' }, 3000)
       }
+      // 加载完成后重置撤销栈并保存初始快照
+      undoStack.value = []
+      redoStack.value = []
+      saveSnapshot()
     }
 
     async function saveTodos() {
@@ -118,11 +234,16 @@ const app = createApp({
 
     // ====== 日期切换 ======
     function onDateChange() {
-      if (selectedDate.value) loadTodos(selectedDate.value)
+      if (selectedDate.value) {
+        undoStack.value = []
+        redoStack.value = []
+        loadTodos(selectedDate.value)
+      }
     }
 
     // ====== 待办 CRUD ======
     function addTodo() {
+      saveSnapshot()
       const text = newTodo.value.trim()
       if (!text) return
       const p = Math.max(0, Math.min(10, newPriority.value ?? 5))
@@ -154,6 +275,7 @@ const app = createApp({
 
     function saveEdit(todo) {
       if (editingKey.value !== todo._key) return
+      saveSnapshot()
       const t = editText.value.trim()
       if (t) todo.text = t
       todo.dueDate = editDueDate.value
@@ -170,21 +292,30 @@ const app = createApp({
     }
 
     function changePriority(todo, delta) {
+      saveSnapshot()
       let v = (todo.priority ?? 5) + delta
       todo.priority = Math.round(Math.max(0, Math.min(10, v)) * 10) / 10
       saveTodos()
     }
 
     function onPrioChange(todo) {
+      saveSnapshot()
       if (todo.priority === '' || todo.priority === null) todo.priority = 0
       todo.priority = Math.round(Math.max(0, Math.min(10, Number(todo.priority))) * 10) / 10
       saveTodos()
     }
 
     function deleteTodo(todo) {
+      saveSnapshot()
       const i = data.value.todos.findIndex(t => t._key === todo._key)
       if (i === -1) return
       data.value.todos.splice(i, 1)
+      saveTodos()
+    }
+
+    function onDueDateChange(todo, val) {
+      saveSnapshot()
+      todo.dueDate = val
       saveTodos()
     }
 
@@ -232,6 +363,7 @@ const app = createApp({
     // ====== 每个模块的快速添加 ======
     function addQuickTodo(catId) {
       if (!isToday.value) return
+      saveSnapshot()
       const todo = {
         _key: Date.now() + '_' + Math.random(),
         text: '新建待办',
@@ -259,6 +391,28 @@ const app = createApp({
     }
 
     // ====== 子任务 ======
+    let clickTimer = null
+
+    function onTodoClick(todo) {
+      if (clickTimer) {
+        clearTimeout(clickTimer)
+        clickTimer = null
+        return  // 双击时跳过，让 dblclick 处理
+      }
+      clickTimer = setTimeout(() => {
+        clickTimer = null
+        openSubtaskView(todo)
+      }, 220)
+    }
+
+    function onTodoDblClick(todo) {
+      if (clickTimer) {
+        clearTimeout(clickTimer)
+        clickTimer = null
+      }
+      if (isToday.value) startEdit(todo)
+    }
+
     function subtaskCount(todo) {
       return (todo.subtasks || []).length
     }
@@ -283,6 +437,7 @@ const app = createApp({
 
     function addSubtask() {
       if (!subtaskTodo.value || !isToday.value) return
+      saveSnapshot()
       const text = newSubtaskText.value.trim()
       if (!text) return
       if (!subtaskTodo.value.subtasks) subtaskTodo.value.subtasks = []
@@ -293,12 +448,14 @@ const app = createApp({
 
     function removeSubtask(index) {
       if (!subtaskTodo.value || !isToday.value) return
+      saveSnapshot()
       subtaskTodo.value.subtasks.splice(index, 1)
       saveTodos()
     }
 
     function onSubtaskToggle() {
       if (!subtaskTodo.value) return
+      saveSnapshot()
       saveTodos()
       // 子任务全部完成 → 自动勾选父任务
       const allDone = subtaskTodo.value.subtasks.length > 0 &&
@@ -338,6 +495,7 @@ const app = createApp({
 
     function onDrop(catId, targetTodo) {
       if (!isToday.value || !dragKey.value) return
+      saveSnapshot()
       const sourceTodo = data.value.todos.find(t => t._key === dragKey.value)
       if (!sourceTodo) { clearDrag(); return }
 
@@ -369,6 +527,7 @@ const app = createApp({
 
     function onDropToEnd(catId) {
       if (!isToday.value || !dragKey.value) return
+      saveSnapshot()
       const sourceTodo = data.value.todos.find(t => t._key === dragKey.value)
       if (!sourceTodo) { clearDrag(); return }
 
@@ -407,6 +566,7 @@ const app = createApp({
 
     // ====== 从昨天继承 ======
     async function carryOver() {
+      saveSnapshot()
       const res = await fetch('/api/carry-over', { method: 'POST' })
       const d = await res.json()
       data.value.todos = (d.todos || []).map(t => ({
@@ -426,10 +586,16 @@ const app = createApp({
     async function onTodoToggle(todo) {
       if (todo.done) {
         const earned = Math.round((todo.priority ?? 5) * 10)
+        let spinsToAward = 1
+        let isScare = false
+        if (scareDDL.value && todo._key === scareDDL.value._key) {
+          spinsToAward = 3
+          isScare = true
+        }
         const res = await fetch('/api/xp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ earned })
+          body: JSON.stringify({ earned, spins: spinsToAward })
         })
         const result = await res.json()
         if (result.ok) {
@@ -438,12 +604,37 @@ const app = createApp({
           globalData.value.attributePoints = result.attributePoints
           globalData.value.spins = result.spins
           addToast('✨ +' + earned + ' XP')
+          if (isScare) {
+            addToast('🎰 恐吓DDL奖励！+3 抽奖次数！')
+          }
           if (result.leveledUp) {
             addToast('🎉 升级！Lv.' + result.level + ' (+3 属性点)')
           }
         }
       }
       saveTodos()
+    }
+
+    function onScareCheckboxClick(e) {
+      if (!isToday.value) return
+      const t = scareDDL.value
+      if (!t) return
+      saveSnapshot()
+      t.done = e.target.checked
+      onTodoToggle(t)
+    }
+
+    // ====== 键盘快捷键 ======
+    function onKeydown(e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
+      if (e.ctrlKey && e.key === 'z') {
+        e.preventDefault()
+        undo()
+      }
+      if (e.ctrlKey && (e.key === 'y' || (e.key === 'Y' && e.shiftKey))) {
+        e.preventDefault()
+        redo()
+      }
     }
 
     // ====== 初始化 ======
@@ -454,6 +645,8 @@ const app = createApp({
         loadGlobal(),
         loadDailies()
       ])
+      initScareDDL()
+      window.addEventListener('keydown', onKeydown)
     })
 
     return {
@@ -466,20 +659,24 @@ const app = createApp({
       dragKey, dragOverKey,
       showDailiesEditor, newDailyText, newDailyPriority,
       showSubtaskModal, subtaskTodo, newSubtaskText,
-      grouped, doneCount,
-      formatDate, formatDueDate,
+      scareDDL,
+      grouped, doneCount, todayProgress,
+      formatDate, formatDueDate, daysUntil, daysLabel, urgencyClass,
       addTodo, startEdit, saveEdit, cancelEdit,
       changePriority, onPrioChange,
-      deleteTodo, onDateChange,
+      deleteTodo, onDueDateChange, onDateChange,
       toggleCat, isEditing, addQuickTodo,
       subtaskCount, subtaskDoneCount,
       openSubtaskView, closeSubtaskModal,
       addSubtask, removeSubtask, onSubtaskToggle,
+      onTodoClick, onTodoDblClick,
       onDragStart, onDragOver, onDragLeave, onModuleDragOver,
       onDrop, onDropToEnd, onDragEnd,
       onDropZoneDragOver, onDropZoneDrop,
       addDailyTask, deleteDailyTask,
-      carryOver, onTodoToggle
+      carryOver, onTodoToggle, onScareCheckboxClick,
+      undo, redo, saveSnapshot,
+      undoStack, redoStack
     }
   }
 })

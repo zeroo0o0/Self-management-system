@@ -211,13 +211,13 @@ app.post('/api/carry-over', (req, res) => {
 
 // ========== XP 联动（待办打勾时调用） ==========
 app.post('/api/xp', (req, res) => {
-  const { earned } = req.body
+  const { earned, spins: spinsOverride } = req.body
   if (!earned || earned <= 0) return res.json({ ok: false })
 
   const global = readJSON(GLOBAL_FILE, getDefaultGlobal())
   global.xp = (global.xp ?? 0) + earned
   global.totalXPEarned = (global.totalXPEarned ?? 0) + earned
-  global.spins = (global.spins ?? 0) + 1
+  global.spins = (global.spins ?? 0) + (spinsOverride ?? 1)
 
   let leveledUp = false
   const threshold = (global.level ?? 1) * 100
@@ -236,6 +236,18 @@ app.post('/api/xp', (req, res) => {
 app.get('/api/global', (req, res) => {
   const global = readJSON(GLOBAL_FILE, getDefaultGlobal())
   res.json(global)
+})
+
+// 保存全局数据（如 scareDDL）
+app.post('/api/global', (req, res) => {
+  const global = readJSON(GLOBAL_FILE, getDefaultGlobal())
+  // 浅合并，数组原样覆盖（只有 scareDDL 这类简单对象会被写入）
+  const updated = { ...global, ...req.body }
+  if (req.body.attributes) {
+    updated.attributes = { ...global.attributes, ...req.body.attributes }
+  }
+  writeJSON(GLOBAL_FILE, updated)
+  res.json({ ok: true })
 })
 
 app.listen(PORT, () => {

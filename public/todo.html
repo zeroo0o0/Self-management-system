@@ -23,6 +23,32 @@
       <div class="import-info" v-if="importInfo">{{ importInfo }}</div>
     </div>
 
+    <!-- ====== 恐吓DDL 横幅 ====== -->
+    <div class="scare-ddl" v-if="isToday && scareDDL">
+      <div class="scare-ddl-header">⚠️ 今日恐吓 DDL</div>
+      <div class="scare-ddl-body" :class="{ done: scareDDL.done }">
+        <div class="scare-ddl-task">
+          <input type="checkbox" :checked="scareDDL.done"
+                 @click="onScareCheckboxClick"
+                 :disabled="!isToday">
+          <span class="scare-ddl-text">{{ scareDDL.text }}</span>
+        </div>
+        <div class="scare-ddl-meta">
+          <span class="scare-ddl-date">
+            📅 <input type="date" :value="scareDDL.dueDate || ''"
+                      @change="onDueDateChange(scareDDL, $event.target.value)"
+                      class="due-date-inline"
+                      :class="{ 'no-date': !scareDDL.dueDate }">
+            <span class="due-remaining" :class="urgencyClass(scareDDL.dueDate)" v-if="scareDDL.dueDate">
+              {{ daysLabel(scareDDL.dueDate) }}
+            </span>
+          </span>
+          <span class="scare-ddl-reward" v-if="!scareDDL.done">🎰 今日内完成可得 3 次抽奖机会</span>
+          <span class="scare-ddl-reward done" v-else>✅ 已完成！获得 3 次抽奖 🎉</span>
+        </div>
+      </div>
+    </div>
+
     <!-- ====== 添加新任务 ====== -->
     <div class="add-section" v-if="isToday">
       <div class="input-row">
@@ -38,12 +64,28 @@
       </div>
     </div>
 
-    <!-- ====== 统计 ====== -->
+    <!-- ====== 统计 & 进度条 ====== -->
     <div class="todo-toolbar" v-if="data.todos.length > 0">
       <span class="todo-stats">
-        ✅ {{ doneCount }} / {{ data.todos.length }}
+        <span class="progress-wrap" v-if="isToday && todayProgress.total > 0">
+          <span class="progress-label">📊 今日进度</span>
+          <span class="progress-bar">
+            <span class="progress-fill" :style="{ width: (todayProgress.done / todayProgress.total * 100) + '%' }"></span>
+          </span>
+          <span class="progress-text">
+            <span class="progress-num">{{ todayProgress.done }}/{{ todayProgress.total }}</span>
+            <span class="progress-pct" v-if="todayProgress.total > 0">{{ Math.round(todayProgress.done / todayProgress.total * 100) }}%</span>
+          </span>
+        </span>
+        <span v-else>
+          ✅ {{ doneCount }} / {{ data.todos.length }}
+        </span>
         <span v-if="(globalData.level ?? 1) > 1"> · Lv.{{ globalData.level }}</span>
         <span v-if="!isToday" class="readonly-hint">（只读查看）</span>
+      </span>
+      <span class="undo-redo-btns" v-if="isToday">
+        <button class="btn-undo" @click="undo" :disabled="undoStack.length === 0" title="撤销 (Ctrl+Z)">↩ 撤销</button>
+        <button class="btn-redo" @click="redo" :disabled="redoStack.length === 0" title="重做 (Ctrl+Y)">↪ 重做</button>
       </span>
     </div>
 
@@ -94,7 +136,9 @@
       </div>
 
       <!-- 模块内容 -->
-      <div class="cat-body" v-show="expanded[cat.id]">
+      <div class="cat-body" v-show="expanded[cat.id]"
+           @dragover="onDropZoneDragOver"
+           @drop="onDropZoneDrop(cat.id)">
         <div v-for="todo in grouped[cat.id]" :key="todo._key"
              :draggable="isToday ? 'true' : 'false'"
              @dragstart="onDragStart(todo)"
@@ -111,7 +155,7 @@
              }"
              :style="dragOverKey === todo._key ? { borderTopColor: cat.color } : {}">
 
-          <input type="checkbox" v-model="todo.done" @change="onTodoToggle(todo)" :disabled="!isToday">
+          <input type="checkbox" v-model="todo.done" @click="saveSnapshot" @change="onTodoToggle(todo)" :disabled="!isToday">
 
           <!-- 编辑模式 -->
           <template v-if="isEditing(todo)">
@@ -121,8 +165,8 @@
 
           <!-- 查看模式 -->
           <template v-else>
-            <span class="todo-text" @dblclick="isToday && startEdit(todo)"
-                  @click="openSubtaskView(todo)"
+            <span class="todo-text" @dblclick="onTodoDblClick(todo)"
+                  @click="onTodoClick(todo)"
                   :class="{ 'has-due': todo.category === 'deadline' && todo.dueDate }">
               {{ todo.text }}
             </span>
@@ -130,8 +174,14 @@
                   :title="'子任务: ' + subtaskDoneCount(todo) + '/' + subtaskCount(todo)">
               📋 {{ subtaskDoneCount(todo) }}/{{ subtaskCount(todo) }}
             </span>
-            <span class="due-badge" v-if="todo.category === 'deadline' && todo.dueDate && !isEditing(todo)">
-              📅 {{ formatDueDate(todo.dueDate) }}
+            <span class="due-badge" v-if="todo.category === 'deadline' && !isEditing(todo)"
+                  :class="todo.dueDate && daysUntil(todo.dueDate) < 0 ? 'overdue' : ''">
+              📅
+              <input type="date" :value="todo.dueDate || ''"
+                     @change="onDueDateChange(todo, $event.target.value)"
+                     class="due-date-inline"
+                     :class="{ 'no-date': !todo.dueDate }">
+              <span class="due-remaining" :class="urgencyClass(todo.dueDate)" v-if="todo.dueDate">{{ daysLabel(todo.dueDate) }}</span>
             </span>
           </template>
 
@@ -152,8 +202,10 @@
         </div>
 
         <!-- 空状态 -->
-        <div v-if="grouped[cat.id].length === 0" class="cat-empty">
-          {{ isToday ? '拖拽任务到这里，或在上方添加' : '暂无' }}
+        <div v-if="grouped[cat.id].length === 0"
+             class="cat-empty"
+             :class="{ 'drag-hover-empty': dragKey && isToday }">
+          {{ (dragKey && isToday) ? '📥 放下到这里' : (isToday ? '拖拽任务到这里，或在上方添加' : '暂无') }}
         </div>
 
         <!-- 底部拖拽放置区 -->
@@ -199,7 +251,7 @@
         <div class="subtask-list" v-if="subtaskCount(subtaskTodo) > 0">
           <div v-for="(st, i) in subtaskTodo.subtasks" :key="i" class="subtask-item">
             <label class="subtask-label">
-              <input type="checkbox" v-model="st.done" @change="onSubtaskToggle"
+              <input type="checkbox" v-model="st.done" @click="saveSnapshot" @change="onSubtaskToggle"
                      :disabled="!isToday">
               <span :class="{ 'st-done': st.done }">{{ st.text }}</span>
             </label>
@@ -225,7 +277,7 @@
     </div>
 
     <footer>
-      <p class="footer-note">💾 完成自动保存 · 勾选任务获得 <strong>经验值</strong> 和 <strong>抽奖次数</strong></p>
+      <p class="footer-note">💾 完成自动保存 · 勾选任务获得 <strong>经验值</strong> 和 <strong>抽奖次数</strong> · <span class="shortcut-hint"><kbd>Ctrl+Z</kbd> 撤销 <kbd>Ctrl+Y</kbd> 重做</span></p>
     </footer>
   </div>
 

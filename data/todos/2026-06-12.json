@@ -1,44 +1,58 @@
 {
   "todos": [
     {
-      "_key": "1781193666191_0.6112541808225447",
-      "text": "新建待办",
-      "done": false,
-      "priority": 5,
-      "category": "daily",
-      "dueDate": ""
-    },
-    {
-      "_key": "1781194065249_0.32043775625884763",
-      "text": "新建待办",
-      "done": false,
-      "priority": 5,
-      "category": "daily",
-      "dueDate": ""
-    },
-    {
       "_key": "1781194110162_0.038429897112402855",
       "text": "1233",
       "done": true,
-      "priority": 5,
+      "priority": 4,
       "category": "temporary",
-      "dueDate": ""
+      "dueDate": "",
+      "subtasks": []
     },
     {
       "_key": "1781194110162_0.3823897616977645",
       "text": "123",
       "done": true,
       "priority": 5,
-      "category": "temporary",
-      "dueDate": ""
+      "category": "daily",
+      "dueDate": "",
+      "subtasks": [
+        {
+          "text": "啊",
+          "done": false
+        },
+        {
+          "text": "啊",
+          "done": false
+        }
+      ]
     },
     {
       "_key": "1781194110162_0.7501145192462981",
       "text": "123",
-      "done": true,
+      "done": false,
       "priority": 5,
       "category": "temporary",
-      "dueDate": ""
+      "dueDate": "",
+      "subtasks": []
+    },
+    {
+      "_key": "1781258359322_0.8900947876822373",
+      "text": "六级考试",
+      "done": false,
+      "priority": 5.1,
+      "category": "deadline",
+      "dueDate": "2026-06-13",
+      "subtasks": []
+    },
+    {
+      "_key": "1781258379857_0.18962599790467038",
+      "text": "保研 或者 留学",
+      "done": false,
+      "priority": 3.1,
+      "category": "longterm",
+      "dueDate": "",
+      "subtasks": []
     }
   ]
 }
