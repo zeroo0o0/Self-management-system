@@ -248,26 +248,37 @@
           </span>
         </div>
 
-        <div class="subtask-list" v-if="subtaskCount(subtaskTodo) > 0">
+        <div class="subtask-list">
           <div v-for="(st, i) in subtaskTodo.subtasks" :key="i" class="subtask-item">
             <label class="subtask-label">
               <input type="checkbox" v-model="st.done" @click="saveSnapshot" @change="onSubtaskToggle"
                      :disabled="!isToday">
-              <span :class="{ 'st-done': st.done }">{{ st.text }}</span>
+              <!-- 内联编辑模式 -->
+              <input v-if="subtaskEditIdx === i" v-model="subtaskEditText"
+                     @keyup.enter="saveSubtaskEdit(i)" @blur="saveSubtaskEdit(i)"
+                     @keyup.escape="cancelSubtaskEdit"
+                     class="subtask-edit-input"
+                     :ref="el => subtaskEditInput = el">
+              <!-- 查看模式 -->
+              <span v-else :class="{ 'st-done': st.done }" @click="isToday && startSubtaskEdit(i)"
+                    class="subtask-text">
+                {{ st.text }}
+              </span>
             </label>
             <button class="btn-icon" @click="removeSubtask(i)" v-if="isToday"
                     title="删除子任务">✕</button>
           </div>
-        </div>
 
-        <div class="subtask-empty" v-else>
-          还没有子任务，在下方添加
-        </div>
+          <!-- 空状态 -->
+          <div v-if="subtaskCount(subtaskTodo) === 0" class="subtask-empty-inline">
+            <span>还没有子任务</span>
+          </div>
 
-        <div class="subtask-add" v-if="isToday">
-          <input v-model="newSubtaskText" @keyup.enter="addSubtask"
-                 placeholder="输入子任务..." class="input-text" autofocus>
-          <button @click="addSubtask">添加</button>
+          <!-- ➕ 添加行 (飞书风格) -->
+          <div v-if="isToday" class="subtask-add-row" @click="addSubtaskInline">
+            <span class="subtask-add-icon">＋</span>
+            <span class="subtask-add-label">添加子任务</span>
+          </div>
         </div>
 
         <div class="subtask-footer" v-if="!isToday">

@@ -31,7 +31,9 @@ const app = createApp({
     // ====== 子任务 modal ======
     const showSubtaskModal = ref(false)
     const subtaskTodo = ref(null)
-    const newSubtaskText = ref('')
+    const subtaskEditIdx = ref(null)
+    const subtaskEditText = ref('')
+    const subtaskEditInput = ref(null)
 
     // ====== 恐吓DDL ======
     const scareDDLKey = ref(null)
@@ -423,7 +425,8 @@ const app = createApp({
 
     function openSubtaskView(todo) {
       subtaskTodo.value = todo
-      newSubtaskText.value = ''
+      subtaskEditIdx.value = null
+      subtaskEditText.value = ''
       showSubtaskModal.value = true
       document.body.style.overflow = 'hidden'
     }
@@ -431,25 +434,73 @@ const app = createApp({
     function closeSubtaskModal() {
       showSubtaskModal.value = false
       subtaskTodo.value = null
-      newSubtaskText.value = ''
+      subtaskEditIdx.value = null
+      subtaskEditText.value = ''
       document.body.style.overflow = ''
     }
 
-    function addSubtask() {
+    function addSubtaskInline() {
       if (!subtaskTodo.value || !isToday.value) return
       saveSnapshot()
-      const text = newSubtaskText.value.trim()
-      if (!text) return
       if (!subtaskTodo.value.subtasks) subtaskTodo.value.subtasks = []
-      subtaskTodo.value.subtasks.push({ text, done: false })
-      newSubtaskText.value = ''
+      const idx = subtaskTodo.value.subtasks.length
+      subtaskTodo.value.subtasks.push({ text: '', done: false })
+      subtaskEditIdx.value = idx
+      subtaskEditText.value = ''
       saveTodos()
+      nextTick(() => {
+        subtaskEditInput.value?.focus()
+      })
+    }
+
+    function startSubtaskEdit(index) {
+      if (!isToday.value) return
+      const st = subtaskTodo.value?.subtasks[index]
+      if (!st) return
+      subtaskEditIdx.value = index
+      subtaskEditText.value = st.text
+      nextTick(() => {
+        subtaskEditInput.value?.focus()
+        subtaskEditInput.value?.select()
+      })
+    }
+
+    function saveSubtaskEdit(index) {
+      if (subtaskEditIdx.value !== index) return
+      const st = subtaskTodo.value?.subtasks[index]
+      if (!st) return
+      const text = subtaskEditText.value.trim()
+      if (text) {
+        st.text = text
+        saveTodos()
+      } else {
+        subtaskTodo.value.subtasks.splice(index, 1)
+        saveTodos()
+      }
+      subtaskEditIdx.value = null
+      subtaskEditText.value = ''
+    }
+
+    function cancelSubtaskEdit() {
+      const idx = subtaskEditIdx.value
+      if (idx === null) return
+      const st = subtaskTodo.value?.subtasks[idx]
+      if (st && !st.text.trim()) {
+        subtaskTodo.value.subtasks.splice(idx, 1)
+        saveTodos()
+      }
+      subtaskEditIdx.value = null
+      subtaskEditText.value = ''
     }
 
     function removeSubtask(index) {
       if (!subtaskTodo.value || !isToday.value) return
       saveSnapshot()
       subtaskTodo.value.subtasks.splice(index, 1)
+      if (subtaskEditIdx.value === index) {
+        subtaskEditIdx.value = null
+        subtaskEditText.value = ''
+      }
       saveTodos()
     }
 
@@ -658,7 +709,7 @@ const app = createApp({
       toasts, expanded, importInfo,
       dragKey, dragOverKey,
       showDailiesEditor, newDailyText, newDailyPriority,
-      showSubtaskModal, subtaskTodo, newSubtaskText,
+      showSubtaskModal, subtaskTodo, subtaskEditIdx, subtaskEditText,
       scareDDL,
       grouped, doneCount, todayProgress,
       formatDate, formatDueDate, daysUntil, daysLabel, urgencyClass,
@@ -668,7 +719,7 @@ const app = createApp({
       toggleCat, isEditing, addQuickTodo,
       subtaskCount, subtaskDoneCount,
       openSubtaskView, closeSubtaskModal,
-      addSubtask, removeSubtask, onSubtaskToggle,
+      addSubtaskInline, startSubtaskEdit, saveSubtaskEdit, cancelSubtaskEdit, removeSubtask, onSubtaskToggle,
       onTodoClick, onTodoDblClick,
       onDragStart, onDragOver, onDragLeave, onModuleDragOver,
       onDrop, onDropToEnd, onDragEnd,

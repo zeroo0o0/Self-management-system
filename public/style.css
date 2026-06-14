@@ -1386,21 +1386,77 @@ footer { text-align: center; padding: 32px 0 24px; }
   opacity: 1;
 }
 
-/* 空状态 & 添加栏 & 底部 */
-.subtask-empty {
-  padding: 32px 20px;
+/* ➕ 飞书风格添加行 */
+.subtask-add-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: background .12s;
+  border-top: 1px dashed #e5e7eb;
+  margin-top: 4px;
+}
+.subtask-add-row:hover {
+  background: #f3f4f6;
+}
+.subtask-add-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1.5px dashed #bbb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .9rem;
+  font-weight: 700;
+  color: #999;
+  transition: all .15s;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.subtask-add-row:hover .subtask-add-icon {
+  border-color: #4f46e5;
+  color: #4f46e5;
+  border-style: solid;
+}
+.subtask-add-label {
+  font-size: .85rem;
+  color: #999;
+  transition: color .12s;
+}
+.subtask-add-row:hover .subtask-add-label {
+  color: #4f46e5;
+}
+
+/* 内联编辑模式 */
+.subtask-edit-input {
+  flex: 1;
+  padding: 4px 10px;
+  border: 2px solid #4f46e5;
+  border-radius: 8px;
+  font-size: .9rem;
+  font-family: inherit;
+  outline: none;
+  background: #fff;
+  min-width: 0;
+}
+.subtask-text {
+  cursor: text;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background .1s;
+}
+.subtask-text:hover {
+  background: #f3f4f6;
+}
+
+/* 空状态 & 底部 */
+.subtask-empty-inline {
+  padding: 20px;
   text-align: center;
   font-size: .82rem;
-  color: #ccc;
-}
-.subtask-add {
-  display: flex;
-  gap: 8px;
-  padding: 12px 20px;
-  border-top: 1px solid #f0f0f0;
-}
-.subtask-add .input-text {
-  flex: 1;
+  color: #d0d0d0;
 }
 .subtask-footer {
   padding: 12px 20px;
