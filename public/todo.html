@@ -144,7 +144,7 @@
              @dragstart="onDragStart(todo)"
              @dragover="onDragOver($event, todo)"
              @dragleave="onDragLeave"
-             @drop="onDrop(cat.id, todo)"
+             @drop="onDrop($event, cat.id, todo)"
              @dragend="onDragEnd"
              class="todo-item"
              :class="{

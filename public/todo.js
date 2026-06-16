@@ -28,6 +28,22 @@ const app = createApp({
     const importInfo = ref('')
     let toastId = 0
 
+    // ====== 工具函数 ======
+    function genKey() {
+      return Date.now() + '_' + Math.random()
+    }
+    function normalizeTodo(t) {
+      return { ...t, category: t.category || 'temporary', dueDate: t.dueDate || '', subtasks: t.subtasks || [] }
+    }
+    function getPrevDate(dateStr) {
+      const d = new Date(dateStr + 'T00:00:00')
+      d.setDate(d.getDate() - 1)
+      const y = d.getFullYear()
+      const m = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      return `${y}-${m}-${day}`
+    }
+
     // ====== 子任务 modal ======
     const showSubtaskModal = ref(false)
     const subtaskTodo = ref(null)
@@ -153,14 +169,6 @@ const app = createApp({
       return `${dateStr} 周${weekdays[d.getDay()]}`
     }
 
-    function formatDueDate(dateStr) {
-      if (!dateStr) return ''
-      const d = new Date(dateStr + 'T00:00:00')
-      const m = String(d.getMonth() + 1).padStart(2, '0')
-      const day = String(d.getDate()).padStart(2, '0')
-      return `${m}-${day}`
-    }
-
     function daysUntil(dateStr) {
       if (!dateStr) return 999
       const now = new Date(selectedDate.value + 'T00:00:00')
@@ -210,20 +218,47 @@ const app = createApp({
     async function loadTodos(dateStr) {
       const res = await fetch(`/api/todos/${dateStr}`)
       const d = await res.json()
-      data.value.todos = (d.todos || []).map(t => ({
-        ...t,
-        category: t.category || 'temporary',
-        dueDate: t.dueDate || '',
-        subtasks: t.subtasks || []
-      }))
+      data.value.todos = (d.todos || []).map(t => normalizeTodo(t))
       if (d.importedFromDailies) {
         importInfo.value = '📋 已自动导入日常任务到「日课」'
         setTimeout(() => { importInfo.value = '' }, 3000)
+      }
+      // 自动从昨天继承日常任务（✓ 状态清零）
+      if (dateStr === today.value) {
+        await autoCarryDaily()
       }
       // 加载完成后重置撤销栈并保存初始快照
       undoStack.value = []
       redoStack.value = []
       saveSnapshot()
+    }
+
+    async function autoCarryDaily() {
+      const yesterday = getPrevDate(today.value)
+      const res = await fetch(`/api/todos/${yesterday}`)
+      const d = await res.json()
+      const yesterdayDailies = (d.todos || []).filter(t => t.category === 'daily')
+      if (yesterdayDailies.length === 0) return
+      const existingTexts = new Set(data.value.todos.map(t => t.text))
+      let added = 0
+      yesterdayDailies.forEach(t => {
+        if (!existingTexts.has(t.text)) {
+          data.value.todos.push({
+            _key: genKey(),
+            text: t.text,
+            done: false,
+            priority: t.priority ?? 5,
+            category: 'daily',
+            dueDate: '',
+            subtasks: []
+          })
+          added++
+        }
+      })
+      if (added > 0) {
+        await saveTodos()
+        addToast(`📆 自动继承 ${added} 项日常任务`)
+      }
     }
 
     async function saveTodos() {
@@ -250,7 +285,7 @@ const app = createApp({
       if (!text) return
       const p = Math.max(0, Math.min(10, newPriority.value ?? 5))
       const todo = {
-        _key: Date.now() + '_' + Math.random(),
+        _key: genKey(),
         text,
         done: false,
         priority: p,
@@ -367,7 +402,7 @@ const app = createApp({
       if (!isToday.value) return
       saveSnapshot()
       const todo = {
-        _key: Date.now() + '_' + Math.random(),
+        _key: genKey(),
         text: '新建待办',
         done: false,
         priority: 5,
@@ -544,8 +579,9 @@ const app = createApp({
       e.preventDefault()
     }
 
-    function onDrop(catId, targetTodo) {
+    function onDrop(e, catId, targetTodo) {
       if (!isToday.value || !dragKey.value) return
+      e.stopPropagation()
       saveSnapshot()
       const sourceTodo = data.value.todos.find(t => t._key === dragKey.value)
       if (!sourceTodo) { clearDrag(); return }
@@ -620,12 +656,7 @@ const app = createApp({
       saveSnapshot()
       const res = await fetch('/api/carry-over', { method: 'POST' })
       const d = await res.json()
-      data.value.todos = (d.todos || []).map(t => ({
-        ...t,
-        category: t.category || 'temporary',
-        dueDate: t.dueDate || '',
-        subtasks: t.subtasks || []
-      }))
+      data.value.todos = (d.todos || []).map(t => normalizeTodo(t))
       if (d.added > 0) {
         addToast('↻ 已继承 ' + d.added + ' 项未完成任务')
       } else {
@@ -712,7 +743,7 @@ const app = createApp({
       showSubtaskModal, subtaskTodo, subtaskEditIdx, subtaskEditText,
       scareDDL,
       grouped, doneCount, todayProgress,
-      formatDate, formatDueDate, daysUntil, daysLabel, urgencyClass,
+      formatDate, daysUntil, daysLabel, urgencyClass,
       addTodo, startEdit, saveEdit, cancelEdit,
       changePriority, onPrioChange,
       deleteTodo, onDueDateChange, onDateChange,
