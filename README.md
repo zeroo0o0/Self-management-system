@@ -1,5 +1,7 @@
 # 🌱 Self-Management System (RPG 版自我管理系统)
 
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 这是一个将"个人管理"游戏化的全栈 Web 应用。通过将任务管理、奖励机制与 RPG 属性树相结合，提升个人成就感。
 
 ## 🌟 核心创意
@@ -127,3 +129,9 @@ node server.js
 # 浏览器打开
 # http://localhost:3000
 ```
+
+## 📄 开源许可
+
+本项目基于 **MIT 许可证** — 详见 [LICENSE](LICENSE)。
+
+你可以自由使用、修改、分发本项目的代码，但**必须保留原作者的版权声明**（即 `LICENSE` 文件中的 Copyright 信息）。
