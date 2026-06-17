@@ -8,6 +8,7 @@ const DATA_DIR = path.join(__dirname, 'data')
 const TODOS_DIR = path.join(DATA_DIR, 'todos')
 const GLOBAL_FILE = path.join(DATA_DIR, 'global.json')
 const DAILIES_FILE = path.join(DATA_DIR, 'dailies.json')
+const QUOTES_FILE = path.join(DATA_DIR, 'quotes.json')
 const LEGACY_FILE = path.join(DATA_DIR, 'db.json')
 
 app.use(express.json())
@@ -230,6 +231,33 @@ app.post('/api/xp', (req, res) => {
 
   writeJSON(GLOBAL_FILE, global)
   res.json({ ok: true, xp: global.xp, level: global.level, attributePoints: global.attributePoints, leveledUp, spins: global.spins })
+})
+
+// ========== 语录 API ==========
+app.get('/api/quotes', (req, res) => {
+  ensureDirs()
+  const data = readJSON(QUOTES_FILE, { quotes: [] })
+  res.json(data)
+})
+
+app.post('/api/quotes', (req, res) => {
+  ensureDirs()
+  const data = readJSON(QUOTES_FILE, { quotes: [] })
+  const { text, author } = req.body
+  if (!text || !text.trim()) return res.json({ ok: false, error: '内容不能为空' })
+  const maxId = data.quotes.reduce((m, q) => Math.max(m, q.id), 0)
+  data.quotes.push({ id: maxId + 1, text: text.trim(), author: (author || '').trim() || '匿名' })
+  writeJSON(QUOTES_FILE, data)
+  res.json({ ok: true, quotes: data.quotes })
+})
+
+app.delete('/api/quotes/:id', (req, res) => {
+  ensureDirs()
+  const data = readJSON(QUOTES_FILE, { quotes: [] })
+  const id = parseInt(req.params.id, 10)
+  data.quotes = data.quotes.filter(q => q.id !== id)
+  writeJSON(QUOTES_FILE, data)
+  res.json({ ok: true, quotes: data.quotes })
 })
 
 // 获取全局数据（RPG + Turntable）
