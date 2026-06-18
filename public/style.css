@@ -35,24 +35,16 @@ body:has(.hero) {
 
 .hero-bg {
   position: absolute;
-  inset: -50%;
-  background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #1a1a3e, #0f3460, #533483);
-  background-size: 400% 400%;
-  animation: hero-aurora 10s ease infinite;
+  inset: 0;
+  background: url('images/background1.jpg') center/cover no-repeat;
+  background-color: #1a1a3e;
   z-index: 0;
-}
-@keyframes hero-aurora {
-  0% { transform: translate(0,0) rotate(0); }
-  25% { transform: translate(2%,2%) rotate(1deg); }
-  50% { transform: translate(-1%,3%) rotate(-1deg); }
-  75% { transform: translate(3%,-1%) rotate(.5deg); }
-  100% { transform: translate(0,0) rotate(0); }
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,.35) 100%);
+  background: radial-gradient(ellipse at center, rgba(0,0,0,.45) 0%, rgba(0,0,0,.7) 100%);
   z-index: 1;
 }
 
@@ -1801,6 +1793,24 @@ footer { text-align: center; padding: 32px 0 24px; }
   color: #444;
   line-height: 1.4;
   word-break: break-word;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 1px 4px;
+  transition: background .15s;
+}
+.quote-list-content:hover {
+  background: #f0f0f0;
+}
+.quote-list-edit-input {
+  width: 100%;
+  padding: 4px 8px;
+  border: 2px solid #4f46e5;
+  border-radius: 6px;
+  font-size: .88rem;
+  font-family: inherit;
+  background: #fff;
+  color: #333;
+  outline: none;
 }
 .quote-list-author {
   font-size: .75rem;

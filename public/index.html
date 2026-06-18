@@ -109,7 +109,7 @@
       const shuffled = [...quotesData].sort(() => Math.random() - 0.5)
       const selected = shuffled.slice(0, 3)
       if (selected.length === 0) {
-        container.innerHTML = '<div class="hero-quote card"><div class="quote-text">还没有语录，点击右上角 ⚙️ 添加</div></div>'
+        container.innerHTML = '<div class="hero-quote"><div class="quote-text">还没有语录，点击右上角 ⚙️ 添加</div></div>'
         return
       }
       container.innerHTML = selected.map(q => `
@@ -150,12 +150,62 @@
       list.innerHTML = quotesData.map(q => `
         <div class="quote-list-item">
           <div class="quote-list-text">
-            <span class="quote-list-content">${escapeHtml(q.text)}</span>
+            <span class="quote-list-content" onclick="editQuoteInList(this, ${q.id})" title="单击编辑">${escapeHtml(q.text)}</span>
             <span class="quote-list-author">—— ${escapeHtml(q.author || '匿名')}</span>
           </div>
           <button class="btn-icon" onclick="deleteQuote(${q.id})" title="删除">✕</button>
         </div>
       `).join('')
+    }
+
+    // ====== 管理弹窗：语录内联编辑 ======
+    function editQuoteInList(el, id) {
+      if (el.querySelector('input')) return
+      const oldText = el.textContent
+      const input = document.createElement('input')
+      input.type = 'text'
+      input.className = 'quote-list-edit-input'
+      input.value = oldText
+      el.textContent = ''
+      el.appendChild(input)
+      input.focus()
+      input.select()
+
+      function finish(save) {
+        const val = input.value.trim()
+        if (save && val && val !== oldText) {
+          updateQuoteInList(id, val, el)
+        } else {
+          el.textContent = oldText
+        }
+      }
+
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); finish(true) }
+        if (e.key === 'Escape') { e.preventDefault(); finish(false) }
+      })
+      input.addEventListener('blur', () => finish(true))
+    }
+
+    async function updateQuoteInList(id, text, el) {
+      try {
+        const res = await fetch('/api/quotes/' + id, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        })
+        const data = await res.json()
+        if (data.ok) {
+          quotesData = data.quotes
+          el.textContent = text
+          renderQuotes() // 同步首页展示
+        } else {
+          el.textContent = text
+        }
+      } catch (e) {
+        console.error('更新语录失败:', e)
+        el.textContent = text
+      }
     }
 
     async function addQuote() {
@@ -207,8 +257,24 @@
       }
     })
 
+    // ====== 背景图片随机选取 ======
+    async function loadRandomBackground() {
+      try {
+        const res = await fetch('/api/backgrounds')
+        const data = await res.json()
+        const list = data.backgrounds || []
+        if (list.length > 0) {
+          const pick = list[Math.floor(Math.random() * list.length)]
+          document.querySelector('.hero-bg').style.backgroundImage = "url('images/" + pick + "')"
+        }
+      } catch (e) {
+        console.error('加载背景图片失败:', e)
+      }
+    }
+
     // ====== 初始化 ======
     loadQuotes()
+    loadRandomBackground()
   </script>
 
 </body>

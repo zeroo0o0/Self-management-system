@@ -251,6 +251,19 @@ app.post('/api/quotes', (req, res) => {
   res.json({ ok: true, quotes: data.quotes })
 })
 
+app.put('/api/quotes/:id', (req, res) => {
+  ensureDirs()
+  const data = readJSON(QUOTES_FILE, { quotes: [] })
+  const id = parseInt(req.params.id, 10)
+  const { text, author } = req.body
+  const quote = data.quotes.find(q => q.id === id)
+  if (!quote) return res.json({ ok: false, error: '语录不存在' })
+  if (text !== undefined) quote.text = text.trim()
+  if (author !== undefined) quote.author = (author || '').trim() || '匿名'
+  writeJSON(QUOTES_FILE, data)
+  res.json({ ok: true, quotes: data.quotes })
+})
+
 app.delete('/api/quotes/:id', (req, res) => {
   ensureDirs()
   const data = readJSON(QUOTES_FILE, { quotes: [] })
@@ -258,6 +271,17 @@ app.delete('/api/quotes/:id', (req, res) => {
   data.quotes = data.quotes.filter(q => q.id !== id)
   writeJSON(QUOTES_FILE, data)
   res.json({ ok: true, quotes: data.quotes })
+})
+
+// ========== 背景图片列表 API ==========
+const IMAGES_DIR = path.join(__dirname, 'public', 'images')
+app.get('/api/backgrounds', (req, res) => {
+  try {
+    const files = fs.readdirSync(IMAGES_DIR).filter(f => /^background\d*\.(jpg|jpeg|png|webp)$/i.test(f))
+    res.json({ backgrounds: files })
+  } catch (e) {
+    res.json({ backgrounds: [] })
+  }
 })
 
 // 获取全局数据（RPG + Turntable）
