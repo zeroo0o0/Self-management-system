@@ -36,7 +36,7 @@ body:has(.hero) {
 .hero-bg {
   position: absolute;
   inset: 0;
-  background: url('images/background1.jpg') center/contain no-repeat;
+  background: url('images/background1.jpg') center/cover no-repeat;
   background-color: #1a1a3e;
   z-index: 0;
 }
