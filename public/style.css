@@ -743,6 +743,26 @@ footer { text-align: center; padding: 32px 0 24px; }
   transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
   overflow: hidden;
 }
+/* 转盘标签（直接标在扇区上） */
+.wheel-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.wheel-label {
+  position: absolute;
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  text-shadow: 0 1px 4px rgba(0,0,0,.6);
+  white-space: nowrap;
+  pointer-events: none;
+  line-height: 1.2;
+}
+.wl-icon { font-size: 1rem; }
+.wl-text { font-size: .8rem; }
+
 .wheel-center {
   position: absolute;
   top: 50%;

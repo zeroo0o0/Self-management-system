@@ -8,24 +8,31 @@ createApp({
     const lastResult = ref(null)
 
     const segments = [
-      { icon: '💫', label: '+5 XP',   desc: '获得 5 点经验值', color: '#ff6b6b' },
-      { icon: '🌟', label: '+10 XP',  desc: '获得 10 点经验值', color: '#feca57' },
-      { icon: '💎', label: '+1 属性', desc: '获得 1 个属性点', color: '#48dbfb' },
-      { icon: '✨', label: '+20 XP',  desc: '获得 20 点经验值', color: '#ff9ff3' },
-      { icon: '🍀', label: '再转一次', desc: '额外获得一次抽奖', color: '#54a0ff' },
-      { icon: '⚡', label: '+15 XP',  desc: '获得 15 点经验值', color: '#26de81' },
-      { icon: '🎯', label: '+1 属性', desc: '获得 1 个属性点', color: '#fd9644' },
-      { icon: '💫', label: '+5 XP',   desc: '获得 5 点经验值', color: '#a55eea' },
+      { icon: '🍟', label: '黄金薯条', desc: '香脆黄金粗薯', color: '#ff6b6b', angle: 55 },
+      { icon: '🧋', label: '奶茶',     desc: '香浓奶茶',      color: '#d4a574', angle: 55 },
+      { icon: '🧀', label: '芝士薯条', desc: '浓郁芝士酱薯条', color: '#feca57', angle: 55 },
+      { icon: '🌶️', label: '香辣薯条', desc: '火辣辣脆薯',   color: '#48dbfb', angle: 55 },
+      { icon: '🥔', label: '松露薯角', desc: '松露风味三角薯', color: '#ff9ff3', angle: 55 },
+      { icon: '🍠', label: '红薯条',   desc: '甜糯蜜薯条',    color: '#54a0ff', angle: 55 },
+      { icon: '💪', label: '再接再厉', desc: '下次一定！',    color: '#a55eea', angle: 30 },
     ]
 
-    const segAngle = 360 / segments.length
+    // 计算每个扇区的起始角度（支持不等宽扇区）
+    const segmentsWithOffset = computed(() => {
+      let start = 0
+      return segments.map(seg => {
+        const s = { ...seg, startAngle: start }
+        start += seg.angle
+        return s
+      })
+    })
 
     // 为转盘生成 conic-gradient
     const wheelBg = computed(() => {
       let stops = []
-      segments.forEach((seg, i) => {
-        const from = i * segAngle
-        const to = (i + 1) * segAngle
+      segmentsWithOffset.value.forEach(seg => {
+        const from = seg.startAngle
+        const to = seg.startAngle + seg.angle
         stops.push(seg.color + ' ' + from + 'deg ' + to + 'deg')
       })
       return 'conic-gradient(' + stops.join(', ') + ')'
@@ -42,10 +49,12 @@ createApp({
       spinning.value = true
       data.value.spins--
 
-      // 随机目标
+      // 随机目标（支持不等宽扇区）
+      const segArr = segmentsWithOffset.value
       const targetSeg = Math.floor(Math.random() * segments.length)
-      const randomOffset = (Math.random() - 0.5) * segAngle * 0.6  // 段内随机偏移
-      const targetWheelAngle = targetSeg * segAngle + segAngle / 2 + randomOffset
+      const seg = segArr[targetSeg]
+      const randomOffset = (Math.random() - 0.5) * seg.angle * 0.6  // 段内随机偏移
+      const targetWheelAngle = seg.startAngle + seg.angle / 2 + randomOffset
       const spinAngle = (360 - (targetWheelAngle % 360)) % 360
       const fullSpins = 360 * (5 + Math.floor(Math.random() * 4))
       const totalRotation = fullSpins + spinAngle
@@ -61,21 +70,6 @@ createApp({
     }
 
     function applyReward(reward) {
-      // 应用奖励
-      let msg = ''
-      if (reward.label === '+5 XP') { gainXP(5); msg = '+5 XP' }
-      else if (reward.label === '+10 XP') { gainXP(10); msg = '+10 XP' }
-      else if (reward.label === '+15 XP') { gainXP(15); msg = '+15 XP' }
-      else if (reward.label === '+20 XP') { gainXP(20); msg = '+20 XP' }
-      else if (reward.label === '+1 属性') {
-        data.value.attributePoints = (data.value.attributePoints ?? 0) + 1
-        msg = '+1 属性点'
-      }
-      else if (reward.label === '再转一次') {
-        data.value.spins = (data.value.spins ?? 0) + 1
-        msg = '再转一次'
-      }
-
       // 记录抽奖历史
       const history = data.value.rewards ?? []
       history.push({
@@ -90,28 +84,12 @@ createApp({
       saveData()
     }
 
-    function gainXP(amount) {
-      data.value.xp = (data.value.xp ?? 0) + amount
-      data.value.totalXPEarned = (data.value.totalXPEarned ?? 0) + amount
-      const threshold = (data.value.level ?? 1) * 100
-      if (data.value.xp >= threshold) {
-        data.value.xp -= threshold
-        data.value.level = (data.value.level ?? 1) + 1
-        data.value.attributePoints = (data.value.attributePoints ?? 0) + 3
-      }
-    }
-
     async function loadData() {
       const res = await fetch('/api/load')
       const d = await res.json()
       data.value = d
       if (data.value.spins === undefined) data.value.spins = 0
       if (!data.value.rewards) data.value.rewards = []
-      if (data.value.xp === undefined) data.value.xp = 0
-      if (data.value.level === undefined) data.value.level = 1
-      if (data.value.attributePoints === undefined) data.value.attributePoints = 0
-      if (data.value.totalXPEarned === undefined) data.value.totalXPEarned = 0
-      if (!data.value.attributes) data.value.attributes = { strength: 0, intelligence: 0, endurance: 0, spirit: 0 }
     }
 
     async function saveData() {
@@ -122,11 +100,28 @@ createApp({
       })
     }
 
+    // 计算每个扇区上标签的位置（径向排列，避免重叠）
+    function labelStyle(seg) {
+      const midAngle = seg.startAngle + seg.angle / 2
+      const rad = midAngle * Math.PI / 180
+      const r = 38 // 距中心百分比（靠近中心一些，文字沿径向向外延伸）
+      const x = 50 + Math.sin(rad) * r
+      const y = 50 - Math.cos(rad) * r
+      // 沿径向旋转，下半部分翻转避免倒置
+      const rotation = (midAngle > 90 && midAngle < 270) ? midAngle - 180 : midAngle
+      return {
+        left: x + '%',
+        top: y + '%',
+        transform: 'translate(-50%, -50%) rotate(' + rotation + 'deg)',
+      }
+    }
+
     onMounted(loadData)
 
     return {
-      data, segments, segAngle, wheelBg, wheelRotation,
+      data, segments, segmentsWithOffset, wheelBg, wheelRotation,
       spinning, lastResult, rewards,
+      labelStyle,
       spin
     }
   }
