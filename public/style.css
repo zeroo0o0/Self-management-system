@@ -1932,3 +1932,278 @@ footer { text-align: center; padding: 32px 0 24px; }
   color: #065f46;
   background: #d1fae5;
 }
+
+/* ========== 数据统计 ========== */
+.stats-loading {
+  text-align: center;
+  padding: 80px 0;
+  color: #aaa;
+}
+.stats-loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #eee;
+  border-top-color: #4f46e5;
+  border-radius: 50%;
+  animation: stats-spin .6s linear infinite;
+  margin: 0 auto 12px;
+}
+@keyframes stats-spin { to { transform: rotate(360deg); } }
+
+/* 概览网格 */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+@media (max-width: 600px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.stats-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  text-align: center;
+}
+.stats-card-label {
+  font-size: .78rem;
+  color: #888;
+  margin-bottom: 4px;
+}
+.stats-card-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #333;
+  line-height: 1.2;
+}
+.stats-card-sub {
+  font-size: .72rem;
+  color: #aaa;
+  margin-top: 2px;
+}
+.stats-card-level .stats-card-value { color: #7c3aed; }
+.stats-card-done .stats-card-value { color: #16a34a; }
+.stats-card-xp .stats-card-value { color: #4f46e5; }
+.stats-card-rate .stats-card-value { color: #d97706; }
+
+/* 等级经验条 */
+.stats-bar {
+  height: 6px;
+  background: #eee;
+  border-radius: 3px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.stats-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #7c3aed, #a78bfa);
+  transition: width .4s ease;
+  min-width: 0;
+}
+
+/* 属性点提示 */
+.stats-points {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  border-radius: 12px;
+  color: #fff;
+  font-size: .9rem;
+  margin-bottom: 24px;
+}
+.stats-points-icon { font-size: 1.2rem; }
+.stats-points-text { flex: 1; }
+.stats-points-text strong { font-size: 1.1rem; }
+.stats-points-link {
+  color: rgba(255,255,255,.85);
+  text-decoration: none;
+  font-size: .82rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.2);
+  transition: background .15s;
+}
+.stats-points-link:hover { background: rgba(255,255,255,.3); }
+
+/* 图表区域 */
+.stats-chart-section { margin-bottom: 24px; }
+.stats-chart-section h2 {
+  font-size: 1.05rem;
+  color: #444;
+  margin-bottom: 12px;
+}
+.stats-chart-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 600px) {
+  .stats-chart-row { grid-template-columns: 1fr; }
+}
+.stats-chart-box {
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.stats-chart-title {
+  font-size: .85rem;
+  color: #666;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+.stats-chart-canvas-wrap {
+  position: relative;
+  height: 180px;
+}
+
+/* 每日明细 */
+.stats-detail-section { margin-bottom: 24px; }
+.stats-detail-section h2 {
+  font-size: 1.05rem;
+  color: #444;
+  margin-bottom: 10px;
+}
+.stats-detail-table {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  overflow: hidden;
+}
+.stats-detail-header {
+  display: grid;
+  grid-template-columns: 70px 1fr 1fr 1.6fr 1fr;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: .75rem;
+  color: #999;
+  background: #fafafa;
+  font-weight: 600;
+  text-align: center;
+}
+.stats-detail-row {
+  display: grid;
+  grid-template-columns: 70px 1fr 1fr 1.6fr 1fr;
+  gap: 8px;
+  padding: 11px 16px;
+  font-size: .85rem;
+  color: #555;
+  text-align: center;
+  align-items: center;
+  border-top: 1px solid #f5f5f5;
+}
+.stats-detail-row.stats-today {
+  background: #f0f7ff;
+  font-weight: 600;
+  color: #333;
+}
+.stats-dr-date { font-weight: 600; color: #666; }
+.stats-today .stats-dr-date { color: #4f46e5; }
+.stats-dr-done { color: #16a34a; font-weight: 600; }
+.stats-dr-xp { color: #4f46e5; font-weight: 600; }
+.stats-dr-rate {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+.stats-rate-bar {
+  flex: 1;
+  max-width: 80px;
+  height: 6px;
+  background: #eee;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.stats-rate-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width .4s ease;
+  min-width: 0;
+}
+.rate-good { background: #16a34a; }
+.rate-ok { background: #d97706; }
+.rate-bad { background: #ef4444; }
+.stats-rate-text { font-size: .78rem; min-width: 32px; }
+
+/* 分类统计 */
+.stats-cat-section { margin-bottom: 24px; }
+.stats-cat-section h2 {
+  font-size: 1.05rem;
+  color: #444;
+  margin-bottom: 10px;
+}
+.stats-cat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.stats-cat-item {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.stats-cat-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: .85rem;
+}
+.stats-cat-icon { font-size: 1rem; }
+.stats-cat-label { flex: 1; font-weight: 600; color: #444; }
+.stats-cat-count { font-size: .82rem; color: #888; }
+.stats-cat-rate {
+  font-size: .82rem;
+  font-weight: 700;
+  color: #333;
+  min-width: 36px;
+  text-align: right;
+}
+.stats-cat-bar {
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.stats-cat-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width .5s ease;
+  min-width: 0;
+}
+
+/* 最近抽奖 */
+.stats-rewards-section { margin-bottom: 24px; }
+.stats-rewards-section h2 {
+  font-size: 1.05rem;
+  color: #444;
+  margin-bottom: 10px;
+}
+.stats-rewards-list {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  overflow: hidden;
+}
+.stats-reward-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  font-size: .85rem;
+  color: #555;
+  border-top: 1px solid #f5f5f5;
+}
+.stats-reward-item:first-child { border-top: none; }
+.stats-reward-icon { font-size: 1.1rem; }
+.stats-reward-label { flex: 1; font-weight: 500; }
+.stats-reward-time { font-size: .75rem; color: #aaa; }

@@ -1,20 +1,30 @@
 {
-  "xp": 382,
-  "level": 4,
+  "xp": 32,
+  "level": 5,
   "attributes": {
     "strength": 0,
     "intelligence": 0,
     "endurance": 0,
     "spirit": 0
   },
-  "totalXPEarned": 982,
-  "attributePoints": 10,
-  "spins": 23,
+  "totalXPEarned": 1032,
+  "attributePoints": 13,
+  "spins": 22,
   "rewards": [
     {
       "icon": "🎯",
       "label": "+1 属性",
       "time": "06/12 00:08"
+    },
+    {
+      "icon": "💪",
+      "label": "再接再厉",
+      "time": "06/21 18:28"
+    },
+    {
+      "icon": "🌶️",
+      "label": "香辣薯条",
+      "time": "06/23 21:14"
     }
   ],
   "history": [],

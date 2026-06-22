@@ -5,13 +5,136 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>数据统计</title>
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="app">
+  <div id="app" v-cloak>
     <a class="back" href="index.html">← 返回首页</a>
     <h1>📊 数据统计</h1>
-    <p class="empty">开发中，敬请期待 🚧</p>
+
+    <!-- 加载中 -->
+    <div class="stats-loading" v-if="loading">
+      <div class="stats-loading-spinner"></div>
+      <p>加载数据中...</p>
+    </div>
+
+    <template v-if="!loading && globalData">
+      <!-- ===== 概览卡片 ===== -->
+      <div class="stats-grid">
+        <div class="stats-card stats-card-level">
+          <div class="stats-card-label">当前等级</div>
+          <div class="stats-card-value">Lv.{{ globalData.level }}</div>
+          <div class="stats-card-sub">
+            XP {{ (globalData.xp ?? 0) }}/{{ (globalData.level ?? 1) * 100 }}
+          </div>
+          <div class="stats-bar">
+            <div class="stats-bar-fill" :style="{ width: ((globalData.xp ?? 0) / ((globalData.level ?? 1) * 100) * 100) + '%' }"></div>
+          </div>
+        </div>
+        <div class="stats-card stats-card-done">
+          <div class="stats-card-label">本周完成</div>
+          <div class="stats-card-value">{{ totalCompleted }}</div>
+          <div class="stats-card-sub">个任务</div>
+        </div>
+        <div class="stats-card stats-card-xp">
+          <div class="stats-card-label">本周 XP</div>
+          <div class="stats-card-value">{{ totalXPWeek }}</div>
+          <div class="stats-card-sub">累计 {{ globalData.totalXPEarned ?? 0 }}</div>
+        </div>
+        <div class="stats-card stats-card-rate">
+          <div class="stats-card-label">完成率</div>
+          <div class="stats-card-value">{{ avgRate }}%</div>
+          <div class="stats-card-sub">近 7 天平均</div>
+        </div>
+      </div>
+
+      <!-- ===== 属性点 ===== -->
+      <div class="stats-points" v-if="availablePoints > 0">
+        <span class="stats-points-icon">🎯</span>
+        <span class="stats-points-text">可用属性点：<strong>{{ availablePoints }}</strong></span>
+        <a class="stats-points-link" href="rpg.html">去加点 →</a>
+      </div>
+
+      <!-- ===== 本周趋势 ===== -->
+      <div class="stats-chart-section">
+        <h2>📈 本周趋势</h2>
+        <div class="stats-chart-row">
+          <div class="stats-chart-box">
+            <div class="stats-chart-title">每日完成任务</div>
+            <div class="stats-chart-canvas-wrap">
+              <canvas id="chart-tasks"></canvas>
+            </div>
+          </div>
+          <div class="stats-chart-box">
+            <div class="stats-chart-title">每日获得 XP</div>
+            <div class="stats-chart-canvas-wrap">
+              <canvas id="chart-xp"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 每日明细 ===== -->
+      <div class="stats-detail-section">
+        <h2>📋 每日明细</h2>
+        <div class="stats-detail-table">
+          <div class="stats-detail-header">
+            <span class="stats-dh-date">日期</span>
+            <span class="stats-dh-count">总任务</span>
+            <span class="stats-dh-done">完成</span>
+            <span class="stats-dh-rate">完成率</span>
+            <span class="stats-dh-xp">XP</span>
+          </div>
+          <div class="stats-detail-row" v-for="d in dailyStats" :key="d.date"
+               :class="{ 'stats-today': d.date === weekDates[6] }">
+            <span class="stats-dr-date">{{ shortDate(d.date) }}</span>
+            <span class="stats-dr-count">{{ d.total }}</span>
+            <span class="stats-dr-done">{{ d.done }}</span>
+            <span class="stats-dr-rate">
+              <span class="stats-rate-bar">
+                <span class="stats-rate-fill" :style="{ width: d.rate + '%' }"
+                      :class="{ 'rate-good': d.rate >= 70, 'rate-ok': d.rate >= 40 && d.rate < 70, 'rate-bad': d.rate < 40 }"></span>
+              </span>
+              <span class="stats-rate-text">{{ d.rate }}%</span>
+            </span>
+            <span class="stats-dr-xp">+{{ d.xpEarned }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 分类统计 ===== -->
+      <div class="stats-cat-section" v-if="categoryStats.length > 0">
+        <h2>📂 分类统计</h2>
+        <div class="stats-cat-list">
+          <div class="stats-cat-item" v-for="cat in categoryStats" :key="cat.key">
+            <div class="stats-cat-header">
+              <span class="stats-cat-icon">{{ cat.icon }}</span>
+              <span class="stats-cat-label">{{ cat.label }}</span>
+              <span class="stats-cat-count">{{ cat.done }}/{{ cat.total }}</span>
+              <span class="stats-cat-rate">{{ cat.rate }}%</span>
+            </div>
+            <div class="stats-cat-bar">
+              <div class="stats-cat-bar-fill" :style="{ width: cat.rate + '%', background: cat.color }"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 最近奖励 ===== -->
+      <div class="stats-rewards-section" v-if="(globalData.rewards ?? []).length > 0">
+        <h2>🎁 最近抽奖</h2>
+        <div class="stats-rewards-list">
+          <div class="stats-reward-item" v-for="(r, i) in (globalData.rewards ?? []).slice().reverse().slice(0, 10)" :key="i">
+            <span class="stats-reward-icon">{{ r.icon }}</span>
+            <span class="stats-reward-label">{{ r.label }}</span>
+            <span class="stats-reward-time">{{ r.time }}</span>
+          </div>
+        </div>
+      </div>
+    </template>
   </div>
+
+  <script src="stats.js"></script>
 </body>
 </html>
