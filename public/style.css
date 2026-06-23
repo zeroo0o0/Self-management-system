@@ -734,13 +734,17 @@ footer { text-align: center; padding: 32px 0 24px; }
   z-index: 10;
   filter: drop-shadow(0 1px 3px rgba(0,0,0,.3));
 }
+.wheel-rotating {
+  position: absolute;
+  inset: 0;
+  transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+}
 .wheel {
   width: 100%;
   height: 100%;
   border-radius: 50%;
   position: relative;
   box-shadow: 0 4px 20px rgba(0,0,0,.15), inset 0 0 0 4px rgba(255,255,255,.4);
-  transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
   overflow: hidden;
 }
 /* 转盘标签（直接标在扇区上） */

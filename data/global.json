@@ -9,7 +9,7 @@
   },
   "totalXPEarned": 1032,
   "attributePoints": 13,
-  "spins": 22,
+  "spins": 21,
   "rewards": [
     {
       "icon": "🎯",
@@ -25,6 +25,11 @@
       "icon": "🌶️",
       "label": "香辣薯条",
       "time": "06/23 21:14"
+    },
+    {
+      "icon": "🧋",
+      "label": "奶茶",
+      "time": "06/23 21:39"
     }
   ],
   "history": [],

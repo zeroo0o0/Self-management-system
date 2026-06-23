@@ -21,12 +21,14 @@
     <!-- 转盘 -->
     <div class="wheel-container">
       <div class="wheel-pointer">▼</div>
-      <div class="wheel" :style="{ transform: 'rotate(' + wheelRotation + 'deg)', background: wheelBg }"></div>
-      <div class="wheel-labels">
-        <div class="wheel-label" v-for="seg in segmentsWithOffset" :key="seg.label"
-             :style="labelStyle(seg)">
-          <span class="wl-icon">{{ seg.icon }}</span>
-          <span class="wl-text">{{ seg.label }}</span>
+      <div class="wheel-rotating" :style="{ transform: 'rotate(' + wheelRotation + 'deg)' }">
+        <div class="wheel" :style="{ background: wheelBg }"></div>
+        <div class="wheel-labels">
+          <div class="wheel-label" v-for="seg in segmentsWithOffset" :key="seg.label"
+               :style="labelStyle(seg)">
+            <span class="wl-icon">{{ seg.icon }}</span>
+            <span class="wl-text">{{ seg.label }}</span>
+          </div>
         </div>
       </div>
       <div class="wheel-center">🎡</div>
