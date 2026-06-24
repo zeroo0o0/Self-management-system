@@ -47,6 +47,11 @@
           <div class="stats-card-value">{{ avgRate }}%</div>
           <div class="stats-card-sub">近 7 天平均</div>
         </div>
+        <div class="stats-card stats-card-dw">
+          <div class="stats-card-label">深度工作</div>
+          <div class="stats-card-value">{{ totalDeepWorkMinutes > 0 ? Math.round(totalDeepWorkMinutes / 60 * 10) / 10 + 'h' : '0h' }}</div>
+          <div class="stats-card-sub">{{ totalDeepWorkMinutes }} 分钟</div>
+        </div>
       </div>
 
       <!-- ===== 属性点 ===== -->
@@ -73,6 +78,15 @@
             </div>
           </div>
         </div>
+        <!-- 深度工作时间图 -->
+        <div class="stats-chart-row" style="margin-top:12px">
+          <div class="stats-chart-box">
+            <div class="stats-chart-title">每日深度工作</div>
+            <div class="stats-chart-canvas-wrap">
+              <canvas id="chart-deepwork"></canvas>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- ===== 每日明细 ===== -->
@@ -85,6 +99,7 @@
             <span class="stats-dh-done">完成</span>
             <span class="stats-dh-rate">完成率</span>
             <span class="stats-dh-xp">XP</span>
+            <span class="stats-dh-dw">深度工作</span>
           </div>
           <div class="stats-detail-row" v-for="d in dailyStats" :key="d.date"
                :class="{ 'stats-today': d.date === weekDates[6] }">
@@ -99,6 +114,12 @@
               <span class="stats-rate-text">{{ d.rate }}%</span>
             </span>
             <span class="stats-dr-xp">+{{ d.xpEarned }}</span>
+            <span class="stats-dr-dw">
+              <template v-if="getDwForDate(d.date) && getDwForDate(d.date).totalMinutes > 0">
+                {{ getDwForDate(d.date).hours }}h
+              </template>
+              <template v-else>—</template>
+            </span>
           </div>
         </div>
       </div>

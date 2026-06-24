@@ -59,6 +59,23 @@ createApp({
       return total > 0 ? Math.round(done / total * 100) : 0
     })
 
+    // 深度工作统计
+    const deepWorkStats = computed(() => {
+      return weekData.value.map(day => {
+        const entries = day.deepWork || []
+        const totalMinutes = entries.reduce((sum, e) => sum + (e.minutes || 0), 0)
+        return {
+          date: day.date,
+          entries,
+          totalMinutes,
+          hours: Math.round(totalMinutes / 60 * 10) / 10,
+        }
+      })
+    })
+    const totalDeepWorkMinutes = computed(() =>
+      deepWorkStats.value.reduce((s, d) => s + d.totalMinutes, 0)
+    )
+
     // 分类统计
     const categoryStats = computed(() => {
       const allTodos = weekData.value.flatMap(d => d.todos)
@@ -87,6 +104,11 @@ createApp({
       return parts[1] + '/' + parts[2]
     }
 
+    // 获取指定日期的深度工作统计
+    function getDwForDate(dateStr) {
+      return deepWorkStats.value.find(d => d.date === dateStr) || { totalMinutes: 0, hours: 0 }
+    }
+
     // ========== 加载数据 ==========
 
     async function loadData() {
@@ -99,7 +121,7 @@ createApp({
         const dayPromises = weekDates.value.map(async date => {
           const res = await fetch(`/api/todos/${date}`)
           const data = await res.json()
-          return { date, todos: data.todos || [] }
+          return { date, todos: data.todos || [], deepWork: data.deepWork || [] }
         })
         weekData.value = await Promise.all(dayPromises)
 
@@ -121,6 +143,7 @@ createApp({
       const days = dailyStats.value.map(d => shortDate(d.date))
       const doneCounts = dailyStats.value.map(d => d.done)
       const xpCounts = dailyStats.value.map(d => d.xpEarned)
+      const dwHours = deepWorkStats.value.map(d => d.hours)
 
       // 任务完成趋势图
       const ctx1 = document.getElementById('chart-tasks')
@@ -197,6 +220,44 @@ createApp({
           }
         }))
       }
+
+      // 深度工作时间图
+      const ctx3 = document.getElementById('chart-deepwork')
+      if (ctx3) {
+        chartInstances.push(new Chart(ctx3, {
+          type: 'bar',
+          data: {
+            labels: days,
+            datasets: [{
+              label: '深度学习',
+              data: dwHours.map(h => Math.round(h * 10) / 10),
+              backgroundColor: dwHours.map(v =>
+                v > 0 ? 'rgba(16, 185, 129, 0.75)' : 'rgba(200, 200, 200, 0.4)'
+              ),
+              borderColor: 'rgba(16, 185, 129, 1)',
+              borderWidth: 1,
+              borderRadius: 4,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: { display: true, text: '小时' },
+                grid: { color: 'rgba(0,0,0,0.05)' },
+              },
+              x: {
+                grid: { display: false },
+              }
+            }
+          }
+        }))
+      }
     }
 
     onMounted(loadData)
@@ -205,7 +266,8 @@ createApp({
       globalData, loading,
       weekDates, dailyStats, totalCompleted, totalXPWeek, avgRate,
       categoryStats, availablePoints,
-      shortDate, CATEGORY_META,
+      deepWorkStats, totalDeepWorkMinutes,
+      shortDate, getDwForDate, CATEGORY_META,
     }
   }
 }).mount('#app')

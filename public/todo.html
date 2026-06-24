@@ -84,6 +84,7 @@
         <span v-if="!isToday" class="readonly-hint">（只读查看）</span>
       </span>
       <span class="undo-redo-btns" v-if="isToday">
+        <button class="btn-deepwork" @click="openDwModal" title="深度工作记录">🧘 深度工作</button>
         <button class="btn-undo" @click="undo" :disabled="undoStack.length === 0" title="撤销 (Ctrl+Z)">↩ 撤销</button>
         <button class="btn-redo" @click="redo" :disabled="redoStack.length === 0" title="重做 (Ctrl+Y)">↪ 重做</button>
       </span>
@@ -219,7 +220,7 @@
       </div>
     </div>
 
-    <!-- 无任务提示 -->
+    <!-- ====== 无任务提示 ====== -->
     <p v-if="data.todos.length === 0 && !isToday" class="empty">
       这一天没有待办 📭
     </p>
@@ -284,6 +285,45 @@
         <div class="subtask-footer" v-if="!isToday">
           <span class="readonly-hint">📌 只读查看</span>
         </div>
+      </div>
+    </div>
+
+    <!-- ====== 深度工作 Modal ====== -->
+    <div class="deepwork-overlay" v-if="showDwModal" @click.self="closeDwModal">
+      <div class="deepwork-modal">
+        <div class="deepwork-modal-header">
+          <span class="deepwork-modal-title">🧘 深度工作记录</span>
+          <button class="deepwork-modal-close" @click="closeDwModal">✕</button>
+        </div>
+
+        <!-- 添加表单 -->
+        <div class="deepwork-modal-form">
+          <input v-model="dwDescription" placeholder="描述深度工作内容（必填）..." class="deepwork-input"
+                 @keyup.enter="addDeepWork" maxlength="200">
+          <div class="dw-form-row">
+            <div class="dw-form-group">
+              <label class="dw-form-label">小时</label>
+              <input type="number" v-model.number="dwHours" min="0" max="24" class="dw-form-input">
+            </div>
+            <div class="dw-form-group">
+              <label class="dw-form-label">分钟</label>
+              <input type="number" v-model.number="dwMinutes" min="0" max="59" class="dw-form-input">
+            </div>
+            <button @click="addDeepWork" :disabled="!dwDescription.trim()" class="dw-submit-btn">提交</button>
+          </div>
+        </div>
+
+        <!-- 已存记录列表 -->
+        <div class="deepwork-modal-list" v-if="deepWorkEntries.length > 0">
+          <div class="dw-list-header">今日记录</div>
+          <div class="dw-list-item" v-for="(dw, i) in deepWorkEntries" :key="i">
+            <span class="dw-item-desc">{{ dw.description }}</span>
+            <span class="dw-item-time">{{ formatDwMinutes(dw.minutes) }}</span>
+            <span class="dw-item-date">{{ dw.time }}</span>
+            <button class="dw-item-del" @click="deleteDeepWork(i)" title="删除">✕</button>
+          </div>
+        </div>
+        <p v-else class="deepwork-modal-empty">还没有深度工作记录</p>
       </div>
     </div>
 

@@ -26,6 +26,12 @@ const app = createApp({
     const dragKey = ref(null)      // 正在拖拽的任务 key
     const dragOverKey = ref(null)  // 鼠标悬停的目标任务 key
     const importInfo = ref('')
+    // 深度工作
+    const deepWorkEntries = ref([])
+    const dwDescription = ref('')
+    const dwHours = ref(1)
+    const dwMinutes = ref(0)
+    const showDwModal = ref(false)
     let toastId = 0
 
     // ====== 工具函数 ======
@@ -219,6 +225,7 @@ const app = createApp({
       const res = await fetch(`/api/todos/${dateStr}`)
       const d = await res.json()
       data.value.todos = (d.todos || []).map(t => normalizeTodo(t))
+      deepWorkEntries.value = d.deepWork || []
       if (d.importedFromDailies) {
         importInfo.value = '📋 已自动导入日常任务到「日课」'
         setTimeout(() => { importInfo.value = '' }, 3000)
@@ -265,7 +272,10 @@ const app = createApp({
       await fetch(`/api/todos/${selectedDate.value}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ todos: data.value.todos })
+        body: JSON.stringify({
+          todos: data.value.todos,
+          deepWork: deepWorkEntries.value
+        })
       })
     }
 
@@ -420,6 +430,49 @@ const app = createApp({
         const el = document.querySelector('.edit-input')
         if (el) { el.focus(); el.select() }
       })
+    }
+
+    // ====== 深度工作 ======
+    function openDwModal() {
+      if (!isToday.value) return
+      dwDescription.value = ''
+      dwHours.value = 1
+      dwMinutes.value = 0
+      showDwModal.value = true
+      document.body.style.overflow = 'hidden'
+    }
+    function closeDwModal() {
+      showDwModal.value = false
+      document.body.style.overflow = ''
+    }
+    function addDeepWork() {
+      const desc = dwDescription.value.trim()
+      if (!desc) return
+      const totalMins = (dwHours.value || 0) * 60 + (dwMinutes.value || 0)
+      if (totalMins < 1) return
+      deepWorkEntries.value.push({
+        description: desc,
+        minutes: totalMins,
+        time: new Date().toLocaleString('zh-CN', {
+          month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit'
+        })
+      })
+      dwDescription.value = ''
+      dwHours.value = 1
+      dwMinutes.value = 0
+      saveTodos()
+    }
+    function deleteDeepWork(index) {
+      deepWorkEntries.value.splice(index, 1)
+      saveTodos()
+    }
+    function formatDwMinutes(total) {
+      const h = Math.floor(total / 60)
+      const m = total % 60
+      if (h > 0 && m > 0) return h + 'h' + m + 'm'
+      if (h > 0) return h + 'h'
+      return m + 'm'
     }
 
     // ====== 让编辑中的任务可见 ======
@@ -758,7 +811,9 @@ const app = createApp({
       addDailyTask, deleteDailyTask,
       carryOver, onTodoToggle, onScareCheckboxClick,
       undo, redo, saveSnapshot,
-      undoStack, redoStack
+      undoStack, redoStack,
+      deepWorkEntries, dwDescription, dwHours, dwMinutes, showDwModal,
+      addDeepWork, deleteDeepWork, formatDwMinutes, openDwModal, closeDwModal,
     }
   }
 })

@@ -144,26 +144,29 @@ app.get('/api/todos/:date', (req, res) => {
       category: 'daily'
     }))
     console.log('[auto-import] writing', todos.length, 'todos with category daily')
-    writeJSON(file, { todos })
-    return res.json({ todos, importedFromDailies: true })
+    writeJSON(file, { todos, deepWork: [] })
+    return res.json({ todos, importedFromDailies: true, deepWork: [] })
   }
 
-  const data = readJSON(file, { todos: [] })
+  const data = readJSON(file, { todos: [], deepWork: [] })
   // 确保所有待办都有 category 字段
   const todos = (data.todos || []).map(t => ({
     ...t,
     category: t.category || 'temporary',
     dueDate: t.dueDate || ''
   }))
-  res.json({ todos, importedFromDailies: false })
+  res.json({ todos, importedFromDailies: false, deepWork: data.deepWork || [] })
 })
 
-// 保存指定日期的待办
+// 保存指定日期的待办（含深度工作记录）
 app.post('/api/todos/:date', (req, res) => {
   ensureDirs()
   const date = req.params.date
   const file = path.join(TODOS_DIR, date + '.json')
-  writeJSON(file, { todos: req.body.todos || [] })
+  writeJSON(file, {
+    todos: req.body.todos || [],
+    deepWork: req.body.deepWork || []
+  })
   res.json({ ok: true })
 })
 
