@@ -280,7 +280,7 @@ app.delete('/api/quotes/:id', (req, res) => {
 const IMAGES_DIR = path.join(__dirname, 'public', 'images')
 app.get('/api/backgrounds', (req, res) => {
   try {
-    const files = fs.readdirSync(IMAGES_DIR).filter(f => /^(background|bg)\d*\.(jpg|jpeg|png|webp)$/i.test(f))
+    const files = fs.readdirSync(IMAGES_DIR).filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f))
     res.json({ backgrounds: files })
   } catch (e) {
     res.json({ backgrounds: [] })
