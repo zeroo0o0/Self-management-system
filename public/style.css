@@ -1839,7 +1839,13 @@ footer { text-align: center; padding: 32px 0 24px; }
   font-size: .75rem;
   color: #aaa;
   font-style: italic;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0 4px;
+  transition: background .15s;
 }
+.quote-list-author:hover { background: #f0f0f0; }
+.quote-list-author.qa-empty { color: #ccc; font-style: normal; }
 .quote-list-item .btn-icon {
   opacity: 0;
   transition: opacity .15s;

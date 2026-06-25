@@ -151,7 +151,7 @@
         <div class="quote-list-item">
           <div class="quote-list-text">
             <span class="quote-list-content" onclick="editQuoteInList(this, ${q.id})" title="单击编辑">${escapeHtml(q.text)}</span>
-            ${q.author ? `<span class="quote-list-author">—— ${escapeHtml(q.author)}</span>` : ''}
+            <span class="quote-list-author ${q.author ? '' : 'qa-empty'}" onclick="editAuthorInList(this, ${q.id})" title="单击编辑出处">—— ${q.author ? escapeHtml(q.author) : '添加出处'}</span>
           </div>
           <button class="btn-icon" onclick="deleteQuote(${q.id})" title="删除">✕</button>
         </div>
@@ -187,24 +187,79 @@
       input.addEventListener('blur', () => finish(true))
     }
 
-    async function updateQuoteInList(id, text, el) {
+    async function updateQuoteInList(id, text, el, author) {
       try {
+        const body = { text }
+        if (author !== undefined) body.author = author
         const res = await fetch('/api/quotes/' + id, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text })
+          body: JSON.stringify(body)
         })
         const data = await res.json()
         if (data.ok) {
           quotesData = data.quotes
           el.textContent = text
-          renderQuotes() // 同步首页展示
+          renderQuotes()
+          renderQuoteList()
         } else {
           el.textContent = text
         }
       } catch (e) {
         console.error('更新语录失败:', e)
         el.textContent = text
+      }
+    }
+
+    // 出处内联编辑
+    function editAuthorInList(el, id) {
+      if (el.querySelector('input')) return
+      const match = el.textContent.match(/——\s*(.*)/)
+      const oldVal = match ? match[1] : ''
+      const input = document.createElement('input')
+      input.type = 'text'
+      input.className = 'quote-list-edit-input'
+      input.value = oldVal === '添加出处' ? '' : oldVal
+      input.placeholder = '出处（留空则不显示）'
+      el.textContent = ''
+      el.appendChild(input)
+      input.focus()
+      input.select()
+
+      function finish(save) {
+        const val = input.value.trim()
+        if (save && val !== oldVal && (val || oldVal !== '')) {
+          updateAuthorInList(id, val, el)
+        } else {
+          el.textContent = '—— ' + (oldVal || '添加出处')
+        }
+      }
+
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); finish(true) }
+        if (e.key === 'Escape') { e.preventDefault(); finish(false) }
+      })
+      input.addEventListener('blur', () => finish(true))
+    }
+
+    async function updateAuthorInList(id, author, el) {
+      try {
+        const res = await fetch('/api/quotes/' + id, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ author })
+        })
+        const data = await res.json()
+        if (data.ok) {
+          quotesData = data.quotes
+          renderQuotes()
+          renderQuoteList()
+        } else {
+          el.textContent = '—— ' + (author || '添加出处')
+        }
+      } catch (e) {
+        console.error('更新出处失败:', e)
+        el.textContent = '—— ' + (author || '添加出处')
       }
     }
 
