@@ -116,7 +116,7 @@
         <div class="hero-quote">
           <div class="quote-mark">"</div>
           <div class="quote-text">${escapeHtml(q.text)}</div>
-          ${q.author ? `<div class="quote-author">—— ${escapeHtml(q.author)}</div>` : ''}
+          ${q.author && q.author !== '匿名' ? `<div class="quote-author">—— ${escapeHtml(q.author)}</div>` : '<div class="quote-author qa-empty">—— 未标注出处</div>'}
         </div>
       `).join('')
     }
@@ -151,7 +151,7 @@
         <div class="quote-list-item">
           <div class="quote-list-text">
             <span class="quote-list-content" onclick="editQuoteInList(this, ${q.id})" title="单击编辑">${escapeHtml(q.text)}</span>
-            <span class="quote-list-author ${q.author ? '' : 'qa-empty'}" onclick="editAuthorInList(this, ${q.id})" title="单击编辑出处">—— ${q.author ? escapeHtml(q.author) : '添加出处'}</span>
+            <span class="quote-list-author ${q.author && q.author !== '匿名' ? '' : 'qa-empty'}" onclick="editAuthorInList(this, ${q.id})" title="单击编辑出处">—— ${q.author && q.author !== '匿名' ? escapeHtml(q.author) : '未标注出处'}</span>
           </div>
           <button class="btn-icon" onclick="deleteQuote(${q.id})" title="删除">✕</button>
         </div>
@@ -219,7 +219,7 @@
       const input = document.createElement('input')
       input.type = 'text'
       input.className = 'quote-list-edit-input'
-      input.value = oldVal === '添加出处' ? '' : oldVal
+      input.value = oldVal === '未标注出处' ? '' : oldVal
       input.placeholder = '出处（留空则不显示）'
       el.textContent = ''
       el.appendChild(input)
@@ -231,7 +231,7 @@
         if (save && val !== oldVal && (val || oldVal !== '')) {
           updateAuthorInList(id, val, el)
         } else {
-          el.textContent = '—— ' + (oldVal || '添加出处')
+          el.textContent = '—— ' + (oldVal || '未标注出处')
         }
       }
 
@@ -255,11 +255,11 @@
           renderQuotes()
           renderQuoteList()
         } else {
-          el.textContent = '—— ' + (author || '添加出处')
+          el.textContent = '—— ' + (author || '未标注出处')
         }
       } catch (e) {
         console.error('更新出处失败:', e)
-        el.textContent = '—— ' + (author || '添加出处')
+        el.textContent = '—— ' + (author || '未标注出处')
       }
     }
 
