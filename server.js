@@ -249,7 +249,7 @@ app.post('/api/quotes', (req, res) => {
   const { text, author } = req.body
   if (!text || !text.trim()) return res.json({ ok: false, error: '内容不能为空' })
   const maxId = data.quotes.reduce((m, q) => Math.max(m, q.id), 0)
-  data.quotes.push({ id: maxId + 1, text: text.trim(), author: (author || '').trim() || '未知出处' })
+  data.quotes.push({ id: maxId + 1, text: text.trim(), author: (author || '').trim() })
   writeJSON(QUOTES_FILE, data)
   res.json({ ok: true, quotes: data.quotes })
 })
@@ -262,7 +262,7 @@ app.put('/api/quotes/:id', (req, res) => {
   const quote = data.quotes.find(q => q.id === id)
   if (!quote) return res.json({ ok: false, error: '语录不存在' })
   if (text !== undefined) quote.text = text.trim()
-  if (author !== undefined) quote.author = (author || '').trim() || '未知出处'
+  if (author !== undefined) quote.author = (author || '').trim()
   writeJSON(QUOTES_FILE, data)
   res.json({ ok: true, quotes: data.quotes })
 })
@@ -280,7 +280,7 @@ app.delete('/api/quotes/:id', (req, res) => {
 const IMAGES_DIR = path.join(__dirname, 'public', 'images')
 app.get('/api/backgrounds', (req, res) => {
   try {
-    const files = fs.readdirSync(IMAGES_DIR).filter(f => /^background\d*\.(jpg|jpeg|png|webp)$/i.test(f))
+    const files = fs.readdirSync(IMAGES_DIR).filter(f => /^(background|bg)\d*\.(jpg|jpeg|png|webp)$/i.test(f))
     res.json({ backgrounds: files })
   } catch (e) {
     res.json({ backgrounds: [] })

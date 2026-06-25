@@ -77,7 +77,7 @@
 
       <div class="quote-add-row">
         <input type="text" id="quote-text-input" placeholder="输入语录内容..." class="quote-input">
-        <input type="text" id="quote-author-input" placeholder="出处（选填）" class="quote-author-input">
+        <input type="text" id="quote-author-input" placeholder="出处（留空则不显示）" class="quote-author-input">
         <button onclick="addQuote()">添加</button>
       </div>
 
@@ -116,7 +116,7 @@
         <div class="hero-quote">
           <div class="quote-mark">"</div>
           <div class="quote-text">${escapeHtml(q.text)}</div>
-          <div class="quote-author">—— ${escapeHtml(q.author || '未知出处')}</div>
+          ${q.author ? `<div class="quote-author">—— ${escapeHtml(q.author)}</div>` : ''}
         </div>
       `).join('')
     }
@@ -151,7 +151,7 @@
         <div class="quote-list-item">
           <div class="quote-list-text">
             <span class="quote-list-content" onclick="editQuoteInList(this, ${q.id})" title="单击编辑">${escapeHtml(q.text)}</span>
-            <span class="quote-list-author">—— ${escapeHtml(q.author || '未知出处')}</span>
+            ${q.author ? `<span class="quote-list-author">—— ${escapeHtml(q.author)}</span>` : ''}
           </div>
           <button class="btn-icon" onclick="deleteQuote(${q.id})" title="删除">✕</button>
         </div>
