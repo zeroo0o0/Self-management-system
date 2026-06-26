@@ -205,7 +205,8 @@ app.post('/api/carry-over', (req, res) => {
       done: false,
       priority: t.priority ?? 5,
       category: t.category || 'temporary',
-      dueDate: t.dueDate || ''
+      dueDate: t.dueDate || '',
+      subtasks: t.subtasks ? t.subtasks.map(s => ({ ...s })) : []
     }))
 
   todayData.todos.push(...toAdd)

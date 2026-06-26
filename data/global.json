@@ -1,15 +1,15 @@
 {
-  "xp": 32,
-  "level": 5,
+  "xp": 232,
+  "level": 6,
   "attributes": {
     "strength": 0,
     "intelligence": 0,
     "endurance": 0,
     "spirit": 0
   },
-  "totalXPEarned": 1032,
-  "attributePoints": 13,
-  "spins": 17,
+  "totalXPEarned": 1732,
+  "attributePoints": 16,
+  "spins": 31,
   "rewards": [
     {
       "icon": "🎯",

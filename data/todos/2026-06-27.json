@@ -1,0 +1,35 @@
+{
+  "todos": [
+    {
+      "_key": "1782524105258_0.16818647300440248",
+      "text": "CA ppt过一遍",
+      "done": false,
+      "priority": 5,
+      "category": "daily",
+      "dueDate": "",
+      "subtasks": [
+        {
+          "text": "02-附录A-136",
+          "done": false
+        },
+        {
+          "text": "04-第三章-64-快速过",
+          "done": false
+        },
+        {
+          "text": "03-附录C-160",
+          "done": false
+        },
+        {
+          "text": "05-第二章-94",
+          "done": false
+        },
+        {
+          "text": "05-附录B-62",
+          "done": false
+        }
+      ]
+    }
+  ],
+  "deepWork": []
+}
