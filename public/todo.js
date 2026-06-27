@@ -26,6 +26,8 @@ const app = createApp({
     const expanded = ref({ daily: true, urgent: true, temporary: true, longterm: true, deadline: true })
     const dragKey = ref(null)      // 正在拖拽的任务 key
     const dragOverKey = ref(null)  // 鼠标悬停的目标任务 key
+    let dragSubIdx = null          // 正在拖拽的子任务 index
+    const dragOverSubIdx = ref(null) // 悬停的子任务 index
     const importInfo = ref('')
     // 深度工作
     const deepWorkEntries = ref([])
@@ -623,6 +625,41 @@ const app = createApp({
       saveTodos()
     }
 
+    // ====== 子任务拖拽排序 ======
+    function onSubDragStart(i) {
+      if (!isToday.value) return
+      dragSubIdx = i
+    }
+    function onSubDragOver(e, i) {
+      if (!isToday.value || dragSubIdx === null) return
+      e.preventDefault()
+      dragOverSubIdx.value = i
+    }
+    function onSubDragEnd() {
+      dragSubIdx = null
+      dragOverSubIdx.value = null
+    }
+    function onSubDrop(e, i) {
+      if (!isToday.value || dragSubIdx === null || !subtaskTodo.value) return
+      e.preventDefault()
+      e.stopPropagation()
+      const subs = subtaskTodo.value.subtasks
+      if (dragSubIdx === i) { onSubDragEnd(); return }
+      saveSnapshot()
+      const [moved] = subs.splice(dragSubIdx, 1)
+      // 拖拽目标索引调整（移除后索引可能变化）
+      const targetIdx = i > dragSubIdx ? i - 1 : i
+      subs.splice(targetIdx, 0, moved)
+      // 恢复编辑状态
+      if (subtaskEditIdx.value !== null) {
+        if (subtaskEditIdx.value === dragSubIdx) subtaskEditIdx.value = targetIdx
+        else if (dragSubIdx < subtaskEditIdx.value && targetIdx >= subtaskEditIdx.value) subtaskEditIdx.value--
+        else if (dragSubIdx > subtaskEditIdx.value && targetIdx <= subtaskEditIdx.value) subtaskEditIdx.value++
+      }
+      onSubDragEnd()
+      saveTodos()
+    }
+
     function onSubtaskToggle() {
       if (!subtaskTodo.value) return
       saveSnapshot()
@@ -856,6 +893,7 @@ const app = createApp({
       subtaskCount, subtaskDoneCount,
       openSubtaskView, closeSubtaskModal,
       addSubtaskInline, startSubtaskEdit, saveSubtaskEdit, cancelSubtaskEdit, removeSubtask, onSubtaskToggle,
+      onSubDragStart, onSubDragOver, onSubDragEnd, onSubDrop, dragOverSubIdx,
       onTodoClick, onTodoDblClick,
       onDragStart, onDragOver, onDragLeave, onModuleDragOver,
       onDrop, onDropToEnd, onDragEnd,

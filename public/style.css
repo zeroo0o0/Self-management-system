@@ -1541,9 +1541,26 @@ footer { text-align: center; padding: 32px 0 24px; }
   gap: 8px;
   padding: 8px 20px;
   transition: background .1s;
+  cursor: default;
 }
 .subtask-item:hover {
   background: #f9f9f9;
+}
+.subtask-item.drag-over {
+  border-top: 2px solid #9C27B0;
+}
+.subtask-grip {
+  cursor: grab;
+  color: #ccc;
+  font-size: 14px;
+  user-select: none;
+  flex-shrink: 0;
+}
+.subtask-grip:active {
+  cursor: grabbing;
+}
+.subtask-item:hover .subtask-grip {
+  color: #999;
 }
 .subtask-label {
   flex: 1;

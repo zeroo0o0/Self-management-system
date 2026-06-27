@@ -10,14 +10,14 @@
       "subtasks": [
         {
           "text": "02-附录A-136",
+          "done": true
+        },
+        {
+          "text": "03-附录C-160",
           "done": false
         },
         {
           "text": "04-第三章-64-快速过",
-          "done": false
-        },
-        {
-          "text": "03-附录C-160",
           "done": false
         },
         {

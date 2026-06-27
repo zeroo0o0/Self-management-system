@@ -250,7 +250,14 @@
         </div>
 
         <div class="subtask-list">
-          <div v-for="(st, i) in subtaskTodo.subtasks" :key="i" class="subtask-item">
+          <div v-for="(st, i) in subtaskTodo.subtasks" :key="i" class="subtask-item"
+               :class="{ 'drag-over': dragOverSubIdx === i }"
+               draggable="true"
+               @dragstart="onSubDragStart(i)"
+               @dragover="onSubDragOver($event, i)"
+               @dragend="onSubDragEnd"
+               @drop="onSubDrop($event, i)">
+            <span class="subtask-grip" v-if="isToday">⠿</span>
             <label class="subtask-label">
               <input type="checkbox" v-model="st.done" @click="saveSnapshot" @change="onSubtaskToggle"
                      :disabled="!isToday">
