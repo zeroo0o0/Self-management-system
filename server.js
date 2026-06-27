@@ -237,6 +237,18 @@ app.post('/api/xp', (req, res) => {
   res.json({ ok: true, xp: global.xp, level: global.level, attributePoints: global.attributePoints, leveledUp, spins: global.spins })
 })
 
+// 扣除 XP / 抽奖次数（撤销打勾时调用）
+app.post('/api/xp/deduct', (req, res) => {
+  const { xp, spins } = req.body
+  if ((!xp || xp <= 0) && (!spins || spins <= 0)) return res.json({ ok: false })
+  const global = readJSON(GLOBAL_FILE, getDefaultGlobal())
+  global.xp = Math.max(0, (global.xp ?? 0) - (xp || 0))
+  global.totalXPEarned = Math.max(0, (global.totalXPEarned ?? 0) - (xp || 0))
+  global.spins = Math.max(0, (global.spins ?? 0) - (spins || 0))
+  writeJSON(GLOBAL_FILE, global)
+  res.json({ ok: true, xp: global.xp, level: global.level, spins: global.spins })
+})
+
 // ========== 语录 API ==========
 app.get('/api/quotes', (req, res) => {
   ensureDirs()

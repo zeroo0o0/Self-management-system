@@ -1,1 +1,8 @@
-{"tasks":[]}
+{
+  "tasks": [
+    {
+      "text": "123",
+      "priority": 5
+    }
+  ]
+}

@@ -112,8 +112,31 @@ const app = createApp({
     function undo() {
       if (undoStack.value.length === 0) return
       redoStack.value.push(JSON.parse(JSON.stringify(data.value.todos)))
-      data.value.todos = undoStack.value.pop()
+      const snapshot = undoStack.value.pop()
+      // 比当前快照 → 找出刚打勾的任务，撤销时扣除对应奖励
+      const toDeduct = { xp: 0, spins: 0 }
+      const oldMap = new Map(snapshot.map(t => [t._key, t]))
+      for (const t of data.value.todos) {
+        const old = oldMap.get(t._key)
+        if (old && !old.done && t.done && t._xpAwarded) {
+          toDeduct.xp += t._xpAwarded
+          toDeduct.spins += t._spinsAwarded || 0
+        }
+      }
+      data.value.todos = snapshot
       saveTodos()
+      if (toDeduct.xp > 0 || toDeduct.spins > 0) {
+        fetch('/api/xp/deduct', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(toDeduct)
+        }).then(r => r.json()).then(result => {
+          if (result.ok) {
+            globalData.value.xp = result.xp
+            globalData.value.spins = result.spins
+          }
+        })
+      }
       addToast('↩ 撤销')
     }
 
@@ -132,10 +155,16 @@ const app = createApp({
 
     const todayProgress = computed(() => {
       const todayCats = data.value.todos.filter(t => t.category === 'daily' || t.category === 'temporary')
-      return {
-        done: todayCats.filter(t => t.done).length,
-        total: todayCats.length
+      let done = todayCats.filter(t => t.done).length
+      let total = todayCats.length
+      // 子任务也计入进度
+      for (const t of todayCats) {
+        if (t.subtasks && t.subtasks.length > 0) {
+          total += t.subtasks.length
+          done += t.subtasks.filter(s => s.done).length
+        }
       }
+      return { done, total }
     })
 
     // 按分类分组并排序
@@ -738,6 +767,9 @@ const app = createApp({
           globalData.value.level = result.level
           globalData.value.attributePoints = result.attributePoints
           globalData.value.spins = result.spins
+          // 记录本次奖励，供撤销时扣除
+          todo._xpAwarded = earned
+          todo._spinsAwarded = spinsToAward
           addToast('✨ +' + earned + ' XP')
           if (isScare) {
             addToast('🎰 恐吓DDL奖励！+3 抽奖次数！')
@@ -746,6 +778,24 @@ const app = createApp({
             addToast('🎉 升级！Lv.' + result.level + ' (+3 属性点)')
           }
         }
+      } else {
+        // 取消打勾 → 扣除之前奖励的 XP / 抽奖次数
+        const xp = todo._xpAwarded || 0
+        const spins = todo._spinsAwarded || 0
+        if (xp > 0 || spins > 0) {
+          const res = await fetch('/api/xp/deduct', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ xp, spins })
+          })
+          const result = await res.json()
+          if (result.ok) {
+            globalData.value.xp = result.xp
+            globalData.value.spins = result.spins
+          }
+        }
+        delete todo._xpAwarded
+        delete todo._spinsAwarded
       }
       saveTodos()
     }
