@@ -2,6 +2,7 @@ const { createApp, ref, computed, onMounted, nextTick } = Vue
 
 const CATEGORIES = [
   { id: 'daily',      label: '日常任务',               icon: '📆', color: '#4CAF50', bg: '#E8F5E9', border: '#A5D6A7' },
+  { id: 'urgent',     label: '重要且紧急',              icon: '🔔',  color: '#9C27B0', bg: '#F3E5F5', border: '#CE93D8' },
   { id: 'temporary',  label: '紧急不重要/无成长：抽空做', icon: '⚡',  color: '#FF9800', bg: '#FFF3E0', border: '#FFCC80' },
   { id: 'deadline',   label: '近期DDL',                icon: '🔥',  color: '#F44336', bg: '#FFEBEE', border: '#EF9A9A' },
   { id: 'longterm',   label: '长期任务/目标/想发展的点', icon: '🌳',  color: '#2196F3', bg: '#E3F2FD', border: '#90CAF9' },
@@ -22,7 +23,7 @@ const app = createApp({
     const editText = ref('')
     const editDueDate = ref('')
     const toasts = ref([])
-    const expanded = ref({ daily: true, temporary: true, longterm: true, deadline: true })
+    const expanded = ref({ daily: true, urgent: true, temporary: true, longterm: true, deadline: true })
     const dragKey = ref(null)      // 正在拖拽的任务 key
     const dragOverKey = ref(null)  // 鼠标悬停的目标任务 key
     const importInfo = ref('')
@@ -154,7 +155,7 @@ const app = createApp({
     const doneCount = computed(() => data.value.todos.filter(t => t.done).length)
 
     const todayProgress = computed(() => {
-      const todayCats = data.value.todos.filter(t => t.category === 'daily' || t.category === 'temporary')
+      const todayCats = data.value.todos.filter(t => t.category === 'daily' || t.category === 'urgent' || t.category === 'temporary')
       let done = todayCats.filter(t => t.done).length
       let total = todayCats.length
       // 子任务也计入进度

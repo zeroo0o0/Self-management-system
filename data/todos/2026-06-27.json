@@ -1,11 +1,11 @@
 {
   "todos": [
     {
-      "_key": "1782524105258_0.16818647300440248",
+      "_key": "1782525809763_0.14028937255904217",
       "text": "CA ppt过一遍",
       "done": false,
       "priority": 5,
-      "category": "daily",
+      "category": "urgent",
       "dueDate": "",
       "subtasks": [
         {
@@ -31,12 +31,12 @@
       ]
     },
     {
-      "_key": "1782524640382_0.3987281451728415",
-      "text": "CA-MD过一遍",
+      "_key": "1782526070692_0.6278050462213858",
+      "text": "体系结构期末考试",
       "done": false,
-      "priority": 5,
-      "category": "daily",
-      "dueDate": "",
+      "priority": 6,
+      "category": "deadline",
+      "dueDate": "2026-06-30",
       "subtasks": []
     }
   ],

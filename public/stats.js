@@ -2,6 +2,7 @@ const { createApp, ref, computed, onMounted, nextTick } = Vue
 
 const CATEGORY_META = {
   daily:     { label: '日常任务', icon: '📆', color: '#4CAF50' },
+  urgent:    { label: '重要且紧急', icon: '🔔', color: '#9C27B0' },
   temporary: { label: '紧急不重要', icon: '⚡', color: '#FF9800' },
   deadline:  { label: '近期DDL',  icon: '🔥', color: '#F44336' },
   longterm:  { label: '长期任务',  icon: '🌳', color: '#2196F3' },
