@@ -111,7 +111,7 @@
           <!-- 日课模板管理入口 -->
           <span class="cat-gear" v-if="cat.id === 'daily' && isToday"
                 @click.stop="showDailiesEditor = !showDailiesEditor"
-                :title="showDailiesEditor ? '关闭模板' : '管理日常任务模板'">⚙️</span>
+                :title="showDailiesEditor ? '关闭模板' : '管理每日任务模板'">⚙️</span>
           <span class="cat-toggle">{{ expanded[cat.id] ? '▲' : '▼' }}</span>
         </span>
       </div>

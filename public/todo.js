@@ -1,7 +1,7 @@
 const { createApp, ref, computed, onMounted, nextTick } = Vue
 
 const CATEGORIES = [
-  { id: 'daily',      label: '日常任务',               icon: '📆', color: '#4CAF50', bg: '#E8F5E9', border: '#A5D6A7' },
+  { id: 'daily',      label: '每日任务',               icon: '📆', color: '#4CAF50', bg: '#E8F5E9', border: '#A5D6A7' },
   { id: 'urgent',     label: '重要且紧急',              icon: '🔔',  color: '#9C27B0', bg: '#F3E5F5', border: '#CE93D8' },
   { id: 'temporary',  label: '紧急不重要/无成长：抽空做', icon: '⚡',  color: '#FF9800', bg: '#FFF3E0', border: '#FFCC80' },
   { id: 'deadline',   label: '近期DDL',                icon: '🔥',  color: '#F44336', bg: '#FFEBEE', border: '#EF9A9A' },
@@ -156,13 +156,16 @@ const app = createApp({
 
     const todayProgress = computed(() => {
       const todayCats = data.value.todos.filter(t => t.category === 'daily' || t.category === 'urgent' || t.category === 'temporary')
-      let done = todayCats.filter(t => t.done).length
-      let total = todayCats.length
-      // 子任务也计入进度
+      let done = 0, total = 0
       for (const t of todayCats) {
         if (t.subtasks && t.subtasks.length > 0) {
+          // 有子任务 → 只计子任务进度，不计父任务本身
           total += t.subtasks.length
           done += t.subtasks.filter(s => s.done).length
+        } else {
+          // 无子任务 → 正常计
+          total += 1
+          if (t.done) done += 1
         }
       }
       return { done, total }
@@ -257,7 +260,7 @@ const app = createApp({
       data.value.todos = (d.todos || []).map(t => normalizeTodo(t))
       deepWorkEntries.value = d.deepWork || []
       if (d.importedFromDailies) {
-        importInfo.value = '📋 已自动导入日常任务到「日课」'
+        importInfo.value = '📋 已自动导入每日任务到「日课」'
         setTimeout(() => { importInfo.value = '' }, 3000)
       }
       // 自动从昨天继承日常任务（✓ 状态清零）
@@ -294,7 +297,7 @@ const app = createApp({
       })
       if (added > 0) {
         await saveTodos()
-        addToast(`📆 自动继承 ${added} 项日常任务`)
+        addToast(`📆 自动继承 ${added} 项每日任务`)
       }
     }
 
