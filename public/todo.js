@@ -363,6 +363,11 @@ const app = createApp({
       editText.value = ''
       editDueDate.value = ''
       saveTodos()
+      // 每日任务编辑后自动同步到日常模板
+      if (todo.category === 'daily' && todo.text && !dailies.value.tasks.some(dt => dt.text === todo.text)) {
+        dailies.value.tasks.push({ text: todo.text, priority: todo.priority ?? 5 })
+        saveDailies()
+      }
     }
 
     function cancelEdit() {
@@ -455,6 +460,11 @@ const app = createApp({
       }
       data.value.todos.push(todo)
       saveTodos()
+      // 每日任务快速添加 → 同步到日常模板，明天自动导入
+      if (catId === 'daily') {
+        dailies.value.tasks.push({ text: todo.text, priority: todo.priority })
+        saveDailies()
+      }
       // 自动进入编辑模式
       editingKey.value = todo._key
       editText.value = todo.text

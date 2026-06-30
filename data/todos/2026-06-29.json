@@ -1,0 +1,82 @@
+{
+  "todos": [
+    {
+      "_key": "1782693561483_0.03766110797675615",
+      "text": "CA ppt过一遍",
+      "done": true,
+      "priority": 6.1,
+      "category": "urgent",
+      "dueDate": "",
+      "subtasks": [
+        {
+          "text": "02-附录A-136",
+          "done": true
+        },
+        {
+          "text": "03-附录C-136",
+          "done": true
+        },
+        {
+          "text": "04-第三章-64-快速过",
+          "done": true
+        },
+        {
+          "text": "05-第二章-94",
+          "done": true
+        },
+        {
+          "text": "05-附录B-62",
+          "done": true
+        }
+      ],
+      "_xpAwarded": 61,
+      "_spinsAwarded": 1
+    },
+    {
+      "_key": "1782693561483_0.5734171794769485",
+      "text": "体系结构期末考试",
+      "done": false,
+      "priority": 10,
+      "category": "deadline",
+      "dueDate": "2026-06-30",
+      "subtasks": []
+    },
+    {
+      "_key": "1782693570217_0.14441853648659508",
+      "text": "刷题",
+      "done": true,
+      "priority": 5,
+      "category": "urgent",
+      "dueDate": "",
+      "subtasks": [
+        {
+          "text": "26hw1",
+          "done": true
+        },
+        {
+          "text": "26hw2",
+          "done": true
+        },
+        {
+          "text": "25作业1",
+          "done": true
+        },
+        {
+          "text": "25作业2",
+          "done": true
+        },
+        {
+          "text": "24作业1",
+          "done": false
+        },
+        {
+          "text": "24作业2",
+          "done": false
+        }
+      ],
+      "_xpAwarded": 50,
+      "_spinsAwarded": 1
+    }
+  ],
+  "deepWork": []
+}

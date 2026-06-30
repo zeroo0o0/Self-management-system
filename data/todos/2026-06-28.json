@@ -1,7 +1,7 @@
 {
   "todos": [
     {
-      "_key": "1782525809763_0.14028937255904217",
+      "_key": "1782577577847_0.2159905689944499",
       "text": "CA ppt过一遍",
       "done": false,
       "priority": 6.1,
@@ -14,15 +14,15 @@
         },
         {
           "text": "03-附录C-136",
-          "done": false
+          "done": true
         },
         {
           "text": "04-第三章-64-快速过",
-          "done": false
+          "done": true
         },
         {
           "text": "05-第二章-94",
-          "done": false
+          "done": true
         },
         {
           "text": "05-附录B-62",
@@ -31,26 +31,13 @@
       ]
     },
     {
-      "_key": "1782526070692_0.6278050462213858",
+      "_key": "1782577577847_0.27617308992146494",
       "text": "体系结构期末考试",
       "done": false,
       "priority": 10,
       "category": "deadline",
       "dueDate": "2026-06-30",
-      "subtasks": [],
-      "_xpAwarded": 60,
-      "_spinsAwarded": 3
-    },
-    {
-      "_key": "1782553949115_0.08061818963325917",
-      "text": "向罗老师提问",
-      "done": true,
-      "priority": 5,
-      "category": "urgent",
-      "dueDate": "",
-      "subtasks": [],
-      "_xpAwarded": 50,
-      "_spinsAwarded": 1
+      "subtasks": []
     }
   ],
   "deepWork": []
