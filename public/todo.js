@@ -183,16 +183,13 @@ const app = createApp({
       Object.values(groups).forEach(arr => {
         arr.sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0))
       })
-      // deadline 分类：优先级相同则按截止日期从近到远排序
+      // deadline 分类：按剩余天数排序（截止越近越靠前），其次优先级
       if (groups.deadline) {
         groups.deadline.sort((a, b) => {
-          const pa = a.priority ?? 0
-          const pb = b.priority ?? 0
-          if (pb !== pa) return pb - pa
-          // 优先级相同 → 按剩余天数升序（截止越近越靠前）
           const da = a.dueDate ? daysUntil(a.dueDate) : 999
           const db = b.dueDate ? daysUntil(b.dueDate) : 999
-          return da - db
+          if (da !== db) return da - db
+          return (b.priority ?? 0) - (a.priority ?? 0)
         })
       }
       return groups
@@ -263,8 +260,9 @@ const app = createApp({
         importInfo.value = '📋 已自动导入每日任务到「日课」'
         setTimeout(() => { importInfo.value = '' }, 3000)
       }
-      // 自动从昨天继承日常任务（✓ 状态清零）
-      if (dateStr === today.value) {
+      // 每天仅导入一次每日任务（localStorage 持久化，刷新不重复）
+      if (dateStr === today.value && !localStorage.getItem('_carried_' + today.value)) {
+        localStorage.setItem('_carried_' + today.value, '1')
         await autoCarryDaily()
       }
       // 加载完成后重置撤销栈并保存初始快照

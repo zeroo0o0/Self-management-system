@@ -34,10 +34,12 @@
       "_key": "1782526070692_0.6278050462213858",
       "text": "体系结构期末考试",
       "done": false,
-      "priority": 6,
+      "priority": 10,
       "category": "deadline",
       "dueDate": "2026-06-30",
-      "subtasks": []
+      "subtasks": [],
+      "_xpAwarded": 60,
+      "_spinsAwarded": 3
     }
   ],
   "deepWork": []
