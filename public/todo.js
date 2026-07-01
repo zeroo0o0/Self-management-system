@@ -259,7 +259,7 @@ const app = createApp({
       data.value.todos = (d.todos || []).map(t => normalizeTodo(t))
       deepWorkEntries.value = d.deepWork || []
       if (d.importedFromDailies) {
-        importInfo.value = '📋 已自动导入每日任务到「日课」'
+        importInfo.value = '📋 已自动导入每日任务'
         setTimeout(() => { importInfo.value = '' }, 3000)
       }
       // 每天仅导入一次每日任务（localStorage 持久化，刷新不重复）
@@ -404,11 +404,8 @@ const app = createApp({
       saveTodos()
     }
 
-    // ====== 日常任务模板（轻量管理） ======
+    // ====== 每日任务模板（自动同步，无需手动管理） ======
     const dailies = ref({ tasks: [] })
-    const showDailiesEditor = ref(false)
-    const newDailyText = ref('')
-    const newDailyPriority = ref(5)
 
     async function loadDailies() {
       const res = await fetch('/api/dailies')
@@ -421,23 +418,6 @@ const app = createApp({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tasks: dailies.value.tasks })
       })
-    }
-
-    function addDailyTask() {
-      const text = newDailyText.value.trim()
-      if (!text) return
-      dailies.value.tasks.push({
-        text,
-        priority: Math.max(0, Math.min(10, newDailyPriority.value ?? 5))
-      })
-      newDailyText.value = ''
-      newDailyPriority.value = 5
-      saveDailies()
-    }
-
-    function deleteDailyTask(i) {
-      dailies.value.tasks.splice(i, 1)
-      saveDailies()
     }
 
     // ====== 折叠切换 ======
@@ -891,7 +871,6 @@ const app = createApp({
       editingKey, editText, editDueDate,
       toasts, expanded, importInfo,
       dragKey, dragOverKey,
-      showDailiesEditor, newDailyText, newDailyPriority,
       showSubtaskModal, subtaskTodo, subtaskEditIdx, subtaskEditText,
       scareDDL,
       grouped, doneCount, todayProgress,
@@ -908,7 +887,6 @@ const app = createApp({
       onDragStart, onDragOver, onDragLeave, onModuleDragOver,
       onDrop, onDropToEnd, onDragEnd,
       onDropZoneDragOver, onDropZoneDrop,
-      addDailyTask, deleteDailyTask,
       carryOver, onTodoToggle, onScareCheckboxClick,
       undo, redo, saveSnapshot,
       undoStack, redoStack,

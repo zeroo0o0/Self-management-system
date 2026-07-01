@@ -108,32 +108,8 @@
           <span class="cat-quick-add" v-if="isToday"
                 @click.stop="addQuickTodo(cat.id)"
                 title="快速添加">＋</span>
-          <!-- 日课模板管理入口 -->
-          <span class="cat-gear" v-if="cat.id === 'daily' && isToday"
-                @click.stop="showDailiesEditor = !showDailiesEditor"
-                :title="showDailiesEditor ? '关闭模板' : '管理每日任务模板'">⚙️</span>
           <span class="cat-toggle">{{ expanded[cat.id] ? '▲' : '▼' }}</span>
         </span>
-      </div>
-
-      <!-- 日课模板编辑器（仅日课模块展开时显示） -->
-      <div class="dailies-editor" v-if="cat.id === 'daily' && showDailiesEditor && expanded[cat.id]">
-        <div class="dailies-editor-inner">
-          <div class="input-row">
-            <input v-model="newDailyText" @keyup.enter="addDailyTask" placeholder="添加日常模板任务..." class="input-text">
-            <input type="number" v-model.number="newDailyPriority" step="0.5" min="0" max="10" class="input-priority" placeholder="优先级">
-            <button @click="addDailyTask">添加</button>
-          </div>
-          <p class="dailies-hint">每天首次打开时自动导入「日课」模块</p>
-          <ul class="dailies-list" v-if="dailies.tasks.length > 0">
-            <li v-for="(task, i) in dailies.tasks" :key="i">
-              <span class="dailies-text">{{ task.text }}</span>
-              <span class="dailies-prio">P{{ task.priority ?? 5 }}</span>
-              <button class="btn-icon" @click="deleteDailyTask(i)">✕</button>
-            </li>
-          </ul>
-          <p v-else class="dailies-empty">还没有模板任务</p>
-        </div>
       </div>
 
       <!-- 模块内容 -->
