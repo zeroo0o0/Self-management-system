@@ -1,0 +1,11 @@
+{
+  "slots": [
+    { "icon": "🍟", "label": "黄金薯条", "desc": "香脆黄金粗薯", "color": "#ff6b6b", "pct": 15 },
+    { "icon": "🧋", "label": "奶茶", "desc": "香浓奶茶", "color": "#d4a574", "pct": 15 },
+    { "icon": "🧀", "label": "芝士薯条", "desc": "浓郁芝士酱薯条", "color": "#feca57", "pct": 15 },
+    { "icon": "🌶️", "label": "香辣薯条", "desc": "火辣辣脆薯", "color": "#48dbfb", "pct": 15 },
+    { "icon": "🥔", "label": "松露薯角", "desc": "松露风味三角薯", "color": "#ff9ff3", "pct": 15 },
+    { "icon": "🍠", "label": "红薯条", "desc": "甜糯蜜薯条", "color": "#54a0ff", "pct": 15 },
+    { "icon": "💪", "label": "再接再厉", "desc": "下次一定！", "color": "#a55eea", "pct": 10 }
+  ]
+}

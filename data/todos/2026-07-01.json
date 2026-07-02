@@ -26,6 +26,53 @@
       "category": "urgent",
       "dueDate": "",
       "subtasks": []
+    },
+    {
+      "_key": "1782871135329_0.6801969167308122",
+      "text": "李沐老师-论文精读",
+      "done": false,
+      "priority": 5,
+      "category": "daily",
+      "dueDate": "",
+      "subtasks": []
+    },
+    {
+      "_key": "1782871483487_0.38655655512293574",
+      "text": "代码阅读ReconViagen",
+      "done": false,
+      "priority": 5,
+      "category": "urgent",
+      "dueDate": "",
+      "subtasks": []
+    },
+    {
+      "_key": "1782871497921_0.5381290042251456",
+      "text": "论文ss4d",
+      "done": false,
+      "priority": 5,
+      "category": "urgent",
+      "dueDate": "",
+      "subtasks": [
+        {
+          "text": "复现",
+          "done": false
+        },
+        {
+          "text": "读论文",
+          "done": false
+        }
+      ],
+      "_xpAwarded": 50,
+      "_spinsAwarded": 1
+    },
+    {
+      "_key": "1782871671647_0.6548048614471573",
+      "text": "雅思经验分享",
+      "done": false,
+      "priority": 5,
+      "category": "daily",
+      "dueDate": "",
+      "subtasks": []
     }
   ],
   "deepWork": []

@@ -8,9 +8,10 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="app">
+  <div id="app" style="position: relative;">
     <a class="back" href="index.html">← 返回首页</a>
     <h1>🎡 幸运转盘</h1>
+    <span class="wheel-settings-btn" @click="openSettings" title="设置奖励">⚙️</span>
 
     <!-- 抽奖次数 -->
     <div class="wheel-spins">
@@ -43,7 +44,7 @@
       </div>
     </div>
 
-    <button class="wheel-btn" @click="spin" :disabled="spinning || (data.spins ?? 0) <= 0">
+    <button class="wheel-btn" @click="spin" :disabled="!canSpin">
       {{ spinning ? '🎡 转动中...' : '🎯 抽奖' }}
     </button>
 
@@ -73,6 +74,61 @@
     <footer>
       <p class="footer-note">✅ 完成待办获得抽奖次数</p>
     </footer>
+
+    <!-- ====== 转盘奖励设置弹窗 ====== -->
+    <div class="reward-settings-overlay" v-if="showSettings" @click.self="closeSettings">
+      <div class="reward-settings-modal">
+        <div class="reward-settings-header">
+          <span class="reward-settings-title">⚙️ 设置奖励</span>
+          <button class="reward-settings-close" @click="closeSettings">✕</button>
+        </div>
+
+        <div class="reward-settings-hint">
+          每个奖励项的百分比决定抽中概率，角度自动按比例分配。
+        </div>
+
+        <div class="reward-settings-list">
+          <div class="reward-slot-row" v-for="(slot, i) in editSlots" :key="i">
+            <div class="reward-slot-fields">
+              <div class="rs-field rs-icon">
+                <label>图标</label>
+                <input v-model="slot.icon" class="rs-input rs-input-icon" maxlength="4">
+              </div>
+              <div class="rs-field rs-label">
+                <label>名称</label>
+                <input v-model="slot.label" class="rs-input" maxlength="12">
+              </div>
+              <div class="rs-field rs-desc">
+                <label>描述</label>
+                <input v-model="slot.desc" class="rs-input" maxlength="30">
+              </div>
+              <div class="rs-field rs-color">
+                <label>颜色</label>
+                <input v-model="slot.color" class="rs-input rs-input-color" maxlength="7">
+              </div>
+              <div class="rs-field rs-pct">
+                <label>%</label>
+                <input type="number" v-model.number="slot.pct" class="rs-input rs-input-pct" min="0.1" max="100" step="0.5">
+              </div>
+            </div>
+            <button class="rs-del-btn" @click="removeSlot(i)" :disabled="editSlots.length <= 2"
+                    :style="{ opacity: editSlots.length <= 2 ? 0.3 : 1 }">✕</button>
+          </div>
+        </div>
+
+        <div class="reward-settings-actions">
+          <button class="rs-add-btn" @click="addSlot">＋ 添加奖励</button>
+          <div class="rs-summary">
+            共 {{ editSlots.length }} 项 · 总和 {{ editSlots.reduce((s, sl) => s + (sl.pct || 0), 0) }}%
+          </div>
+        </div>
+
+        <div class="reward-settings-footer">
+          <button class="rs-cancel-btn" @click="closeSettings">取消</button>
+          <button class="rs-save-btn" @click="saveRewardSlots">保存</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="turntable.js"></script>

@@ -1,4 +1,4 @@
-const { createApp, ref, computed, onMounted } = Vue
+const { createApp, ref, computed, onMounted, nextTick } = Vue
 
 createApp({
   setup() {
@@ -7,28 +7,42 @@ createApp({
     const spinning = ref(false)
     const lastResult = ref(null)
 
-    const segments = [
-      { icon: '🍟', label: '黄金薯条', desc: '香脆黄金粗薯', color: '#ff6b6b', angle: 55 },
-      { icon: '🧋', label: '奶茶',     desc: '香浓奶茶',      color: '#d4a574', angle: 55 },
-      { icon: '🧀', label: '芝士薯条', desc: '浓郁芝士酱薯条', color: '#feca57', angle: 55 },
-      { icon: '🌶️', label: '香辣薯条', desc: '火辣辣脆薯',   color: '#48dbfb', angle: 55 },
-      { icon: '🥔', label: '松露薯角', desc: '松露风味三角薯', color: '#ff9ff3', angle: 55 },
-      { icon: '🍠', label: '红薯条',   desc: '甜糯蜜薯条',    color: '#54a0ff', angle: 55 },
-      { icon: '💪', label: '再接再厉', desc: '下次一定！',    color: '#a55eea', angle: 30 },
-    ]
+    // 可配置的奖励槽位（从服务器加载）
+    const rewardSlots = ref([])
+    const loaded = ref(false)
 
-    // 计算每个扇区的起始角度（支持不等宽扇区）
+    // 从百分比计算角度
+    const segments = computed(() => {
+      const slots = rewardSlots.value
+      if (!slots.length) return []
+      const totalPct = slots.reduce((s, sl) => s + (sl.pct || 0), 0) || 100
+      return slots.map(sl => ({
+        icon: sl.icon,
+        label: sl.label,
+        desc: sl.desc || '',
+        color: sl.color,
+        angle: (sl.pct / totalPct) * 360
+      }))
+    })
+
+    // 计算每个扇区的起始角度
     const segmentsWithOffset = computed(() => {
       let start = 0
-      return segments.map(seg => {
+      return segments.value.map(seg => {
         const s = { ...seg, startAngle: start }
         start += seg.angle
         return s
       })
     })
 
+    // 是否可以抽奖（已加载且有次数）
+    const canSpin = computed(() => {
+      return !spinning.value && (data.value.spins ?? 0) > 0 && segments.value.length > 0
+    })
+
     // 为转盘生成 conic-gradient
     const wheelBg = computed(() => {
+      if (segmentsWithOffset.value.length === 0) return '#e0e0e0'
       let stops = []
       segmentsWithOffset.value.forEach(seg => {
         const from = seg.startAngle
@@ -43,17 +57,30 @@ createApp({
       return (data.value.rewards ?? []).slice().reverse().slice(0, 20)
     })
 
+    // ========== 加权随机选择 ==========
+    function pickWeightedSlot() {
+      const slots = rewardSlots.value
+      if (!slots.length) return 0
+      const totalPct = slots.reduce((s, sl) => s + (sl.pct || 0), 0)
+      let r = Math.random() * totalPct
+      for (let i = 0; i < slots.length; i++) {
+        r -= (slots[i].pct || 0)
+        if (r <= 0) return i
+      }
+      return slots.length - 1
+    }
+
     function spin() {
       if (spinning.value || (data.value.spins ?? 0) <= 0) return
 
       spinning.value = true
       data.value.spins--
 
-      // 随机目标（支持不等宽扇区）
+      // 加权随机选择
       const segArr = segmentsWithOffset.value
-      const targetSeg = Math.floor(Math.random() * segments.length)
-      const seg = segArr[targetSeg]
-      const randomOffset = (Math.random() - 0.5) * seg.angle * 0.6  // 段内随机偏移
+      const targetIdx = pickWeightedSlot()
+      const seg = segArr[targetIdx]
+      const randomOffset = (Math.random() - 0.5) * seg.angle * 0.6
       const targetWheelAngle = seg.startAngle + seg.angle / 2 + randomOffset
       const spinAngle = (360 - (targetWheelAngle % 360)) % 360
       const fullSpins = 360 * (5 + Math.floor(Math.random() * 4))
@@ -61,16 +88,14 @@ createApp({
 
       wheelRotation.value = totalRotation
 
-      // 等待动画结束后处理结果
       setTimeout(() => {
-        const reward = segments[targetSeg]
+        const reward = segments.value[targetIdx]
         applyReward(reward)
         spinning.value = false
       }, 4200)
     }
 
     function applyReward(reward) {
-      // 记录抽奖历史
       const history = data.value.rewards ?? []
       history.push({
         icon: reward.icon,
@@ -79,7 +104,6 @@ createApp({
       })
       data.value.rewards = history
 
-      // 显示结果
       lastResult.value = reward
       saveData()
     }
@@ -100,14 +124,78 @@ createApp({
       })
     }
 
-    // 计算每个扇区上标签的位置（径向排列，避免重叠）
+    // ========== 加载奖励配置 ==========
+    async function loadRewardSlots() {
+      const res = await fetch('/api/reward-slots')
+      const d = await res.json()
+      rewardSlots.value = (d.slots || []).map(s => ({ ...s }))
+      loaded.value = true
+    }
+
+    // ========== 设置弹窗 ==========
+    const showSettings = ref(false)
+
+    // 编辑中的副本
+    const editSlots = ref([])
+
+    function openSettings() {
+      // 深拷贝当前配置到编辑区
+      editSlots.value = rewardSlots.value.map(s => ({ ...s }))
+      showSettings.value = true
+    }
+
+    function closeSettings() {
+      showSettings.value = false
+    }
+
+    function addSlot() {
+      if (editSlots.value.length >= 12) return
+      editSlots.value.push({
+        icon: '🎁',
+        label: '新奖励',
+        desc: '新奖励描述',
+        color: '#' + Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0'),
+        pct: 10
+      })
+    }
+
+    function removeSlot(idx) {
+      if (editSlots.value.length <= 2) return
+      editSlots.value.splice(idx, 1)
+    }
+
+    async function saveRewardSlots() {
+      // 校验百分比：允许用户自己控制，不强制总和为100
+      const slots = editSlots.value.map(s => ({
+        icon: s.icon || '🎁',
+        label: s.label || '未命名',
+        desc: s.desc || '',
+        color: s.color || '#999',
+        pct: Math.max(0.1, Math.min(100, s.pct || 10))
+      }))
+      const res = await fetch('/api/reward-slots', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slots })
+      })
+      const d = await res.json()
+      if (d.ok) {
+        rewardSlots.value = slots
+        // 重置转盘旋转（避免旧角度残留）
+        wheelRotation.value = 0
+        closeSettings()
+      } else {
+        alert('保存失败: ' + (d.error || '未知错误'))
+      }
+    }
+
+    // ========== 标签位置计算 ==========
     function labelStyle(seg) {
       const midAngle = seg.startAngle + seg.angle / 2
       const rad = midAngle * Math.PI / 180
-      const r = 38 // 距中心百分比（靠近中心一些，文字沿径向向外延伸）
+      const r = 38
       const x = 50 + Math.sin(rad) * r
       const y = 50 - Math.cos(rad) * r
-      // 沿径向旋转，下半部分翻转避免倒置
       const rotation = (midAngle > 90 && midAngle < 270) ? midAngle - 180 : midAngle
       return {
         left: x + '%',
@@ -116,13 +204,19 @@ createApp({
       }
     }
 
-    onMounted(loadData)
+    onMounted(() => {
+      loadData()
+      loadRewardSlots()
+    })
 
     return {
       data, segments, segmentsWithOffset, wheelBg, wheelRotation,
-      spinning, lastResult, rewards,
+      spinning, lastResult, rewards, canSpin,
       labelStyle,
-      spin
+      spin,
+      // settings
+      showSettings, editSlots,
+      openSettings, closeSettings, addSlot, removeSlot, saveRewardSlots
     }
   }
 }).mount('#app')

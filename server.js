@@ -9,6 +9,7 @@ const TODOS_DIR = path.join(DATA_DIR, 'todos')
 const GLOBAL_FILE = path.join(DATA_DIR, 'global.json')
 const DAILIES_FILE = path.join(DATA_DIR, 'dailies.json')
 const QUOTES_FILE = path.join(DATA_DIR, 'quotes.json')
+const REWARD_SLOTS_FILE = path.join(DATA_DIR, 'reward-slots.json')
 const LEGACY_FILE = path.join(DATA_DIR, 'db.json')
 
 app.use(express.json())
@@ -62,6 +63,18 @@ function getDefaultGlobal() {
   }
 }
 
+function getDefaultRewardSlots() {
+  return [
+    { icon: '🍟', label: '黄金薯条', desc: '香脆黄金粗薯', color: '#ff6b6b', pct: 15 },
+    { icon: '🧋', label: '奶茶',     desc: '香浓奶茶',      color: '#d4a574', pct: 15 },
+    { icon: '🧀', label: '芝士薯条', desc: '浓郁芝士酱薯条', color: '#feca57', pct: 15 },
+    { icon: '🌶️', label: '香辣薯条', desc: '火辣辣脆薯',   color: '#48dbfb', pct: 15 },
+    { icon: '🥔', label: '松露薯角', desc: '松露风味三角薯', color: '#ff9ff3', pct: 15 },
+    { icon: '🍠', label: '红薯条',   desc: '甜糯蜜薯条',    color: '#54a0ff', pct: 15 },
+    { icon: '💪', label: '再接再厉', desc: '下次一定！',    color: '#a55eea', pct: 10 },
+  ]
+}
+
 // ========== 启动迁移 (旧 db.json → 新结构) ==========
 
 function migrateIfNeeded() {
@@ -97,6 +110,7 @@ function migrateIfNeeded() {
 ensureDirs()
 migrateIfNeeded()
 if (!fs.existsSync(DAILIES_FILE)) writeJSON(DAILIES_FILE, { tasks: [] })
+if (!fs.existsSync(REWARD_SLOTS_FILE)) writeJSON(REWARD_SLOTS_FILE, { slots: getDefaultRewardSlots() })
 if (!fs.existsSync(GLOBAL_FILE)) writeJSON(GLOBAL_FILE, getDefaultGlobal())
 
 // ========== 旧 API (向后兼容) ==========
@@ -212,6 +226,29 @@ app.post('/api/carry-over', (req, res) => {
   todayData.todos.push(...toAdd)
   writeJSON(todayFile, todayData)
   res.json({ added: toAdd.length, todos: todayData.todos })
+})
+
+// ========== 转盘奖励配置 API ==========
+app.get('/api/reward-slots', (req, res) => {
+  ensureDirs()
+  const data = readJSON(REWARD_SLOTS_FILE, { slots: getDefaultRewardSlots() })
+  res.json(data)
+})
+
+app.post('/api/reward-slots', (req, res) => {
+  ensureDirs()
+  const slots = req.body.slots
+  if (!Array.isArray(slots) || slots.length < 2) {
+    return res.json({ ok: false, error: '至少需要 2 个奖励项' })
+  }
+  // 验证每个 slot 有 icon/label/color/pct
+  for (const s of slots) {
+    if (!s.icon || !s.label || !s.color || typeof s.pct !== 'number') {
+      return res.json({ ok: false, error: '奖励项缺少必要字段' })
+    }
+  }
+  writeJSON(REWARD_SLOTS_FILE, { slots })
+  res.json({ ok: true })
 })
 
 // ========== XP 联动（待办打勾时调用） ==========
