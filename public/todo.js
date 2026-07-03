@@ -468,7 +468,7 @@ const app = createApp({
       showDwModal.value = false
       document.body.style.overflow = ''
     }
-    function addDeepWork() {
+    async function addDeepWork() {
       const desc = dwDescription.value.trim()
       if (!desc) return
       const totalMins = (dwHours.value || 0) * 60 + (dwMinutes.value || 0)
@@ -484,7 +484,24 @@ const app = createApp({
       dwDescription.value = ''
       dwHours.value = 1
       dwMinutes.value = 0
-      saveTodos()
+      await saveTodos()
+      // 深度学习自动转积分（1小时 = 1积分）
+      const earnedPoints = Math.round(totalMins / 60 * 10) / 10
+      if (earnedPoints >= 0.1) {
+        const res = await fetch('/api/points', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: earnedPoints, source: 'deepwork' })
+        })
+        const result = await res.json()
+        if (result.ok) {
+          globalData.value.points = result.points
+          globalData.value.totalPointsEarned = result.totalPointsEarned
+          if (!globalData.value.pointsDetail) globalData.value.pointsDetail = { deepwork: 0, taskCompletion: 0 }
+          globalData.value.pointsDetail = result.pointsDetail
+          addToast('🧠 深度学习 +' + earnedPoints + ' 积分')
+        }
+      }
     }
     function deleteDeepWork(index) {
       deepWorkEntries.value.splice(index, 1)
@@ -496,6 +513,56 @@ const app = createApp({
       if (h > 0 && m > 0) return h + 'h' + m + 'm'
       if (h > 0) return h + 'h'
       return m + 'm'
+    }
+
+    // ====== 每日完成率 → 积分奖励 ======
+    async function checkDailyProgressPoints() {
+      if (!isToday.value) return
+      const progress = todayProgress.value
+      if (progress.total === 0) return
+      const rate = progress.done / progress.total
+      const todayKey = today.value
+      const awarded50 = localStorage.getItem('_pts50_' + todayKey)
+      const awarded90 = localStorage.getItem('_pts90_' + todayKey)
+
+      if (rate >= 0.9 && !awarded90) {
+        let totalAward = 2
+        let msg = '🎯 完成率超过90%！+2 积分'
+        if (rate >= 0.5 && !awarded50) {
+          totalAward += 1
+          msg = '🎯 完成率超过90%！+3 积分（含50%奖励）'
+          localStorage.setItem('_pts50_' + todayKey, '1')
+        }
+        localStorage.setItem('_pts90_' + todayKey, '1')
+        const res = await fetch('/api/points', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: totalAward, source: 'taskCompletion' })
+        })
+        const result = await res.json()
+        if (result.ok) {
+          globalData.value.points = result.points
+          globalData.value.totalPointsEarned = result.totalPointsEarned
+          if (!globalData.value.pointsDetail) globalData.value.pointsDetail = { deepwork: 0, taskCompletion: 0 }
+          globalData.value.pointsDetail = result.pointsDetail
+          addToast(msg)
+        }
+      } else if (rate >= 0.5 && !awarded50) {
+        localStorage.setItem('_pts50_' + todayKey, '1')
+        const res = await fetch('/api/points', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: 1, source: 'taskCompletion' })
+        })
+        const result = await res.json()
+        if (result.ok) {
+          globalData.value.points = result.points
+          globalData.value.totalPointsEarned = result.totalPointsEarned
+          if (!globalData.value.pointsDetail) globalData.value.pointsDetail = { deepwork: 0, taskCompletion: 0 }
+          globalData.value.pointsDetail = result.pointsDetail
+          addToast('🎯 完成率超过50%！+1 积分')
+        }
+      }
     }
 
     // ====== 让编辑中的任务可见 ======
@@ -775,7 +842,7 @@ const app = createApp({
       }
     }
 
-    // ====== RPG 联动 ======
+    // ====== 积分联动 ======
     async function onTodoToggle(todo) {
       if (todo.done) {
         const earned = Math.round((todo.priority ?? 5) * 10)
@@ -794,7 +861,6 @@ const app = createApp({
         if (result.ok) {
           globalData.value.xp = result.xp
           globalData.value.level = result.level
-          globalData.value.attributePoints = result.attributePoints
           globalData.value.spins = result.spins
           // 记录本次奖励，供撤销时扣除
           todo._xpAwarded = earned
@@ -804,9 +870,11 @@ const app = createApp({
             addToast('🎰 恐吓DDL奖励！+3 抽奖次数！')
           }
           if (result.leveledUp) {
-            addToast('🎉 升级！Lv.' + result.level + ' (+3 属性点)')
+            addToast('🎉 升级！Lv.' + result.level)
           }
         }
+        // 检查每日完成率 → 积分奖励
+        await checkDailyProgressPoints()
       } else {
         // 取消打勾 → 扣除之前奖励的 XP / 抽奖次数
         const xp = todo._xpAwarded || 0

@@ -52,13 +52,25 @@
           <div class="stats-card-value">{{ totalDeepWorkMinutes > 0 ? Math.round(totalDeepWorkMinutes / 60 * 10) / 10 + 'h' : '0h' }}</div>
           <div class="stats-card-sub">{{ totalDeepWorkMinutes }} 分钟</div>
         </div>
+        <div class="stats-card stats-card-points">
+          <div class="stats-card-label">当前积分</div>
+          <div class="stats-card-value">{{ currentPoints }}</div>
+          <div class="stats-card-sub">历史总计 {{ totalPoints }}</div>
+        </div>
       </div>
 
-      <!-- ===== 属性点 ===== -->
-      <div class="stats-points" v-if="availablePoints > 0">
-        <span class="stats-points-icon">🎯</span>
-        <span class="stats-points-text">可用属性点：<strong>{{ availablePoints }}</strong></span>
-        <a class="stats-points-link" href="rpg.html">去加点 →</a>
+      <!-- ===== 积分明细 ===== -->
+      <div class="stats-points-breakdown" v-if="totalPoints > 0">
+        <div class="stats-pb-item">
+          <span class="stats-pb-icon">🧠</span>
+          <span class="stats-pb-label">深度学习</span>
+          <span class="stats-pb-val">+{{ pointsDeepWork }}</span>
+        </div>
+        <div class="stats-pb-item">
+          <span class="stats-pb-icon">🎯</span>
+          <span class="stats-pb-label">任务完成</span>
+          <span class="stats-pb-val">+{{ pointsTask }}</span>
+        </div>
       </div>
 
       <!-- ===== 本周趋势 ===== -->

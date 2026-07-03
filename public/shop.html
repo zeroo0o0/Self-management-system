@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>积分商城</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app" v-cloak>
+    <a class="back" href="index.html">← 返回首页</a>
+
+    <div class="shop-header">
+      <div class="shop-title-row">
+        <h1>🏪 积分商城</h1>
+        <button class="shop-refresh-btn" @click="onRefresh" title="刷新商品">🔄</button>
+      </div>
+      <div class="shop-balance">
+        <div class="shop-points-display">
+          <span class="shop-points-icon">⭐</span>
+          <span class="shop-points-num">{{ points }}</span>
+          <span class="shop-points-label">积分</span>
+        </div>
+        <div class="shop-total">累计获得 {{ totalEarned }} 积分</div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="shop-toast" v-if="toastMsg">{{ toastMsg }}</div>
+
+    <!-- 加载中 -->
+    <div class="shop-loading" v-if="loading">
+      <p>加载中...</p>
+    </div>
+
+    <template v-if="!loading">
+      <!-- 商品列表 -->
+      <div class="shop-items-grid" v-if="shopItems.length > 0">
+        <div class="shop-item-card" v-for="item in shopItems" :key="item.name + item.cost">
+          <div class="shop-item-icon">{{ item.icon }}</div>
+          <div class="shop-item-info">
+            <div class="shop-item-name">{{ item.name }}</div>
+            <div class="shop-item-desc">{{ item.desc }}</div>
+          </div>
+          <div class="shop-item-bottom">
+            <span class="shop-item-cost">⭐ {{ item.cost }}</span>
+            <button class="shop-buy-btn" @click="buyItem(item)"
+                    :disabled="points < item.cost">兑换</button>
+          </div>
+        </div>
+      </div>
+      <div class="shop-empty" v-else>
+        <p>🎉 商品已售罄！点击右上角 🔄 刷新</p>
+      </div>
+
+      <!-- 兑换记录 -->
+      <div class="shop-history-section" v-if="purchasedHistory.length > 0">
+        <h3>📜 兑换记录</h3>
+        <div class="shop-history-list">
+          <div class="shop-history-item" v-for="(h, i) in purchasedHistory" :key="i">
+            <span class="shop-h-icon">{{ h.icon }}</span>
+            <span class="shop-h-name">{{ h.name }}</span>
+            <span class="shop-h-cost">-⭐{{ h.cost }}</span>
+            <span class="shop-h-time">{{ h.boughtAt }}</span>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <footer>
+      <p class="footer-note">🎯 完成待办 · 深度学习 → 赚取积分</p>
+    </footer>
+  </div>
+  <script src="shop.js"></script>
+</body>
+</html>

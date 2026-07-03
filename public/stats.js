@@ -96,8 +96,17 @@ createApp({
       }))
     })
 
-    // 可用属性点
-    const availablePoints = computed(() => globalData.value?.attributePoints ?? 0)
+    // 积分
+    const currentPoints = computed(() => Math.round((globalData.value?.points ?? 0) * 10) / 10)
+    const totalPoints = computed(() => Math.round((globalData.value?.totalPointsEarned ?? 0) * 10) / 10)
+    const pointsDeepWork = computed(() => {
+      const detail = globalData.value?.pointsDetail
+      return detail ? Math.round((detail.deepwork ?? 0) * 10) / 10 : 0
+    })
+    const pointsTask = computed(() => {
+      const detail = globalData.value?.pointsDetail
+      return detail ? Math.round((detail.taskCompletion ?? 0) * 10) / 10 : 0
+    })
 
     // 格式化日期为短标签（如 "06/17"）
     function shortDate(dateStr) {
@@ -266,7 +275,7 @@ createApp({
     return {
       globalData, loading,
       weekDates, dailyStats, totalCompleted, totalXPWeek, avgRate,
-      categoryStats, availablePoints,
+      categoryStats, currentPoints, totalPoints, pointsDeepWork, pointsTask,
       deepWorkStats, totalDeepWorkMinutes,
       shortDate, getDwForDate, CATEGORY_META,
     }

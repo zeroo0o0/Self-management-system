@@ -53,14 +53,26 @@ function getDefaultGlobal() {
   return {
     xp: 0,
     level: 1,
-    attributes: { strength: 0, intelligence: 0, endurance: 0, spirit: 0 },
     totalXPEarned: 0,
-    attributePoints: 0,
+    points: 0,
+    totalPointsEarned: 0,
+    pointsDetail: { deepwork: 0, taskCompletion: 0 },
     spins: 0,
     rewards: [],
     history: [],
     counter: 0
   }
+}
+
+function cleanGlobal(obj) {
+  // 迁移：移除旧的 RPG 属性字段
+  if (obj.attributes) delete obj.attributes
+  if (obj.attributePoints !== undefined) delete obj.attributePoints
+  // 确保积分字段存在
+  if (obj.points === undefined) obj.points = 0
+  if (obj.totalPointsEarned === undefined) obj.totalPointsEarned = 0
+  if (!obj.pointsDetail) obj.pointsDetail = { deepwork: 0, taskCompletion: 0 }
+  return obj
 }
 
 function getDefaultRewardSlots() {
@@ -112,11 +124,20 @@ migrateIfNeeded()
 if (!fs.existsSync(DAILIES_FILE)) writeJSON(DAILIES_FILE, { tasks: [] })
 if (!fs.existsSync(REWARD_SLOTS_FILE)) writeJSON(REWARD_SLOTS_FILE, { slots: getDefaultRewardSlots() })
 if (!fs.existsSync(GLOBAL_FILE)) writeJSON(GLOBAL_FILE, getDefaultGlobal())
+else {
+  // 迁移旧 global.json：去除 RPG 属性字段，确保积分字段存在
+  const g = readJSON(GLOBAL_FILE)
+  if (g.attributes || g.attributePoints !== undefined || g.points === undefined) {
+    const cleaned = cleanGlobal({ ...getDefaultGlobal(), ...g })
+    writeJSON(GLOBAL_FILE, cleaned)
+    console.log('🔄 迁移 global.json：去除属性系统，添加积分字段')
+  }
+}
 
 // ========== 旧 API (向后兼容) ==========
 
 app.get('/api/load', (req, res) => {
-  const global = readJSON(GLOBAL_FILE, getDefaultGlobal())
+  const global = cleanGlobal(readJSON(GLOBAL_FILE, getDefaultGlobal()))
   const todayTodos = readJSON(path.join(TODOS_DIR, getDateStr() + '.json'), { todos: [] })
   res.json({ ...global, todos: todayTodos.todos })
 })
@@ -124,7 +145,7 @@ app.get('/api/load', (req, res) => {
 app.post('/api/save', (req, res) => {
   const body = req.body
   const { todos, ...globalData } = body
-  writeJSON(GLOBAL_FILE, { ...getDefaultGlobal(), ...globalData })
+  writeJSON(GLOBAL_FILE, cleanGlobal({ ...getDefaultGlobal(), ...globalData }))
   if (todos !== undefined) {
     writeJSON(path.join(TODOS_DIR, getDateStr() + '.json'), { todos })
   }
@@ -271,7 +292,7 @@ app.post('/api/xp', (req, res) => {
   }
 
   writeJSON(GLOBAL_FILE, global)
-  res.json({ ok: true, xp: global.xp, level: global.level, attributePoints: global.attributePoints, leveledUp, spins: global.spins })
+  res.json({ ok: true, xp: global.xp, level: global.level, leveledUp, spins: global.spins })
 })
 
 // 扣除 XP / 抽奖次数（撤销打勾时调用）
@@ -337,22 +358,48 @@ app.get('/api/backgrounds', (req, res) => {
   }
 })
 
-// 获取全局数据（RPG + Turntable）
+// 获取全局数据（RPG + Turntable + 积分）
 app.get('/api/global', (req, res) => {
-  const global = readJSON(GLOBAL_FILE, getDefaultGlobal())
+  const global = cleanGlobal(readJSON(GLOBAL_FILE, getDefaultGlobal()))
   res.json(global)
 })
 
 // 保存全局数据（如 scareDDL）
 app.post('/api/global', (req, res) => {
-  const global = readJSON(GLOBAL_FILE, getDefaultGlobal())
-  // 浅合并，数组原样覆盖（只有 scareDDL 这类简单对象会被写入）
-  const updated = { ...global, ...req.body }
-  if (req.body.attributes) {
-    updated.attributes = { ...global.attributes, ...req.body.attributes }
-  }
+  let global = cleanGlobal(readJSON(GLOBAL_FILE, getDefaultGlobal()))
+  const { attributes, attributePoints, ...rest } = req.body // 忽略旧属性字段
+  const updated = { ...global, ...rest }
   writeJSON(GLOBAL_FILE, updated)
   res.json({ ok: true })
+})
+
+// ========== 积分 API ==========
+
+// 获得积分（来源：deepwork / taskCompletion）
+app.post('/api/points', (req, res) => {
+  const { amount, source } = req.body
+  if (!amount || amount <= 0) return res.json({ ok: false })
+  const global = cleanGlobal(readJSON(GLOBAL_FILE, getDefaultGlobal()))
+  const rounded = Math.round(amount * 10) / 10
+  global.points = Math.round(((global.points ?? 0) + rounded) * 10) / 10
+  global.totalPointsEarned = Math.round(((global.totalPointsEarned ?? 0) + rounded) * 10) / 10
+  if (!global.pointsDetail) global.pointsDetail = { deepwork: 0, taskCompletion: 0 }
+  if (source === 'deepwork' || source === 'taskCompletion') {
+    global.pointsDetail[source] = Math.round(((global.pointsDetail[source] ?? 0) + rounded) * 10) / 10
+  }
+  writeJSON(GLOBAL_FILE, global)
+  res.json({ ok: true, points: global.points, totalPointsEarned: global.totalPointsEarned, pointsDetail: global.pointsDetail })
+})
+
+// 消费积分
+app.post('/api/points/spend', (req, res) => {
+  const { amount } = req.body
+  if (!amount || amount <= 0) return res.json({ ok: false })
+  const global = cleanGlobal(readJSON(GLOBAL_FILE, getDefaultGlobal()))
+  if ((global.points ?? 0) < amount) return res.json({ ok: false, error: '积分不足' })
+  global.points = Math.round(((global.points ?? 0) - amount) * 10) / 10
+  writeJSON(GLOBAL_FILE, global)
+  res.json({ ok: true, points: global.points })
 })
 
 app.listen(PORT, () => {

@@ -81,6 +81,7 @@
           ✅ {{ doneCount }} / {{ data.todos.length }}
         </span>
         <span v-if="(globalData.level ?? 1) > 1"> · Lv.{{ globalData.level }}</span>
+        <span v-if="(globalData.points ?? 0) > 0" class="todo-points-badge">⭐ {{ Math.round((globalData.points ?? 0) * 10) / 10 }}</span>
         <span v-if="!isToday" class="readonly-hint">（只读查看）</span>
       </span>
       <span class="undo-redo-btns" v-if="isToday">
