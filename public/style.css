@@ -2652,7 +2652,10 @@ footer { text-align: center; padding: 32px 0 24px; }
   align-items: baseline;
   gap: 8px;
 }
-.shop-points-icon { font-size: 1.5rem; }
+.shop-points-icon { display: flex; align-items: center; }
+.pts-icon-lg { height: 28px; width: auto; vertical-align: middle; }
+.pts-icon-sm { height: 14px; width: auto; vertical-align: middle; margin-right: 1px; }
+.pts-icon-badge { height: 14px; width: auto; vertical-align: middle; }
 .shop-points-num { font-size: 2rem; font-weight: 800; letter-spacing: -1px; }
 .shop-points-label { font-size: .85rem; opacity: .8; }
 .shop-total { margin-top: 4px; font-size: .8rem; opacity: .7; }

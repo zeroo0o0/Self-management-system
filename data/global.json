@@ -1,14 +1,13 @@
 {
   "xp": 50,
-  "level": 7,
-  "attributes": {
-    "strength": 0,
-    "intelligence": 0,
-    "endurance": 0,
-    "spirit": 0
-  },
+  "level": 1,
   "totalXPEarned": 2103,
-  "attributePoints": 19,
+  "points": 0,
+  "totalPointsEarned": 0,
+  "pointsDetail": {
+    "deepwork": 0,
+    "taskCompletion": 0
+  },
   "spins": 40,
   "rewards": [
     {

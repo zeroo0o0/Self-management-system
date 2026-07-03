@@ -49,6 +49,10 @@ function writeJSON(file, data) {
   fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf-8')
 }
 
+function calcLevel(totalPointsEarned) {
+  return Math.floor(Math.sqrt(Math.max(0, totalPointsEarned))) + 1
+}
+
 function getDefaultGlobal() {
   return {
     xp: 0,
@@ -72,6 +76,8 @@ function cleanGlobal(obj) {
   if (obj.points === undefined) obj.points = 0
   if (obj.totalPointsEarned === undefined) obj.totalPointsEarned = 0
   if (!obj.pointsDetail) obj.pointsDetail = { deepwork: 0, taskCompletion: 0 }
+  // 等级基于历史总积分计算
+  obj.level = calcLevel(obj.totalPointsEarned)
   return obj
 }
 
@@ -272,34 +278,25 @@ app.post('/api/reward-slots', (req, res) => {
   res.json({ ok: true })
 })
 
-// ========== XP 联动（待办打勾时调用） ==========
+// ========== XP 联动（待办打勾时调用，仅用于追加减抽奖次数，等级由积分决定） ==========
 app.post('/api/xp', (req, res) => {
   const { earned, spins: spinsOverride } = req.body
   if (!earned || earned <= 0) return res.json({ ok: false })
 
-  const global = readJSON(GLOBAL_FILE, getDefaultGlobal())
+  const global = cleanGlobal(readJSON(GLOBAL_FILE, getDefaultGlobal()))
   global.xp = (global.xp ?? 0) + earned
   global.totalXPEarned = (global.totalXPEarned ?? 0) + earned
   global.spins = (global.spins ?? 0) + (spinsOverride ?? 1)
 
-  let leveledUp = false
-  const threshold = (global.level ?? 1) * 100
-  if (global.xp >= threshold) {
-    global.xp -= threshold
-    global.level = (global.level ?? 1) + 1
-    global.attributePoints = (global.attributePoints ?? 0) + 3
-    leveledUp = true
-  }
-
   writeJSON(GLOBAL_FILE, global)
-  res.json({ ok: true, xp: global.xp, level: global.level, leveledUp, spins: global.spins })
+  res.json({ ok: true, xp: global.xp, level: global.level, spins: global.spins })
 })
 
 // 扣除 XP / 抽奖次数（撤销打勾时调用）
 app.post('/api/xp/deduct', (req, res) => {
   const { xp, spins } = req.body
   if ((!xp || xp <= 0) && (!spins || spins <= 0)) return res.json({ ok: false })
-  const global = readJSON(GLOBAL_FILE, getDefaultGlobal())
+  const global = cleanGlobal(readJSON(GLOBAL_FILE, getDefaultGlobal()))
   global.xp = Math.max(0, (global.xp ?? 0) - (xp || 0))
   global.totalXPEarned = Math.max(0, (global.totalXPEarned ?? 0) - (xp || 0))
   global.spins = Math.max(0, (global.spins ?? 0) - (spins || 0))
@@ -348,7 +345,7 @@ app.delete('/api/quotes/:id', (req, res) => {
 })
 
 // ========== 背景图片列表 API ==========
-const IMAGES_DIR = path.join(__dirname, 'public', 'images')
+const IMAGES_DIR = path.join(__dirname, 'public', 'images', 'background')
 app.get('/api/backgrounds', (req, res) => {
   try {
     const files = fs.readdirSync(IMAGES_DIR).filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f))
@@ -380,6 +377,7 @@ app.post('/api/points', (req, res) => {
   const { amount, source } = req.body
   if (!amount || amount <= 0) return res.json({ ok: false })
   const global = cleanGlobal(readJSON(GLOBAL_FILE, getDefaultGlobal()))
+  const oldLevel = global.level ?? 1
   const rounded = Math.round(amount * 10) / 10
   global.points = Math.round(((global.points ?? 0) + rounded) * 10) / 10
   global.totalPointsEarned = Math.round(((global.totalPointsEarned ?? 0) + rounded) * 10) / 10
@@ -387,8 +385,11 @@ app.post('/api/points', (req, res) => {
   if (source === 'deepwork' || source === 'taskCompletion') {
     global.pointsDetail[source] = Math.round(((global.pointsDetail[source] ?? 0) + rounded) * 10) / 10
   }
+  // 等级基于历史总积分
+  global.level = calcLevel(global.totalPointsEarned)
+  const leveledUp = global.level > oldLevel
   writeJSON(GLOBAL_FILE, global)
-  res.json({ ok: true, points: global.points, totalPointsEarned: global.totalPointsEarned, pointsDetail: global.pointsDetail })
+  res.json({ ok: true, points: global.points, totalPointsEarned: global.totalPointsEarned, pointsDetail: global.pointsDetail, level: global.level, leveledUp })
 })
 
 // 消费积分

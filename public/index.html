@@ -320,7 +320,7 @@
         const list = data.backgrounds || []
         if (list.length > 0) {
           const pick = list[Math.floor(Math.random() * list.length)]
-          document.querySelector('.hero-bg').style.backgroundImage = "url('images/" + pick + "')"
+          document.querySelector('.hero-bg').style.backgroundImage = "url('images/background/" + pick + "')"
         }
       } catch (e) {
         console.error('加载背景图片失败:', e)

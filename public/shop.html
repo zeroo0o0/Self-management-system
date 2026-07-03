@@ -18,7 +18,7 @@
       </div>
       <div class="shop-balance">
         <div class="shop-points-display">
-          <span class="shop-points-icon">⭐</span>
+          <span class="shop-points-icon"><img src="images/credits/%E7%A7%AF%E5%88%86-%E9%AB%98%E6%B8%85%E7%89%88%E9%80%8F%E6%98%8E.png" class="pts-icon-lg"></span>
           <span class="shop-points-num">{{ points }}</span>
           <span class="shop-points-label">积分</span>
         </div>
@@ -44,7 +44,7 @@
             <div class="shop-item-desc">{{ item.desc }}</div>
           </div>
           <div class="shop-item-bottom">
-            <span class="shop-item-cost">⭐ {{ item.cost }}</span>
+            <span class="shop-item-cost"><img src="images/credits/%E7%A7%AF%E5%88%86-%E9%AB%98%E6%B8%85%E7%89%88%E9%80%8F%E6%98%8E.png" class="pts-icon-sm"> {{ item.cost }}</span>
             <button class="shop-buy-btn" @click="buyItem(item)"
                     :disabled="points < item.cost">兑换</button>
           </div>
@@ -61,7 +61,7 @@
           <div class="shop-history-item" v-for="(h, i) in purchasedHistory" :key="i">
             <span class="shop-h-icon">{{ h.icon }}</span>
             <span class="shop-h-name">{{ h.name }}</span>
-            <span class="shop-h-cost">-⭐{{ h.cost }}</span>
+            <span class="shop-h-cost">-<img src="images/credits/%E7%A7%AF%E5%88%86-%E9%AB%98%E6%B8%85%E7%89%88%E9%80%8F%E6%98%8E.png" class="pts-icon-sm">{{ h.cost }}</span>
             <span class="shop-h-time">{{ h.boughtAt }}</span>
           </div>
         </div>

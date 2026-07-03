@@ -26,10 +26,10 @@
           <div class="stats-card-label">当前等级</div>
           <div class="stats-card-value">Lv.{{ globalData.level }}</div>
           <div class="stats-card-sub">
-            XP {{ (globalData.xp ?? 0) }}/{{ (globalData.level ?? 1) * 100 }}
+            累计获得 {{ totalPoints }} 积分
           </div>
           <div class="stats-bar">
-            <div class="stats-bar-fill" :style="{ width: ((globalData.xp ?? 0) / ((globalData.level ?? 1) * 100) * 100) + '%' }"></div>
+            <div class="stats-bar-fill" :style="{ width: levelProgressPct + '%' }" :title="'距离 Lv.' + (globalData.level + 1) + ' 还需 ' + ptsToNextLevel + ' 积分'"></div>
           </div>
         </div>
         <div class="stats-card stats-card-done">

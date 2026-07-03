@@ -497,9 +497,13 @@ const app = createApp({
         if (result.ok) {
           globalData.value.points = result.points
           globalData.value.totalPointsEarned = result.totalPointsEarned
+          globalData.value.level = result.level
           if (!globalData.value.pointsDetail) globalData.value.pointsDetail = { deepwork: 0, taskCompletion: 0 }
           globalData.value.pointsDetail = result.pointsDetail
           addToast('🧠 深度学习 +' + earnedPoints + ' 积分')
+          if (result.leveledUp) {
+            addToast('🎉 升级！Lv.' + result.level)
+          }
         }
       }
     }
@@ -543,9 +547,13 @@ const app = createApp({
         if (result.ok) {
           globalData.value.points = result.points
           globalData.value.totalPointsEarned = result.totalPointsEarned
+          globalData.value.level = result.level
           if (!globalData.value.pointsDetail) globalData.value.pointsDetail = { deepwork: 0, taskCompletion: 0 }
           globalData.value.pointsDetail = result.pointsDetail
           addToast(msg)
+          if (result.leveledUp) {
+            addToast('🎉 升级！Lv.' + result.level)
+          }
         }
       } else if (rate >= 0.5 && !awarded50) {
         localStorage.setItem('_pts50_' + todayKey, '1')
@@ -558,9 +566,13 @@ const app = createApp({
         if (result.ok) {
           globalData.value.points = result.points
           globalData.value.totalPointsEarned = result.totalPointsEarned
+          globalData.value.level = result.level
           if (!globalData.value.pointsDetail) globalData.value.pointsDetail = { deepwork: 0, taskCompletion: 0 }
           globalData.value.pointsDetail = result.pointsDetail
           addToast('🎯 完成率超过50%！+1 积分')
+          if (result.leveledUp) {
+            addToast('🎉 升级！Lv.' + result.level)
+          }
         }
       }
     }
@@ -868,9 +880,6 @@ const app = createApp({
           addToast('✨ +' + earned + ' XP')
           if (isScare) {
             addToast('🎰 恐吓DDL奖励！+3 抽奖次数！')
-          }
-          if (result.leveledUp) {
-            addToast('🎉 升级！Lv.' + result.level)
           }
         }
         // 检查每日完成率 → 积分奖励

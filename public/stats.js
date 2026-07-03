@@ -107,6 +107,21 @@ createApp({
       const detail = globalData.value?.pointsDetail
       return detail ? Math.round((detail.taskCompletion ?? 0) * 10) / 10 : 0
     })
+    // 等级进度（基于历史总积分）
+    const levelProgressPct = computed(() => {
+      const lvl = globalData.value?.level ?? 1
+      const pts = totalPoints.value
+      const prevThreshold = (lvl - 1) * (lvl - 1)
+      const nextThreshold = lvl * lvl
+      if (nextThreshold <= prevThreshold) return 100
+      return Math.round((pts - prevThreshold) / (nextThreshold - prevThreshold) * 100)
+    })
+    const ptsToNextLevel = computed(() => {
+      const lvl = globalData.value?.level ?? 1
+      const pts = totalPoints.value
+      const nextThreshold = lvl * lvl
+      return Math.round(Math.max(0, nextThreshold - pts) * 10) / 10
+    })
 
     // 格式化日期为短标签（如 "06/17"）
     function shortDate(dateStr) {
@@ -276,6 +291,7 @@ createApp({
       globalData, loading,
       weekDates, dailyStats, totalCompleted, totalXPWeek, avgRate,
       categoryStats, currentPoints, totalPoints, pointsDeepWork, pointsTask,
+      levelProgressPct, ptsToNextLevel,
       deepWorkStats, totalDeepWorkMinutes,
       shortDate, getDwForDate, CATEGORY_META,
     }
