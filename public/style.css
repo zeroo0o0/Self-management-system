@@ -2653,9 +2653,9 @@ footer { text-align: center; padding: 32px 0 24px; }
   gap: 8px;
 }
 .shop-points-icon { display: flex; align-items: center; }
-.pts-icon-lg { height: 28px; width: auto; vertical-align: middle; }
-.pts-icon-sm { height: 14px; width: auto; vertical-align: middle; margin-right: 1px; }
-.pts-icon-badge { height: 14px; width: auto; vertical-align: middle; }
+.pts-icon-lg { height: 28px; width: auto; }
+.pts-icon-sm { height: 14px; width: auto; vertical-align: -1.5px; margin-right: 1px; }
+.pts-icon-badge { height: 14px; width: auto; }
 .shop-points-num { font-size: 2rem; font-weight: 800; letter-spacing: -1px; }
 .shop-points-label { font-size: .85rem; opacity: .8; }
 .shop-total { margin-top: 4px; font-size: .8rem; opacity: .7; }
@@ -2706,7 +2706,7 @@ footer { text-align: center; padding: 32px 0 24px; }
   align-items: center;
   justify-content: space-between;
 }
-.shop-item-cost { font-size: .85rem; font-weight: 700; color: #f59e0b; }
+.shop-item-cost { display: inline-flex; align-items: center; gap: 2px; font-size: .85rem; font-weight: 700; color: #f59e0b; }
 .shop-buy-btn {
   padding: 6px 16px;
   font-size: .78rem;
@@ -2750,5 +2750,5 @@ footer { text-align: center; padding: 32px 0 24px; }
 .shop-history-item:first-child { border-top: none; }
 .shop-h-icon { font-size: 1rem; }
 .shop-h-name { flex: 1; font-weight: 500; color: #444; }
-.shop-h-cost { font-size: .78rem; font-weight: 700; color: #f59e0b; }
+.shop-h-cost { display: inline-flex; align-items: center; gap: 1px; font-size: .78rem; font-weight: 700; color: #f59e0b; }
 .shop-h-time { font-size: .72rem; color: #aaa; }
