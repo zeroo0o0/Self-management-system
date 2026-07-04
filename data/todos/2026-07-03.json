@@ -1,24 +1,6 @@
 {
   "todos": [
     {
-      "_key": "1783046814324_0.014156525037758882",
-      "text": "新建待办",
-      "done": false,
-      "priority": 5,
-      "category": "daily",
-      "dueDate": "",
-      "subtasks": []
-    },
-    {
-      "_key": "1783046814325_0.17251054205211847",
-      "text": "新建待办",
-      "done": false,
-      "priority": 5,
-      "category": "daily",
-      "dueDate": "",
-      "subtasks": []
-    },
-    {
       "_key": "1783046814325_0.590899792011037",
       "text": "李沐老师-论文精读",
       "done": false,
@@ -30,11 +12,13 @@
     {
       "_key": "1783046814325_0.6695804670551864",
       "text": "新建待办",
-      "done": false,
+      "done": true,
       "priority": 5,
-      "category": "daily",
+      "category": "urgent",
       "dueDate": "",
-      "subtasks": []
+      "subtasks": [],
+      "_xpAwarded": 50,
+      "_spinsAwarded": 1
     },
     {
       "_key": "1783046814325_0.6138351713466801",
@@ -43,6 +27,15 @@
       "priority": 5,
       "category": "daily",
       "dueDate": "",
+      "subtasks": []
+    },
+    {
+      "_key": "1783064684268_0.7224275417768442",
+      "text": "123",
+      "done": false,
+      "priority": 5,
+      "category": "deadline",
+      "dueDate": "2026-07-11",
       "subtasks": []
     }
   ],

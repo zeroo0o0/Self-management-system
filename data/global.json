@@ -1,12 +1,12 @@
 {
-  "xp": 50,
-  "level": 1,
-  "totalXPEarned": 2103,
-  "points": 0,
-  "totalPointsEarned": 0,
+  "xp": 100,
+  "level": 2,
+  "totalXPEarned": 2153,
+  "points": 3,
+  "totalPointsEarned": 3,
   "pointsDetail": {
     "deepwork": 0,
-    "taskCompletion": 0
+    "taskCompletion": 3
   },
   "spins": 40,
   "rewards": [
@@ -49,12 +49,17 @@
       "icon": "🥔",
       "label": "松露薯角",
       "time": "06/25 19:04"
+    },
+    {
+      "icon": "🍟",
+      "label": "黄金薯条",
+      "time": "07/03 15:48"
     }
   ],
   "history": [],
   "counter": 0,
   "scareDDL": {
-    "key": "1782870172622_0.12916326545459345",
-    "date": "2026-07-01"
+    "key": "1783064684268_0.7224275417768442",
+    "date": "2026-07-03"
   }
 }

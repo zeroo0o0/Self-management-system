@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+  <script>document.documentElement.classList.toggle('dark',localStorage.getItem('_theme')==='dark')</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>待办事项</title>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -312,6 +313,7 @@
     </div>
 
     <footer>
+      <button class="theme-toggle" onclick="var d=document.documentElement;d.classList.toggle('dark');localStorage.setItem('_theme',d.classList.contains('dark')?'dark':'light')" title="切换主题"><span class="tt-moon">🌙</span><span class="tt-sun">☀️</span></button>
       <p class="footer-note">💾 完成自动保存 · 勾选任务获得 <strong>抽奖次数</strong>，深度学习与完成任务赚取 <strong>积分</strong> · <span class="shortcut-hint"><kbd>Ctrl+Z</kbd> 撤销 <kbd>Ctrl+Y</kbd> 重做</span></p>
     </footer>
   </div>

@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+  <script>document.documentElement.classList.toggle('dark',localStorage.getItem('_theme')==='dark')</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>自我管理系统</title>
   <link rel="stylesheet" href="style.css">
@@ -86,6 +87,8 @@
       </div>
     </div>
   </div>
+
+  <button class="theme-toggle" onclick="var d=document.documentElement;d.classList.toggle('dark');localStorage.setItem('_theme',d.classList.contains('dark')?'dark':'light')" title="切换主题"><span class="tt-moon">🌙</span><span class="tt-sun">☀️</span></button>
 
   <script>
     // ====== 加载并显示 3 条随机语录 ======

@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+  <script>document.documentElement.classList.toggle('dark',localStorage.getItem('_theme')==='dark')</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>积分商城</title>
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
@@ -69,6 +70,7 @@
     </template>
 
     <footer>
+      <button class="theme-toggle" onclick="var d=document.documentElement;d.classList.toggle('dark');localStorage.setItem('_theme',d.classList.contains('dark')?'dark':'light')" title="切换主题"><span class="tt-moon">🌙</span><span class="tt-sun">☀️</span></button>
       <p class="footer-note">🎯 完成待办 · 深度学习 → 赚取积分</p>
     </footer>
   </div>
