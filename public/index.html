@@ -8,6 +8,21 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title">🌱 导航</span>
+      <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+    </div>
+    <div class="sidebar-nav">
+      <a class="sidebar-item active" href="index.html"><span class="si-icon">🏠</span> 首页</a>
+      <a class="sidebar-item" href="todo.html"><span class="si-icon">📋</span> 待办事项</a>
+      <a class="sidebar-item" href="shop.html"><span class="si-icon">🏪</span> 积分商城</a>
+      <a class="sidebar-item" href="turntable.html"><span class="si-icon">🎡</span> 幸运转盘</a>
+      <a class="sidebar-item" href="stats.html"><span class="si-icon">📊</span> 数据统计</a>
+    </div>
+  </div>
 
   <!-- ====== 全屏英雄区 ====== -->
   <section class="hero" id="hero">
@@ -329,6 +344,9 @@
         console.error('加载背景图片失败:', e)
       }
     }
+
+    // ====== 侧边栏 ======
+    function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open'),document.getElementById('sidebarOverlay').classList.toggle('active')}
 
     // ====== 初始化 ======
     loadQuotes()
