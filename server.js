@@ -1,6 +1,7 @@
 const express = require('express')
 const fs = require('fs')
 const path = require('path')
+const https = require('https')
 
 const app = express()
 const PORT = 3000
@@ -401,6 +402,89 @@ app.post('/api/points/spend', (req, res) => {
   global.points = Math.round(((global.points ?? 0) - amount) * 10) / 10
   writeJSON(GLOBAL_FILE, global)
   res.json({ ok: true, points: global.points })
+})
+
+// ========== Bilibili API 代理 ==========
+
+function biliFetch(urlStr) {
+  return new Promise((resolve, reject) => {
+    const u = new URL(urlStr)
+    const opts = {
+      hostname: u.hostname,
+      path: u.pathname + u.search,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Referer': 'https://space.bilibili.com/'
+      }
+    }
+    https.get(opts, res => {
+      let data = ''
+      res.on('data', chunk => data += chunk)
+      res.on('end', () => {
+        try { resolve(JSON.parse(data)) } catch (e) { reject(e) }
+      })
+    }).on('error', reject)
+  })
+}
+
+function formatDuration(seconds) {
+  if (!seconds && seconds !== 0) return '??:??'
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  const s = seconds % 60
+  if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+  return `${m}:${String(s).padStart(2, '0')}`
+}
+
+// 获取 Bilibili 合集视频列表
+app.get('/api/bilibili/series', async (req, res) => {
+  const { url } = req.query
+  if (!url) return res.json({ ok: false, error: '请提供 Bilibili 合集链接' })
+
+  const match = url.match(/space\.bilibili\.com\/(\d+)\/lists\/(\d+)/)
+  if (!match) return res.json({ ok: false, error: '无法解析合集链接，请检查格式' })
+
+  const mid = match[1]
+  const seriesId = match[2]
+
+  try {
+    // 分页拉取所有视频
+    const allArchives = []
+    let page = 1
+    let total = 0
+
+    do {
+      const data = await biliFetch(`https://api.bilibili.com/x/series/archives?series_id=${seriesId}&mid=${mid}&ps=50&pn=${page}`)
+      if (data.code !== 0) {
+        return res.json({ ok: false, error: 'Bilibili API: ' + (data.message || '请求失败') })
+      }
+      const archives = data.data?.archives || []
+      allArchives.push(...archives)
+      total = data.data?.page?.total || archives.length
+      page++
+    } while (allArchives.length < total && page <= 20)
+
+    // 获取合集名称
+    let seriesName = 'Bilibili 合集'
+    try {
+      const infoData = await biliFetch(`https://api.bilibili.com/x/series?series_id=${seriesId}`)
+      if (infoData.code === 0 && infoData.data?.name) {
+        seriesName = infoData.data.name
+      }
+    } catch (e) { /* 忽略 */ }
+
+    const videos = allArchives.map(a => ({
+      bvid: a.bvid,
+      title: a.title,
+      duration: a.duration,
+      durationText: formatDuration(a.duration),
+      aid: a.aid
+    }))
+
+    res.json({ ok: true, videos, seriesName, count: videos.length })
+  } catch (e) {
+    res.json({ ok: false, error: '请求 Bilibili 失败: ' + e.message })
+  }
 })
 
 app.listen(PORT, () => {

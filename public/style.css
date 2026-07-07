@@ -3055,3 +3055,159 @@ html.dark .btn-clear { border-color: var(--border); }
   font-weight: 600;
 }
 .sidebar-item .si-icon { font-size: 1.1rem; }
+
+/* ========== Bilibili 课程导入模块 ========== */
+.bili-section {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 24px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+.bili-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: var(--text);
+}
+.bili-input-row {
+  display: flex;
+  gap: 8px;
+}
+.bili-input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: .85rem;
+  outline: none;
+  transition: border-color .2s;
+}
+.bili-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(129,140,248,.15);
+}
+.bili-fetch-btn {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity .2s;
+}
+.bili-fetch-btn:hover { opacity: .85; }
+.bili-fetch-btn:disabled { opacity: .5; cursor: not-allowed; }
+.bili-error {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(239,68,68,.1);
+  color: #ef4444;
+  font-size: .82rem;
+}
+.bili-loading {
+  margin-top: 12px;
+  color: var(--text3);
+  font-size: .85rem;
+  padding: 8px 0;
+}
+.bili-result { margin-top: 12px; }
+.bili-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: .85rem;
+  color: var(--text2);
+}
+.bili-series-name { font-weight: 600; color: var(--text); }
+.bili-counter {
+  font-size: .82rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+.bili-video-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 480px;
+  overflow-y: auto;
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 4px;
+}
+.bili-video-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  transition: background .15s;
+  cursor: default;
+}
+.bili-video-item:hover { background: var(--hover-bg); }
+.bili-video-item.bili-done { opacity: .55; }
+.bili-video-item.bili-done .bili-video-title {
+  text-decoration: line-through;
+  color: var(--text3);
+}
+.bili-cb {
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 1rem;
+  width: 26px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  border-radius: 4px;
+  transition: background .15s;
+}
+.bili-cb:hover {
+  background: var(--nav-bg);
+}
+.bili-video-title {
+  flex: 1;
+  font-size: .85rem;
+  color: var(--text);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bili-video-duration {
+  flex-shrink: 0;
+  font-size: .75rem;
+  color: var(--text4);
+  background: var(--nav-bg);
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+.bili-total-time {
+  margin-top: 8px;
+  font-size: .78rem;
+  color: var(--text4);
+  text-align: right;
+}
+.bili-empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--text3);
+  font-size: .85rem;
+}
+
+/* Bilibili 暗黑模式 */
+html.dark .bili-input { background: var(--input-bg); color: var(--text); border-color: var(--border); }
+html.dark .bili-video-duration { background: var(--bar-bg2); color: var(--text4); }
+html.dark .bili-video-item:hover { background: var(--nav-bg); }
+html.dark .bili-video-list { border-color: var(--border-light); }

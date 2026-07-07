@@ -75,6 +75,19 @@
       </a>
     </div>
 
+    <!-- ====== Bilibili 课程导入模块 ====== -->
+    <section class="bili-section">
+      <h2 class="bili-title">📺 Bilibili 课程导入</h2>
+      <div class="bili-input-row">
+        <input type="text" id="biliUrl" class="bili-input"
+               placeholder="粘贴 Bilibili 合集链接，如 https://space.bilibili.com/1567748478/lists/358497?type=series">
+        <button class="bili-fetch-btn" onclick="fetchBiliSeries()" id="biliFetchBtn">📥 获取列表</button>
+      </div>
+      <div id="biliError" class="bili-error" style="display:none"></div>
+      <div id="biliLoading" class="bili-loading" style="display:none">⏳ 加载中...</div>
+      <div id="biliResult" class="bili-result"></div>
+    </section>
+
     <footer>
       <div class="footer-links">
         <a class="repo-link" href="https://github.com/zeroo0o0/Self-management-system" target="_blank" rel="noopener"><span>https://github.com/zeroo0o0/Self-management-system</span></a>
@@ -347,6 +360,106 @@
 
     // ====== 侧边栏 ======
     function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open'),document.getElementById('sidebarOverlay').classList.toggle('active')}
+
+    // ====== Bilibili 课程导入 ======
+    function getBiliWatched(seriesId) {
+      try { return JSON.parse(localStorage.getItem('_bili_' + seriesId)) || [] } catch(e) { return [] }
+    }
+
+    function saveBiliWatched(seriesId, arr) {
+      localStorage.setItem('_bili_' + seriesId, JSON.stringify(arr))
+    }
+
+    function updateBiliCounter(seriesId) {
+      const watched = getBiliWatched(seriesId)
+      const items = document.querySelectorAll('.bili-video-item')
+      const counter = document.getElementById('biliCounter')
+      if (counter) counter.textContent = '✅ ' + watched.length + '/' + items.length
+    }
+
+    function toggleBili(el) {
+      const seriesId = el.dataset.series
+      const bvid = el.dataset.bvid
+      const watched = getBiliWatched(seriesId)
+      const idx = watched.indexOf(bvid)
+      const item = el.closest('.bili-video-item')
+      if (idx === -1) {
+        watched.push(bvid)
+        el.textContent = '✅'
+        item.classList.add('bili-done')
+      } else {
+        watched.splice(idx, 1)
+        el.textContent = '⬜'
+        item.classList.remove('bili-done')
+      }
+      saveBiliWatched(seriesId, watched)
+      updateBiliCounter(seriesId)
+    }
+
+    async function fetchBiliSeries() {
+      const url = document.getElementById('biliUrl').value.trim()
+      if (!url) return
+      const errorEl = document.getElementById('biliError')
+      const loadingEl = document.getElementById('biliLoading')
+      const resultEl = document.getElementById('biliResult')
+      const btn = document.getElementById('biliFetchBtn')
+      errorEl.style.display = 'none'
+      resultEl.innerHTML = ''
+      loadingEl.style.display = 'block'
+      btn.disabled = true
+      try {
+        const res = await fetch('/api/bilibili/series?url=' + encodeURIComponent(url))
+        const data = await res.json()
+        if (!data.ok) {
+          errorEl.textContent = '❌ ' + data.error
+          errorEl.style.display = 'block'
+          return
+        }
+        if (data.videos.length === 0) {
+          resultEl.innerHTML = '<div class="bili-empty">该合集暂无视频</div>'
+          return
+        }
+        const seriesId = url.match(/\/lists\/(\d+)/)[1]
+        const watched = getBiliWatched(seriesId)
+        let html = '<div class="bili-meta">'
+        html += '<span class="bili-series-name">📚 ' + escapeHtml(data.seriesName) + '</span>'
+        html += '<span class="bili-counter" id="biliCounter">✅ ' + watched.length + '/' + data.videos.length + '</span>'
+        html += '</div>'
+        html += '<div class="bili-video-list">'
+        data.videos.forEach(function(v) {
+          var isWatched = watched.indexOf(v.bvid) !== -1
+          html += '<div class="bili-video-item' + (isWatched ? ' bili-done' : '') + '">'
+          html += '<span class="bili-cb" data-series="' + seriesId + '" data-bvid="' + v.bvid + '" onclick="toggleBili(this)">' + (isWatched ? '✅' : '⬜') + '</span>'
+          html += '<span class="bili-video-title" title="' + escapeHtml(v.title) + '">' + escapeHtml(v.title) + '</span>'
+          html += '<span class="bili-video-duration">' + v.durationText + '</span>'
+          html += '</div>'
+        })
+        html += '</div>'
+        if (data.videos.length > 0) {
+          var totalSecs = data.videos.reduce(function(s, v) { return s + (v.duration || 0) }, 0)
+          var totalH = Math.floor(totalSecs / 3600)
+          var totalM = Math.floor((totalSecs % 3600) / 60)
+          html += '<div class="bili-total-time">📆 总时长 ' + totalH + 'h' + totalM + 'm</div>'
+        }
+        resultEl.innerHTML = html
+      } catch (e) {
+        errorEl.textContent = '❌ 请求失败: ' + e.message
+        errorEl.style.display = 'block'
+      } finally {
+        loadingEl.style.display = 'none'
+        btn.disabled = false
+      }
+    }
+
+    // Enter 键触发获取
+    document.addEventListener('DOMContentLoaded', function() {
+      var input = document.getElementById('biliUrl')
+      if (input) {
+        input.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') { e.preventDefault(); fetchBiliSeries() }
+        })
+      }
+    })
 
     // ====== 初始化 ======
     loadQuotes()
