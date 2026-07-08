@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <script>document.documentElement.classList.toggle('dark',localStorage.getItem('_theme')==='dark')</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bilibili 课程</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title">🌱 导航</span>
+      <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+    </div>
+    <div class="sidebar-nav">
+      <a class="sidebar-item" href="index.html"><span class="si-icon">🏠</span> 首页</a>
+      <a class="sidebar-item" href="todo.html"><span class="si-icon">📋</span> 待办事项</a>
+      <a class="sidebar-item" href="shop.html"><span class="si-icon">🏪</span> 积分商城</a>
+      <a class="sidebar-item active" href="bilibili.html"><span class="si-icon">📺</span> Bilibili 课程</a>
+      <a class="sidebar-item" href="turntable.html"><span class="si-icon">🎡</span> 幸运转盘</a>
+      <a class="sidebar-item" href="stats.html"><span class="si-icon">📊</span> 数据统计</a>
+    </div>
+  </div>
+
+  <div id="app" v-cloak>
+    <a class="back" href="index.html">← 返回首页</a>
+    <h1>📺 Bilibili 课程</h1>
+
+    <!-- ====== 输入区域 ====== -->
+    <div class="bili-input-row">
+      <input v-model="url" class="bili-input" placeholder="粘贴 Bilibili 合集链接，如 https://space.bilibili.com/1567748478/lists/358497?type=series" @keydown.enter="fetchSeries">
+      <button class="bili-fetch-btn" @click="fetchSeries" :disabled="loading">📥 获取列表</button>
+    </div>
+    <div class="bili-error" v-if="error">{{ error }}</div>
+    <div class="bili-loading" v-if="loading">⏳ 加载中...</div>
+
+    <!-- ====== 当前课程列表 ====== -->
+    <div class="bili-course" v-if="currentCourse" style="margin-top: 18px;">
+      <div class="bili-course-header">
+        <span class="bili-course-name">📚 {{ currentCourse.seriesName }}</span>
+        <div class="bili-course-actions">
+          <span class="bili-progress">✅ <strong>{{ watchedCount }}</strong>/{{ videoCount }}</span>
+          <button class="bili-sort-btn" @click="toggleSort" :title="sortAsc ? '点击倒序' : '点击正序'">
+            ↕ {{ sortAsc ? '正序' : '倒序' }}
+          </button>
+        </div>
+      </div>
+      <div class="bili-meta">
+        <span class="bili-total-time">📆 总时长 <strong>{{ totalTime }}</strong></span>
+        <span class="bili-video-count">{{ videoCount }} 个视频</span>
+      </div>
+      <div class="bili-video-list">
+        <div class="bili-video-item" v-for="v in sortedVideos" :key="v.bvid"
+             :class="{ 'bili-done': isWatched(v.bvid) }">
+          <span class="bili-cb" @click="toggleWatched(v.bvid)">{{ isWatched(v.bvid) ? '✅' : '⬜' }}</span>
+          <span class="bili-video-title" :title="v.title">{{ v.title }}</span>
+          <span class="bili-video-duration bili-duration-lg">{{ v.durationText }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== 导入历史 ====== -->
+    <div class="bili-history" v-if="courses.length > 0" style="margin-top: 24px;">
+      <h3>📜 导入历史</h3>
+      <div class="bili-history-list">
+        <div class="bili-history-item" v-for="c in courses" :key="c.id"
+             :class="{ 'bili-history-active': currentCourse === c }"
+             @click="selectCourse(c)">
+          <span class="bili-history-icon">📚</span>
+          <span class="bili-history-name">{{ c.seriesName }}</span>
+          <span class="bili-history-count">{{ c.videos.length }} 视频</span>
+          <span class="bili-history-date">{{ formatDate(c.createdAt) }}</span>
+          <button class="bili-history-del" @click.stop="deleteCourse(c)" title="删除记录">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p class="footer-note">📺 粘贴 Bilibili 合集链接导入课程，勾选跟踪学习进度</p>
+    </footer>
+  </div>
+
+  <button class="theme-toggle" onclick="var d=document.documentElement;d.classList.toggle('dark');localStorage.setItem('_theme',d.classList.contains('dark')?'dark':'light')" title="切换主题"><span class="tt-moon">🌙</span><span class="tt-sun">☀️</span></button>
+  <script>function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open'),document.getElementById('sidebarOverlay').classList.toggle('active')}</script>
+  <script src="bilibili.js"></script>
+</body>
+</html>

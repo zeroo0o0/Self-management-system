@@ -3211,3 +3211,156 @@ html.dark .bili-input { background: var(--input-bg); color: var(--text); border-
 html.dark .bili-video-duration { background: var(--bar-bg2); color: var(--text4); }
 html.dark .bili-video-item:hover { background: var(--nav-bg); }
 html.dark .bili-video-list { border-color: var(--border-light); }
+
+/* ========== Bilibili 独立页面 ========== */
+.bili-course {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+.bili-course-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.bili-course-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bili-course-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.bili-progress {
+  font-size: .82rem;
+  color: var(--accent);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.bili-sort-btn {
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--nav-bg);
+  color: var(--text2);
+  font-size: .78rem;
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.bili-sort-btn:hover {
+  background: var(--bar-bg2);
+  color: var(--text);
+  border-color: var(--accent);
+}
+.bili-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: .78rem;
+  color: var(--text4);
+}
+.bili-total-time strong { color: var(--text); }
+.bili-video-count { color: var(--text4); }
+
+/* 时间显示加强 */
+.bili-duration-lg {
+  font-size: .82rem !important;
+  font-weight: 600 !important;
+  padding: 3px 10px !important;
+  background: var(--accent-light) !important;
+  color: var(--accent) !important;
+  letter-spacing: .3px;
+}
+html.dark .bili-duration-lg {
+  background: rgba(129,140,248,.12) !important;
+  color: #a5b4fc !important;
+}
+.bili-done .bili-duration-lg {
+  opacity: .5;
+}
+
+/* 历史记录 */
+.bili-history {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+.bili-history h3 {
+  margin: 0 0 12px;
+  font-size: .95rem;
+  color: var(--text);
+}
+.bili-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.bili-history-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.bili-history-item:hover { background: var(--hover-bg); }
+.bili-history-active {
+  background: var(--accent-light) !important;
+  border: 1px solid var(--accent);
+}
+.bili-history-icon { font-size: 1rem; }
+.bili-history-name {
+  flex: 1;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bili-history-count {
+  font-size: .75rem;
+  color: var(--text4);
+  white-space: nowrap;
+}
+.bili-history-date {
+  font-size: .72rem;
+  color: var(--text5);
+  white-space: nowrap;
+}
+.bili-history-del {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .8rem;
+  flex-shrink: 0;
+  transition: all .15s;
+}
+.bili-history-del:hover {
+  background: rgba(239,68,68,.12);
+  color: #ef4444;
+}
+html.dark .bili-history-item:hover { background: var(--nav-bg); }

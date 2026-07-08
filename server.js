@@ -11,6 +11,7 @@ const GLOBAL_FILE = path.join(DATA_DIR, 'global.json')
 const DAILIES_FILE = path.join(DATA_DIR, 'dailies.json')
 const QUOTES_FILE = path.join(DATA_DIR, 'quotes.json')
 const REWARD_SLOTS_FILE = path.join(DATA_DIR, 'reward-slots.json')
+const BILI_COURSES_FILE = path.join(DATA_DIR, 'bilibili-courses.json')
 const LEGACY_FILE = path.join(DATA_DIR, 'db.json')
 
 app.use(express.json())
@@ -481,10 +482,46 @@ app.get('/api/bilibili/series', async (req, res) => {
       aid: a.aid
     }))
 
-    res.json({ ok: true, videos, seriesName, count: videos.length })
+    res.json({ ok: true, videos, seriesName, seriesId, mid, count: videos.length })
   } catch (e) {
     res.json({ ok: false, error: '请求 Bilibili 失败: ' + e.message })
   }
+})
+
+// ========== Bilibili 课程持久化 ==========
+
+// 获取所有已保存课程
+app.get('/api/bilibili/courses', (req, res) => {
+  ensureDirs()
+  const data = readJSON(BILI_COURSES_FILE, { courses: [] })
+  res.json(data)
+})
+
+// 保存课程
+app.post('/api/bilibili/courses', (req, res) => {
+  ensureDirs()
+  const data = readJSON(BILI_COURSES_FILE, { courses: [] })
+  const course = req.body
+  if (!course.id || !course.videos) {
+    return res.json({ ok: false, error: '无效的课程数据' })
+  }
+  const existing = data.courses.findIndex(c => c.id === course.id)
+  if (existing !== -1) {
+    data.courses[existing] = course
+  } else {
+    data.courses.push(course)
+  }
+  writeJSON(BILI_COURSES_FILE, data)
+  res.json({ ok: true })
+})
+
+// 删除课程
+app.delete('/api/bilibili/courses/:id', (req, res) => {
+  ensureDirs()
+  const data = readJSON(BILI_COURSES_FILE, { courses: [] })
+  data.courses = data.courses.filter(c => c.id !== req.params.id)
+  writeJSON(BILI_COURSES_FILE, data)
+  res.json({ ok: true })
 })
 
 app.listen(PORT, () => {
