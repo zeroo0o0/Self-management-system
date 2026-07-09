@@ -3275,6 +3275,87 @@ html.dark .bili-video-list { border-color: var(--border-light); }
 .bili-total-time strong { color: var(--text); }
 .bili-video-count { color: var(--text4); }
 
+/* ====== 时间进度条 ====== */
+.bili-time-progress {
+  margin: 12px 0 10px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, var(--accent-light), rgba(79,70,229,.04));
+  border-radius: 12px;
+  border: 1px solid rgba(79,70,229,.12);
+}
+html.dark .bili-time-progress {
+  background: linear-gradient(135deg, rgba(129,140,248,.08), rgba(129,140,248,.02));
+  border-color: rgba(129,140,248,.15);
+}
+.bili-tp-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.bili-tp-label {
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--text2);
+}
+.bili-tp-text {
+  font-size: .82rem;
+  color: var(--text3);
+  margin-left: auto;
+}
+.bili-tp-text strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+.bili-tp-pct {
+  font-size: .85rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  padding: 1px 10px;
+  border-radius: 20px;
+  line-height: 1.6;
+  min-width: 44px;
+  text-align: center;
+}
+html.dark .bili-tp-pct {
+  background: linear-gradient(135deg, #818cf8, #a78bfa);
+}
+.bili-tp-bar {
+  height: 10px;
+  background: rgba(79,70,229,.1);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.06);
+}
+html.dark .bili-tp-bar {
+  background: rgba(129,140,248,.1);
+}
+.bili-tp-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width .6s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 0;
+  background: linear-gradient(90deg, #4f46e5, #7c3aed, #818cf8);
+  background-size: 200% 100%;
+  animation: bili-progress-shimmer 2.5s ease infinite;
+  position: relative;
+}
+.bili-tp-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(79,70,229,.3);
+}
+html.dark .bili-tp-fill::after {
+  box-shadow: 0 0 10px rgba(129,140,248,.3);
+}
+@keyframes bili-progress-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 /* 时间显示加强 */
 .bili-duration-lg {
   font-size: .82rem !important;

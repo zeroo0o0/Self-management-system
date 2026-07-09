@@ -42,12 +42,35 @@ const app = createApp({
     const watchedCount = computed(() => currentWatched.value.length)
 
     // ====== 总时长 ======
+    const totalSeconds = computed(() => {
+      if (!currentCourse.value) return 0
+      return currentCourse.value.videos.reduce((s, v) => s + (v.duration || 0), 0)
+    })
     const totalTime = computed(() => {
-      if (!currentCourse.value) return ''
-      const secs = currentCourse.value.videos.reduce((s, v) => s + (v.duration || 0), 0)
+      const secs = totalSeconds.value
+      if (!secs) return ''
       const h = Math.floor(secs / 3600)
       const m = Math.floor((secs % 3600) / 60)
       return h + 'h ' + m + 'm'
+    })
+
+    // ====== 已看时长 & 进度百分比 ======
+    const watchedSeconds = computed(() => {
+      if (!currentCourse.value) return 0
+      return currentCourse.value.videos
+        .filter(v => currentWatched.value.indexOf(v.bvid) !== -1)
+        .reduce((s, v) => s + (v.duration || 0), 0)
+    })
+    const watchedTimeStr = computed(() => {
+      const secs = watchedSeconds.value
+      if (!secs) return '0m'
+      const h = Math.floor(secs / 3600)
+      const m = Math.floor((secs % 3600) / 60)
+      return h > 0 ? h + 'h ' + m + 'm' : m + 'm'
+    })
+    const timeProgressPct = computed(() => {
+      if (!totalSeconds.value) return 0
+      return Math.min(100, Math.round(watchedSeconds.value / totalSeconds.value * 100))
     })
 
     const videoCount = computed(() => {
@@ -163,6 +186,7 @@ const app = createApp({
     return {
       url, loading, error, courses, currentCourse,
       sortAsc, sortedVideos, watchedCount, totalTime, videoCount,
+      totalSeconds, watchedSeconds, watchedTimeStr, timeProgressPct,
       isWatched, toggleWatched,
       fetchSeries, toggleSort, selectCourse, deleteCourse,
       formatDate

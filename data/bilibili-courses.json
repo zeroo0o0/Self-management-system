@@ -1,3 +1,545 @@
 {
-  "courses": []
+  "courses": [
+    {
+      "id": "bili_358497_1783838611423",
+      "seriesId": "358497",
+      "seriesName": "Bilibili 合集",
+      "url": "https://space.bilibili.com/1567748478/lists/358497?type=series",
+      "videos": [
+        {
+          "bvid": "BV1AL4y1Y7gu",
+          "title": "【完结】73 - 课程总结和进阶学习【动手学深度学习v2】",
+          "duration": 1675,
+          "durationText": "27:55",
+          "aid": 847592146
+        },
+        {
+          "bvid": "BV1bP4y1p7Gq",
+          "title": "72 优化算法【动手学深度学习v2】",
+          "duration": 2597,
+          "durationText": "43:17",
+          "aid": 890094855
+        },
+        {
+          "bvid": "BV13b4y1m7y8",
+          "title": "71  目标检测竞赛总结【动手学深度学习v2】",
+          "duration": 1438,
+          "durationText": "23:58",
+          "aid": 632558188
+        },
+        {
+          "bvid": "BV15L4y1v7ts",
+          "title": "70 BERT微调【动手学深度学习v2】",
+          "duration": 1886,
+          "durationText": "31:26",
+          "aid": 847491605
+        },
+        {
+          "bvid": "BV1yU4y1E7Ns",
+          "title": "69 BERT预训练【动手学深度学习v2】",
+          "duration": 3434,
+          "durationText": "57:14",
+          "aid": 674970301
+        },
+        {
+          "bvid": "BV1Kq4y1H7FL",
+          "title": "68 Transformer【动手学深度学习v2】",
+          "duration": 3113,
+          "durationText": "51:53",
+          "aid": 547307796
+        },
+        {
+          "bvid": "BV19o4y1m7mo",
+          "title": "67 自注意力【动手学深度学习v2】",
+          "duration": 2264,
+          "durationText": "37:44",
+          "aid": 377288232
+        },
+        {
+          "bvid": "BV1v44y1C7Tg",
+          "title": "66 使用注意力机制的seq2seq【动手学深度学习v2】",
+          "duration": 1837,
+          "durationText": "30:37",
+          "aid": 974654755
+        },
+        {
+          "bvid": "BV1Tb4y167rb",
+          "title": "65 注意力分数【动手学深度学习v2】",
+          "duration": 1847,
+          "durationText": "30:47",
+          "aid": 632233659
+        },
+        {
+          "bvid": "BV1264y1i7R1",
+          "title": "64 注意力机制【动手学深度学习v2】",
+          "duration": 1438,
+          "durationText": "23:58",
+          "aid": 759726865
+        },
+        {
+          "bvid": "BV1B44y1C7m1",
+          "title": "63 束搜索【动手学深度学习v2】",
+          "duration": 704,
+          "durationText": "11:44",
+          "aid": 974667399
+        },
+        {
+          "bvid": "BV16g411L7FG",
+          "title": "62 序列到序列学习（seq2seq）【动手学深度学习v2】",
+          "duration": 2926,
+          "durationText": "48:46",
+          "aid": 504678491
+        },
+        {
+          "bvid": "BV1c54y1E7YP",
+          "title": "61 编码器-解码器架构【动手学深度学习v2】",
+          "duration": 377,
+          "durationText": "6:17",
+          "aid": 847202723
+        },
+        {
+          "bvid": "BV1H64y1s7TH",
+          "title": "60 机器翻译数据集【动手学深度学习v2】",
+          "duration": 616,
+          "durationText": "10:16",
+          "aid": 762218228
+        },
+        {
+          "bvid": "BV12X4y1c71W",
+          "title": "59 双向循环神经网络【动手学深度学习v2】",
+          "duration": 834,
+          "durationText": "13:54",
+          "aid": 716963264
+        },
+        {
+          "bvid": "BV1JM4y1T7N4",
+          "title": "58 深层循环神经网络【动手学深度学习v2】",
+          "duration": 799,
+          "durationText": "13:19",
+          "aid": 931877179
+        },
+        {
+          "bvid": "BV1JU4y1H7PC",
+          "title": "57 长短期记忆网络（LSTM）【动手学深度学习v2】",
+          "duration": 1075,
+          "durationText": "17:55",
+          "aid": 674456973
+        },
+        {
+          "bvid": "BV1mf4y157N2",
+          "title": "56 门控循环单元（GRU）【动手学深度学习v2】",
+          "duration": 2389,
+          "durationText": "39:49",
+          "aid": 291912508
+        },
+        {
+          "bvid": "BV1kq4y1H7sw",
+          "title": "55 循环神经网络 RNN 的实现【动手学深度学习v2】",
+          "duration": 5185,
+          "durationText": "1:26:25",
+          "aid": 546870213
+        },
+        {
+          "bvid": "BV1D64y1z7CA",
+          "title": "54 循环神经网络 RNN【动手学深度学习v2】",
+          "duration": 2044,
+          "durationText": "34:04",
+          "aid": 759282928
+        },
+        {
+          "bvid": "BV1ZX4y1F7K3",
+          "title": "53 语言模型【动手学深度学习v2】",
+          "duration": 3073,
+          "durationText": "51:13",
+          "aid": 716796428
+        },
+        {
+          "bvid": "BV1Fo4y1Q79L",
+          "title": "52 文本预处理【动手学深度学习v2】",
+          "duration": 1230,
+          "durationText": "20:30",
+          "aid": 376812972
+        },
+        {
+          "bvid": "BV1L44y1m768",
+          "title": "51 序列模型【动手学深度学习v2】",
+          "duration": 3251,
+          "durationText": "54:11",
+          "aid": 974353636
+        },
+        {
+          "bvid": "BV1F64y1x7xP",
+          "title": "50 课程竞赛：牛仔行头检测【动手学深度学习v2】",
+          "duration": 664,
+          "durationText": "11:04",
+          "aid": 761854141
+        },
+        {
+          "bvid": "BV1Eh41167GN",
+          "title": "49 样式迁移【动手学深度学习v2】",
+          "duration": 1968,
+          "durationText": "32:48",
+          "aid": 206577894
+        },
+        {
+          "bvid": "BV1af4y1L7Zu",
+          "title": "48 全连接卷积神经网络 FCN【动手学深度学习v2】",
+          "duration": 1615,
+          "durationText": "26:55",
+          "aid": 291566726
+        },
+        {
+          "bvid": "BV1CM4y1K7r7",
+          "title": "47.2 转置卷积是一种卷积【动手学深度学习v2】",
+          "duration": 579,
+          "durationText": "9:39",
+          "aid": 931730690
+        },
+        {
+          "bvid": "BV17o4y1X7Jn",
+          "title": "47 转置卷积【动手学深度学习v2】",
+          "duration": 1918,
+          "durationText": "31:58",
+          "aid": 376538965
+        },
+        {
+          "bvid": "BV1BK4y1M7Rd",
+          "title": "46 语义分割和数据集【动手学深度学习v2】",
+          "duration": 3310,
+          "durationText": "55:10",
+          "aid": 889059767
+        },
+        {
+          "bvid": "BV1ZX4y1c7Sw",
+          "title": "45 SSD实现【动手学深度学习v2】",
+          "duration": 5383,
+          "durationText": "1:29:43",
+          "aid": 716443297
+        },
+        {
+          "bvid": "BV1Db4y1C71g",
+          "title": "44 物体检测算法：R-CNN，SSD，YOLO【动手学深度学习v2】",
+          "duration": 3509,
+          "durationText": "58:29",
+          "aid": 631383373
+        },
+        {
+          "bvid": "BV1by4y1K7SE",
+          "title": "43 树叶分类竞赛技术总结【动手学深度学习v2】",
+          "duration": 1589,
+          "durationText": "26:29",
+          "aid": 803995705
+        },
+        {
+          "bvid": "BV1aB4y1K7za",
+          "title": "42 锚框【动手学深度学习v2】",
+          "duration": 3173,
+          "durationText": "52:53",
+          "aid": 588787564
+        },
+        {
+          "bvid": "BV1Lh411Y7LX",
+          "title": "41 物体检测和数据集【动手学深度���习v2】",
+          "duration": 2140,
+          "durationText": "35:40",
+          "aid": 206250574
+        },
+        {
+          "bvid": "BV1j5411T7wx",
+          "title": "40 实战 Kaggle 比赛：狗的品种识别（ImageNet Dogs）【动手学深度学习v2】",
+          "duration": 2065,
+          "durationText": "34:25",
+          "aid": 461272350
+        },
+        {
+          "bvid": "BV1Gy4y1M7Cu",
+          "title": "39 实战 Kaggle 比赛：图像分类（CIFAR-10）【动手学深度学习v2】",
+          "duration": 2743,
+          "durationText": "45:43",
+          "aid": 803807574
+        },
+        {
+          "bvid": "BV1Eb4y1C7Fn",
+          "title": "38 第二次竞赛 树叶分类结果【动手学深度学习v2】",
+          "duration": 331,
+          "durationText": "5:31",
+          "aid": 631276695
+        },
+        {
+          "bvid": "BV1Sb4y1d7CR",
+          "title": "37 微调【动手学深度学习v2】",
+          "duration": 2061,
+          "durationText": "34:21",
+          "aid": 631134930
+        },
+        {
+          "bvid": "BV17y4y1g76q",
+          "title": "36 数据增广【动手学深度学习v2】",
+          "duration": 3300,
+          "durationText": "55:00",
+          "aid": 803728933
+        },
+        {
+          "bvid": "BV1jU4y1G7iu",
+          "title": "35 分布式训练【动手学深度学习v2】",
+          "duration": 1845,
+          "durationText": "30:45",
+          "aid": 673739196
+        },
+        {
+          "bvid": "BV1MQ4y1R7Qg",
+          "title": "34 多GPU训练实现【动手学深度学习v2】",
+          "duration": 3254,
+          "durationText": "54:14",
+          "aid": 716153757
+        },
+        {
+          "bvid": "BV1vU4y1V7rd",
+          "title": "33 单机多卡并行【动手学深度学习v2】",
+          "duration": 655,
+          "durationText": "10:55",
+          "aid": 673475005
+        },
+        {
+          "bvid": "BV1VV41147PC",
+          "title": "32 深度学习硬件：TPU和其他【动手学深度学习v2】",
+          "duration": 3997,
+          "durationText": "1:06:37",
+          "aid": 418495005
+        },
+        {
+          "bvid": "BV1TU4y1j7Wd",
+          "title": "31 深度学习硬件：CPU 和 GPU【动手学深度学习v2】",
+          "duration": 5529,
+          "durationText": "1:32:09",
+          "aid": 673440227
+        },
+        {
+          "bvid": "BV1z64y1o7iz",
+          "title": "30 第二部分完结竞赛：图片分类【动手学深度学习v2】",
+          "duration": 397,
+          "durationText": "6:37",
+          "aid": 758363663
+        },
+        {
+          "bvid": "BV1554y157E3",
+          "title": "29.2 ResNet为什么能训练出1000层的模型【动手学深度学习v2】",
+          "duration": 639,
+          "durationText": "10:39",
+          "aid": 845908060
+        },
+        {
+          "bvid": "BV1bV41177ap",
+          "title": "29 残差网络 ResNet【动手学深度学习v2】",
+          "duration": 2049,
+          "durationText": "34:09",
+          "aid": 418363999
+        },
+        {
+          "bvid": "BV1X44y1r77r",
+          "title": "28 批量归一化【动手学深度学习v2】",
+          "duration": 2771,
+          "durationText": "46:11",
+          "aid": 973300661
+        },
+        {
+          "bvid": "BV1b5411g7Xo",
+          "title": "27 含并行连结的网络 GoogLeNet / Inception V3【动手学深度学习v2】",
+          "duration": 3042,
+          "durationText": "50:42",
+          "aid": 460824062
+        },
+        {
+          "bvid": "BV1Uv411G71b",
+          "title": "26 网络中的网络 NiN【动手学深度学习v2】",
+          "duration": 2258,
+          "durationText": "37:38",
+          "aid": 248254059
+        },
+        {
+          "bvid": "BV1Ao4y117Pd",
+          "title": "25 使用块的网络 VGG【动手学深度学习v2】",
+          "duration": 1243,
+          "durationText": "20:43",
+          "aid": 375682529
+        },
+        {
+          "bvid": "BV1h54y1L7oe",
+          "title": "24 深度卷积神经网络 AlexNet【动手学深度学习v2】",
+          "duration": 3721,
+          "durationText": "1:02:01",
+          "aid": 845665724
+        },
+        {
+          "bvid": "BV1t44y1r7ct",
+          "title": "23 经典卷积神经网络 LeNet【动手学深度学习v2】",
+          "duration": 3626,
+          "durationText": "1:00:26",
+          "aid": 973192378
+        },
+        {
+          "bvid": "BV1EV411j7nX",
+          "title": "22 池化层【动手学深度学习v2】",
+          "duration": 1627,
+          "durationText": "27:07",
+          "aid": 418134600
+        },
+        {
+          "bvid": "BV1MB4y1F7of",
+          "title": "21 卷积层里的多输入多输出通道【动手学深度学习v2】",
+          "duration": 2726,
+          "durationText": "45:26",
+          "aid": 588058788
+        },
+        {
+          "bvid": "BV1Th411U7UN",
+          "title": "20 卷积层里的填充和步幅【动手学深度学习v2】",
+          "duration": 2590,
+          "durationText": "43:10",
+          "aid": 205518852
+        },
+        {
+          "bvid": "BV1L64y1m7Nh",
+          "title": "19 卷积层【动手学深度学习v2】",
+          "duration": 2634,
+          "durationText": "43:54",
+          "aid": 758101639
+        },
+        {
+          "bvid": "BV15Q4y1o7vc",
+          "title": "18 预测房价竞赛总结【动手学深度学习v2】",
+          "duration": 2562,
+          "durationText": "42:42",
+          "aid": 715547166
+        },
+        {
+          "bvid": "BV1z5411c7C1",
+          "title": "17 使用和购买 GPU【动手学深度学习v2】",
+          "duration": 1831,
+          "durationText": "30:31",
+          "aid": 460180427
+        },
+        {
+          "bvid": "BV1AK4y1P7vs",
+          "title": "16 PyTorch 神经网络基础【动手学深度学习v2】",
+          "duration": 3189,
+          "durationText": "53:09",
+          "aid": 887637315
+        },
+        {
+          "bvid": "BV1NK4y1P7Tu",
+          "title": "15 实战：Kaggle房价预测 + 课程竞赛：加州2020年房价预测【动手学深度学习v2】",
+          "duration": 1590,
+          "durationText": "26:30",
+          "aid": 887640424
+        },
+        {
+          "bvid": "BV1u64y1i75a",
+          "title": "14 数值稳定性 + 模型初始化和激活函数【动手学深度学习v2】",
+          "duration": 3713,
+          "durationText": "1:01:53",
+          "aid": 760127756
+        },
+        {
+          "bvid": "BV1Y5411c7aY",
+          "title": "13 丢弃法【动手学深度学习v2】",
+          "duration": 2947,
+          "durationText": "49:07",
+          "aid": 460159349
+        },
+        {
+          "bvid": "BV1UK4y1o7dy",
+          "title": "12 权重衰退【动手学深度学习v2】",
+          "duration": 2231,
+          "durationText": "37:11",
+          "aid": 930245248
+        },
+        {
+          "bvid": "BV1kX4y1g7jp",
+          "title": "11 模型选择 + 过拟合和欠拟合【动手学深度学习v2】",
+          "duration": 5230,
+          "durationText": "1:27:10",
+          "aid": 715001153
+        },
+        {
+          "bvid": "BV1hh411U7gn",
+          "title": "10 多层感知机 + 代码实现 - 动手学深度学习v2",
+          "duration": 4305,
+          "durationText": "1:11:45",
+          "aid": 205035027
+        },
+        {
+          "bvid": "BV1K64y1Q7wu",
+          "title": "09 Softmax 回归 + 损失函数 + 图片分类数据集【动手学深度学习v2】",
+          "duration": 4806,
+          "durationText": "1:20:06",
+          "aid": 757278510
+        },
+        {
+          "bvid": "BV1PX4y1g7KC",
+          "title": "08 线性回归 + 基础优化算法【动手学深度学习v2】",
+          "duration": 4184,
+          "durationText": "1:09:44",
+          "aid": 714872301
+        },
+        {
+          "bvid": "BV1KA411N7Px",
+          "title": "07 自动求导【动手学深度学习v2】",
+          "duration": 1467,
+          "durationText": "24:27",
+          "aid": 332144138
+        },
+        {
+          "bvid": "BV1eZ4y1w7PY",
+          "title": "06 矩阵计算【动手学深度学习v2】",
+          "duration": 875,
+          "durationText": "14:35",
+          "aid": 374679815
+        },
+        {
+          "bvid": "BV1eK4y1U7Qy",
+          "title": "05 线性代数【动手学深度学习v2】",
+          "duration": 2494,
+          "durationText": "41:34",
+          "aid": 929681632
+        },
+        {
+          "bvid": "BV1CV411Y7i4",
+          "title": "04 数据操作 + 数据预处理【动手学深度学习v2】",
+          "duration": 2058,
+          "durationText": "34:18",
+          "aid": 417143579
+        },
+        {
+          "bvid": "BV18p4y1h7Dr",
+          "title": "03 安装【动手学深度学习v2】",
+          "duration": 1197,
+          "durationText": "19:57",
+          "aid": 972150557
+        },
+        {
+          "bvid": "BV1J54y187f9",
+          "title": "02 深度学习介绍【动手学深度学习v2】",
+          "duration": 1377,
+          "durationText": "22:57",
+          "aid": 844692297
+        },
+        {
+          "bvid": "BV1oX4y137bC",
+          "title": "01 课程安排【动手学深度学习v2】",
+          "duration": 488,
+          "durationText": "8:08",
+          "aid": 714717789
+        },
+        {
+          "bvid": "BV1if4y147hS",
+          "title": "00 预告【动手学深度学习v2】",
+          "duration": 193,
+          "durationText": "3:13",
+          "aid": 289532467
+        }
+      ],
+      "createdAt": "2026-07-12T06:43:31.423Z"
+    }
+  ]
 }

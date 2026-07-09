@@ -49,6 +49,19 @@
           </button>
         </div>
       </div>
+      <!-- ====== 时间进度条 ====== -->
+      <div class="bili-time-progress" v-if="totalSeconds > 0">
+        <div class="bili-tp-header">
+          <span class="bili-tp-label">⏱ 学习进度</span>
+          <span class="bili-tp-text">
+            <strong>{{ watchedTimeStr }}</strong> / {{ totalTime }}
+          </span>
+          <span class="bili-tp-pct">{{ timeProgressPct }}%</span>
+        </div>
+        <div class="bili-tp-bar">
+          <div class="bili-tp-fill" :style="{ width: timeProgressPct + '%' }"></div>
+        </div>
+      </div>
       <div class="bili-meta">
         <span class="bili-total-time">📆 总时长 <strong>{{ totalTime }}</strong></span>
         <span class="bili-video-count">{{ videoCount }} 个视频</span>
