@@ -20,13 +20,17 @@ const app = createApp({
 
     const currentWatched = ref([])
 
-    function isWatched(bvid) {
-      return currentWatched.value.indexOf(bvid) !== -1
+    function getVideoId(v) {
+      return v.uid || v.bvid
     }
 
-    function toggleWatched(bvid) {
-      const idx = currentWatched.value.indexOf(bvid)
-      if (idx === -1) currentWatched.value.push(bvid)
+    function isWatched(id) {
+      return currentWatched.value.indexOf(id) !== -1
+    }
+
+    function toggleWatched(id) {
+      const idx = currentWatched.value.indexOf(id)
+      if (idx === -1) currentWatched.value.push(id)
       else currentWatched.value.splice(idx, 1)
       saveWatched(currentCourse.value.id, currentWatched.value)
     }
@@ -58,7 +62,7 @@ const app = createApp({
     const watchedSeconds = computed(() => {
       if (!currentCourse.value) return 0
       return currentCourse.value.videos
-        .filter(v => currentWatched.value.indexOf(v.bvid) !== -1)
+        .filter(v => currentWatched.value.indexOf(v.uid || v.bvid) !== -1)
         .reduce((s, v) => s + (v.duration || 0), 0)
     })
     const watchedTimeStr = computed(() => {
@@ -77,23 +81,36 @@ const app = createApp({
       return currentCourse.value ? currentCourse.value.videos.length : 0
     })
 
-    // ====== 获取合集 ======
+    // ====== 获取合集 / 多P视频 ======
     async function fetchSeries() {
       const u = url.value.trim()
       if (!u) return
       error.value = ''
       loading.value = true
       currentCourse.value = null
+
+      // 判断链接类型
+      let apiPath
+      if (u.includes('space.bilibili.com') && u.includes('/lists/')) {
+        apiPath = '/api/bilibili/series'
+      } else if (u.match(/bilibili\.com\/video\/(BV\w+)/i)) {
+        apiPath = '/api/bilibili/video'
+      } else {
+        error.value = '无法识别的链接，请使用 Bilibili 合集链接或视频链接'
+        loading.value = false
+        return
+      }
+
       try {
-        const res = await fetch('/api/bilibili/series?url=' + encodeURIComponent(u))
+        const res = await fetch(apiPath + '?url=' + encodeURIComponent(u))
         const data = await res.json()
         if (!data.ok) {
           error.value = data.error
           return
         }
 
-        // 检查是否已导入
-        const existing = courses.value.find(c => c.url === u || c.seriesId === data.seriesId)
+        // 检查是否已导入（匹配 url / seriesId / videoId）
+        const existing = courses.value.find(c => c.url === u || c.seriesId === data.seriesId || c.videoId === data.videoId)
         if (existing) {
           currentCourse.value = existing
           currentWatched.value = getWatched(existing.id)
@@ -101,9 +118,11 @@ const app = createApp({
         }
 
         // 创建新课程
+        const courseId = 'bili_' + (data.seriesId || data.videoId) + '_' + Date.now()
         const course = {
-          id: 'bili_' + data.seriesId + '_' + Date.now(),
-          seriesId: data.seriesId,
+          id: courseId,
+          seriesId: data.seriesId || '',
+          videoId: data.videoId || '',
           seriesName: data.seriesName,
           url: u,
           videos: data.videos,
@@ -134,6 +153,10 @@ const app = createApp({
 
     // ====== 选择历史课程 ======
     function selectCourse(course) {
+      // 确保所有视频有 uid（兼容旧数据）
+      if (course.videos) {
+        course.videos = course.videos.map(v => ({ ...v, uid: v.uid || v.bvid }))
+      }
       currentCourse.value = course
       currentWatched.value = getWatched(course.id)
       url.value = course.url
@@ -173,6 +196,10 @@ const app = createApp({
         const res = await fetch('/api/bilibili/courses')
         const data = await res.json()
         courses.value = data.courses || []
+        // 确保所有历史课程视频都有 uid（兼容旧数据）
+        courses.value.forEach(c => {
+          if (c.videos) c.videos = c.videos.map(v => ({ ...v, uid: v.uid || v.bvid }))
+        })
         // 自动选中第一个课程
         if (courses.value.length > 0) {
           currentCourse.value = courses.value[0]
@@ -187,7 +214,7 @@ const app = createApp({
       url, loading, error, courses, currentCourse,
       sortAsc, sortedVideos, watchedCount, totalTime, videoCount,
       totalSeconds, watchedSeconds, watchedTimeStr, timeProgressPct,
-      isWatched, toggleWatched,
+      isWatched, toggleWatched, getVideoId,
       fetchSeries, toggleSort, selectCourse, deleteCourse,
       formatDate
     }

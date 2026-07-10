@@ -122,15 +122,18 @@ data/
 - [x] **时间显示加强**：独立页面大号加粗时间标签，更醒目
 - [x] **导入历史持久化**：课程保存到服务端（data/bilibili-courses.json），侧边历史记录可随时切换回看
 - [x] **时间进度条**：课程顶部展示渐变动画进度条，已看时长/总时长 + 百分比，更直观
+- [x] **多P视频支持**：支持导入 Bilibili 多P视频链接（`bilibili.com/video/BVxxx`），自动拉取全部分P列表并跟踪每个分P的观看进度
+- [x] Bilibili 课程导入，做一个比较显眼的进度条，总时间进度
 
 ### 🚧 待开发
 
 #### 我的后续想法/改进（本小节只有人工可以进行可以编辑主体内容，AI只能丰富，完成之后打勾并更新至"已实现"下的对应的板块）
 
-- [x] Bilibili 课程导入，做一个比较显眼的进度条，总时间进度
+- [x] 课程导入功能模块，对这种多p的课程也要支持（https://www.bilibili.com/video/BV1JA411c7VT/?spm_id_from=333.337.search-card.all.click&vd_source=5366be93f43e6a40161aecaec29f4a2a）
 
-> 【重要】做完之后先不push！commmit信息格式参考：
->
+> 【重要提示】做完之后先不push！
+
+> commmit信息格式参考（要有下面的详细内容）：
 > feat：Bilibili 课程导入：首页粘贴合集链接，自动拉取视频列表展示为可勾选待办
 >
 > 1. 新增 /api/bilibili/series 后端代理，自动多页拉取合集全部视频（标题+时长）

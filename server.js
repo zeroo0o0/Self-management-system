@@ -475,6 +475,7 @@ app.get('/api/bilibili/series', async (req, res) => {
     } catch (e) { /* 忽略 */ }
 
     const videos = allArchives.map(a => ({
+      uid: a.bvid,
       bvid: a.bvid,
       title: a.title,
       duration: a.duration,
@@ -483,6 +484,45 @@ app.get('/api/bilibili/series', async (req, res) => {
     }))
 
     res.json({ ok: true, videos, seriesName, seriesId, mid, count: videos.length })
+  } catch (e) {
+    res.json({ ok: false, error: '请求 Bilibili 失败: ' + e.message })
+  }
+})
+
+// 获取多P视频的分P列表
+app.get('/api/bilibili/video', async (req, res) => {
+  const { url } = req.query
+  if (!url) return res.json({ ok: false, error: '请提供 Bilibili 视频链接' })
+
+  const match = url.match(/bilibili\.com\/video\/(BV\w+)/i)
+  if (!match) return res.json({ ok: false, error: '无法解析视频链接，请检查格式' })
+
+  const bvid = match[1]
+
+  try {
+    const data = await biliFetch(`https://api.bilibili.com/x/web-interface/view?bvid=${bvid}`)
+    if (data.code !== 0) {
+      return res.json({ ok: false, error: 'Bilibili API: ' + (data.message || '请求失败') })
+    }
+
+    const viewData = data.data
+    const pages = viewData.pages || []
+
+    if (pages.length === 0) {
+      return res.json({ ok: false, error: '该视频没有分P内容' })
+    }
+
+    const videos = pages.map(p => ({
+      uid: bvid + '_p' + p.page,
+      bvid: bvid,
+      cid: p.cid,
+      page: p.page,
+      title: p.part || 'P' + p.page,
+      duration: p.duration,
+      durationText: formatDuration(p.duration),
+    }))
+
+    res.json({ ok: true, videos, seriesName: viewData.title, videoId: bvid, count: videos.length })
   } catch (e) {
     res.json({ ok: false, error: '请求 Bilibili 失败: ' + e.message })
   }

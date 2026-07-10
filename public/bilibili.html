@@ -67,9 +67,9 @@
         <span class="bili-video-count">{{ videoCount }} 个视频</span>
       </div>
       <div class="bili-video-list">
-        <div class="bili-video-item" v-for="v in sortedVideos" :key="v.bvid"
-             :class="{ 'bili-done': isWatched(v.bvid) }">
-          <span class="bili-cb" @click="toggleWatched(v.bvid)">{{ isWatched(v.bvid) ? '✅' : '⬜' }}</span>
+        <div class="bili-video-item" v-for="v in sortedVideos" :key="getVideoId(v)"
+             :class="{ 'bili-done': isWatched(getVideoId(v)) }">
+          <span class="bili-cb" @click="toggleWatched(getVideoId(v))">{{ isWatched(getVideoId(v)) ? '✅' : '⬜' }}</span>
           <span class="bili-video-title" :title="v.title">{{ v.title }}</span>
           <span class="bili-video-duration bili-duration-lg">{{ v.durationText }}</span>
         </div>
