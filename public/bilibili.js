@@ -7,7 +7,15 @@ const app = createApp({
     const error = ref('')
     const courses = ref([])
     const currentCourse = ref(null)
-    const sortAsc = ref(true)
+    // ====== 排序状态持久化 ======
+    const SORT_KEY = '_bili_sort_asc'
+    function loadSort() {
+      try { return localStorage.getItem(SORT_KEY) !== 'false' } catch { return true }
+    }
+    function saveSort(v) {
+      localStorage.setItem(SORT_KEY, v ? 'true' : 'false')
+    }
+    const sortAsc = ref(loadSort())
 
     // ====== 已看状态（localStorage） ======
     function getWatchedKey(id) { return '_bili_w_' + id }
@@ -149,6 +157,7 @@ const app = createApp({
 
     function toggleSort() {
       sortAsc.value = !sortAsc.value
+      saveSort(sortAsc.value)
     }
 
     // ====== 选择历史课程 ======

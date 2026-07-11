@@ -540,6 +540,385 @@
         }
       ],
       "createdAt": "2026-07-12T06:43:31.423Z"
+    },
+    {
+      "id": "bili_BV1JA411c7VT_1783844093819",
+      "seriesId": "",
+      "videoId": "BV1JA411c7VT",
+      "seriesName": "李宏毅《机器学习/深度学习》2021课程（国语版本，已授权）",
+      "url": "https://www.bilibili.com/video/BV1JA411c7VT/?spm_id_from=333.337.search-card.all.click&vd_source=5366be93f43e6a40161aecaec29f4a2a",
+      "videos": [
+        {
+          "uid": "BV1JA411c7VT_p1",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395092298,
+          "page": 1,
+          "title": "机器学习相关规定",
+          "duration": 1966,
+          "durationText": "32:46"
+        },
+        {
+          "uid": "BV1JA411c7VT_p2",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395092394,
+          "page": 2,
+          "title": "预测本频道观看人数（上） - 机器学习基本概念简介",
+          "duration": 3000,
+          "durationText": "50:00"
+        },
+        {
+          "uid": "BV1JA411c7VT_p3",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395092527,
+          "page": 3,
+          "title": "预测本频道观看人数（下） - 机器学习基本概念简介",
+          "duration": 3515,
+          "durationText": "58:35"
+        },
+        {
+          "uid": "BV1JA411c7VT_p4",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395092623,
+          "page": 4,
+          "title": "机器学习任务攻略",
+          "duration": 3084,
+          "durationText": "51:24"
+        },
+        {
+          "uid": "BV1JA411c7VT_p5",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395092722,
+          "page": 5,
+          "title": "神经网络训练不起来怎么办（1）：局部最小值（：Loacl Minima）与鞍点（Saddle Point）",
+          "duration": 2025,
+          "durationText": "33:45"
+        },
+        {
+          "uid": "BV1JA411c7VT_p6",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395092789,
+          "page": 6,
+          "title": "神经网络训练不起来怎么办（2）：批次（batch）与动量（Momentum）",
+          "duration": 1859,
+          "durationText": "30:59"
+        },
+        {
+          "uid": "BV1JA411c7VT_p7",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395092858,
+          "page": 7,
+          "title": "神经网络训练不起来怎么办（3）：自动调整学习速率（Learning Rate）",
+          "duration": 2263,
+          "durationText": "37:43"
+        },
+        {
+          "uid": "BV1JA411c7VT_p8",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395092926,
+          "page": 8,
+          "title": "神经网络训练不起来怎么办（4）：损失函数（Loss）也可能有影响",
+          "duration": 1168,
+          "durationText": "19:28"
+        },
+        {
+          "uid": "BV1JA411c7VT_p9",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395092965,
+          "page": 9,
+          "title": "神经网络训练不起来怎么办（5）：批次标准化（Batch Normalization）简介",
+          "duration": 1856,
+          "durationText": "30:56"
+        },
+        {
+          "uid": "BV1JA411c7VT_p10",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395093027,
+          "page": 10,
+          "title": "卷积神经网络 (Convolutional Neural Networks, CNN)",
+          "duration": 3340,
+          "durationText": "55:40"
+        },
+        {
+          "uid": "BV1JA411c7VT_p11",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395093136,
+          "page": 11,
+          "title": "自注意力机制 (Self-attention) (上)",
+          "duration": 1698,
+          "durationText": "28:18"
+        },
+        {
+          "uid": "BV1JA411c7VT_p12",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395093184,
+          "page": 12,
+          "title": "自注意力机制 (Self-attention) (下)",
+          "duration": 2758,
+          "durationText": "45:58"
+        },
+        {
+          "uid": "BV1JA411c7VT_p13",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395093284,
+          "page": 13,
+          "title": "Transformer (上)",
+          "duration": 1968,
+          "durationText": "32:48"
+        },
+        {
+          "uid": "BV1JA411c7VT_p14",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395093348,
+          "page": 14,
+          "title": "Transformer (下)",
+          "duration": 3634,
+          "durationText": "1:00:34"
+        },
+        {
+          "uid": "BV1JA411c7VT_p15",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395093486,
+          "page": 15,
+          "title": "生成对抗网络(Generative Adversarial Network, GAN)（一）",
+          "duration": 2349,
+          "durationText": "39:09"
+        },
+        {
+          "uid": "BV1JA411c7VT_p16",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395093668,
+          "page": 16,
+          "title": "生成对抗网络(Generative Adversarial Network, GAN)（二）",
+          "duration": 2801,
+          "durationText": "46:41"
+        },
+        {
+          "uid": "BV1JA411c7VT_p17",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395093560,
+          "page": 17,
+          "title": "生成对抗网络(Generative Adversarial Network, GAN)（三）",
+          "duration": 2987,
+          "durationText": "49:47"
+        },
+        {
+          "uid": "BV1JA411c7VT_p18",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395093775,
+          "page": 18,
+          "title": "生成对抗网络(Generative Adversarial Network, GAN)（四）",
+          "duration": 1421,
+          "durationText": "23:41"
+        },
+        {
+          "uid": "BV1JA411c7VT_p19",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395093846,
+          "page": 19,
+          "title": "自监督学习 (Self-supervised Learning) (一) – 芝麻街与进击的巨人",
+          "duration": 430,
+          "durationText": "7:10"
+        },
+        {
+          "uid": "BV1JA411c7VT_p20",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395093883,
+          "page": 20,
+          "title": "自监督学习 (Self-supervised Learning) (二) – BERT简介",
+          "duration": 3041,
+          "durationText": "50:41"
+        },
+        {
+          "uid": "BV1JA411c7VT_p21",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395093970,
+          "page": 21,
+          "title": "自监督学习 (Self-supervised Learning) (三) – BERT的奇闻轶事",
+          "duration": 1454,
+          "durationText": "24:14"
+        },
+        {
+          "uid": "BV1JA411c7VT_p22",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395094020,
+          "page": 22,
+          "title": "自监督学习 (Self-supervised Learning) (四) – GPT的野望",
+          "duration": 1024,
+          "durationText": "17:04"
+        },
+        {
+          "uid": "BV1JA411c7VT_p23",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395094088,
+          "page": 23,
+          "title": "自编码器 (Auto-encoder) (上) – 基本概念",
+          "duration": 1141,
+          "durationText": "19:01"
+        },
+        {
+          "uid": "BV1JA411c7VT_p24",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395094157,
+          "page": 24,
+          "title": "自编码器 (Auto-encoder) (下) – 领结变声器与更多应用",
+          "duration": 1835,
+          "durationText": "30:35"
+        },
+        {
+          "uid": "BV1JA411c7VT_p25",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395094334,
+          "page": 25,
+          "title": "来自人类的恶意攻击 (Adversarial Attack) (一) – 基本概念",
+          "duration": 1790,
+          "durationText": "29:50"
+        },
+        {
+          "uid": "BV1JA411c7VT_p26",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395094227,
+          "page": 26,
+          "title": "来自人类的恶意攻击 (Adversarial Attack) (二) – 神经网络能否躲过人类深不见底的恶意？",
+          "duration": 2794,
+          "durationText": "46:34"
+        },
+        {
+          "uid": "BV1JA411c7VT_p27",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395094450,
+          "page": 27,
+          "title": "机器学习模型的可解释性 (Explainable ML) (上) – 为什么神经网络可以正确分辨",
+          "duration": 2949,
+          "durationText": "49:09"
+        },
+        {
+          "uid": "BV1JA411c7VT_p28",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395094382,
+          "page": 28,
+          "title": "机器学习模型的可解释性 (Explainable ML) (下) –机器心中的猫长什么样子？",
+          "duration": 1366,
+          "durationText": "22:46"
+        },
+        {
+          "uid": "BV1JA411c7VT_p29",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395094552,
+          "page": 29,
+          "title": "概述领域自适应 (Domain Adaptation)",
+          "duration": 2073,
+          "durationText": "34:33"
+        },
+        {
+          "uid": "BV1JA411c7VT_p30",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395094612,
+          "page": 30,
+          "title": "强化学习 (Reinforcement Learning, RL) (一) – 强化学习跟机器学习一样都是三个步骤",
+          "duration": 2702,
+          "durationText": "45:02"
+        },
+        {
+          "uid": "BV1JA411c7VT_p31",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395094703,
+          "page": 31,
+          "title": "强化学习 (Reinforcement Learning, RL) (二) – Policy Gradient与修课心情",
+          "duration": 2475,
+          "durationText": "41:15"
+        },
+        {
+          "uid": "BV1JA411c7VT_p32",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395094844,
+          "page": 32,
+          "title": "强化学习 (Reinforcement Learning, RL) (三) - Actor-Critic",
+          "duration": 2081,
+          "durationText": "34:41"
+        },
+        {
+          "uid": "BV1JA411c7VT_p33",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395095075,
+          "page": 33,
+          "title": "强化学习 (Reinforcement Learning, RL) (四) - 回馈非常罕见的时候怎么办？机器的望梅止渴",
+          "duration": 1055,
+          "durationText": "17:35"
+        },
+        {
+          "uid": "BV1JA411c7VT_p34",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395094909,
+          "page": 34,
+          "title": "强化学习 (Reinforcement Learning, RL) (五) - 如何从示范中学习？逆向强化学习（Inverse RL）",
+          "duration": 1628,
+          "durationText": "27:08"
+        },
+        {
+          "uid": "BV1JA411c7VT_p35",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395094986,
+          "page": 35,
+          "title": "终身学习 (Life Long Learning, LL) (一) -灾难性遗忘（catastrophic forgetting）",
+          "duration": 1920,
+          "durationText": "32:00"
+        },
+        {
+          "uid": "BV1JA411c7VT_p36",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395095103,
+          "page": 36,
+          "title": "终身学习 (Life Long Learning, LL) (二) - 灾难性遗忘（catastrophic forgetting）的克服之道",
+          "duration": 2199,
+          "durationText": "36:39"
+        },
+        {
+          "uid": "BV1JA411c7VT_p37",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395095189,
+          "page": 37,
+          "title": "神经网络压缩 (Network Compression) (一) - 神经网络剪枝 (Pruning）与大乐透假说",
+          "duration": 1772,
+          "durationText": "29:32"
+        },
+        {
+          "uid": "BV1JA411c7VT_p38",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395095265,
+          "page": 38,
+          "title": "神经网络压缩(Network Compression) (二) - 从各自不同的面向来压缩神经网络",
+          "duration": 3406,
+          "durationText": "56:46"
+        },
+        {
+          "uid": "BV1JA411c7VT_p39",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395095400,
+          "page": 39,
+          "title": "元学习 Meta Learning (一) - 元学习和机器学习一样也是三個步驟",
+          "duration": 2781,
+          "durationText": "46:21"
+        },
+        {
+          "uid": "BV1JA411c7VT_p40",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395095519,
+          "page": 40,
+          "title": "元学习 Meta Learning (二) - 万物皆可 Meta",
+          "duration": 1897,
+          "durationText": "31:37"
+        },
+        {
+          "uid": "BV1JA411c7VT_p41",
+          "bvid": "BV1JA411c7VT",
+          "cid": 395095605,
+          "page": 41,
+          "title": "课程结语 - 最後的業配並改編《為學一首示子姪》作結",
+          "duration": 1661,
+          "durationText": "27:41"
+        }
+      ],
+      "createdAt": "2026-07-12T08:14:53.819Z"
     }
   ]
 }
