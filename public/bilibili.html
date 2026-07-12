@@ -72,6 +72,7 @@
           <span class="bili-cb" @click="toggleWatched(getVideoId(v))">{{ isWatched(getVideoId(v)) ? '✅' : '⬜' }}</span>
           <span class="bili-video-title" :title="v.title">{{ v.title }}</span>
           <span class="bili-video-duration bili-duration-lg">{{ v.durationText }}</span>
+          <a class="bili-open-btn" :href="'https://www.bilibili.com/video/' + v.bvid + (v.page ? '?p=' + v.page : '')" target="_blank" rel="noopener" title="在B站打开">↗</a>
         </div>
       </div>
     </div>

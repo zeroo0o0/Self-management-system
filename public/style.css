@@ -3279,6 +3279,26 @@ html.dark .btn-clear { border-color: var(--border); }
   font-variant-numeric: tabular-nums;
   font-weight: 500;
 }
+/* 在B站打开按钮 */
+.bili-open-btn {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-size: .85rem;
+  text-decoration: none;
+  color: var(--text3);
+  transition: all .15s;
+  opacity: .4;
+}
+.bili-open-btn:hover {
+  opacity: 1;
+  background: var(--nav-bg);
+  color: var(--accent);
+}
 .bili-total-time {
   margin-top: 8px;
   font-size: .78rem;
