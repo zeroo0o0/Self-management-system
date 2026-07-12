@@ -77,6 +77,12 @@
       </div>
     </div>
 
+    <!-- ====== 撒花彩蛋 ====== -->
+    <div class="confetti-container" v-if="showConfetti">
+      <div class="confetti-particle" v-for="i in 20" :key="i"
+           :style="confettiStyle(i)"></div>
+    </div>
+
     <!-- 抽奖记录 -->
     <div class="wheel-history" v-if="rewards.length > 0">
       <h3>📜 抽奖记录</h3>

@@ -6,6 +6,7 @@ createApp({
     const wheelRotation = ref(0)
     const spinning = ref(false)
     const lastResult = ref(null)
+    const showConfetti = ref(false)
 
     // 可配置的奖励槽位（从服务器加载）
     const rewardSlots = ref([])
@@ -40,14 +41,21 @@ createApp({
       return !spinning.value && (data.value.spins ?? 0) > 0 && segments.value.length > 0
     })
 
-    // 为转盘生成 conic-gradient
+    // 为转盘生成 conic-gradient（含扇区分隔白线）
     const wheelBg = computed(() => {
       if (segmentsWithOffset.value.length === 0) return '#e0e0e0'
       let stops = []
+      const DIV = 0.6  // 白线半宽（deg）
       segmentsWithOffset.value.forEach(seg => {
         const from = seg.startAngle
         const to = seg.startAngle + seg.angle
-        stops.push(seg.color + ' ' + from + 'deg ' + to + 'deg')
+        // 每个扇区：左白线 → 主色 → 右白线
+        stops.push('#fff ' + Math.max(0, from - DIV) + 'deg')
+        stops.push('#fff ' + (from + DIV) + 'deg')
+        stops.push(seg.color + ' ' + (from + DIV) + 'deg')
+        stops.push(seg.color + ' ' + (to - DIV) + 'deg')
+        stops.push('#fff ' + (to - DIV) + 'deg')
+        stops.push('#fff ' + (to + DIV) + 'deg')
       })
       return 'conic-gradient(' + stops.join(', ') + ')'
     })
@@ -105,6 +113,13 @@ createApp({
       data.value.rewards = history
 
       lastResult.value = reward
+
+      // 中奖撒花（"再接再厉"不触发）
+      if (reward.label !== '再接再厉') {
+        showConfetti.value = true
+        setTimeout(() => { showConfetti.value = false }, 2500)
+      }
+
       saveData()
     }
 
@@ -204,6 +219,25 @@ createApp({
       }
     }
 
+    // ========== 撒花粒子样式 ==========
+    const CONFETTI_COLORS = ['#ff6b6b','#feca57','#48dbfb','#ff9ff3','#54a0ff','#5f27cd','#01a3a4','#f368e0']
+    function confettiStyle(i) {
+      const color = CONFETTI_COLORS[i % CONFETTI_COLORS.length]
+      const left = 30 + Math.random() * 40  // 30%–70%
+      const delay = Math.random() * 0.5
+      const dur = 1.5 + Math.random() * 1
+      const size = 6 + Math.random() * 8
+      const rot = Math.random() * 360
+      return {
+        '--c': color,
+        '--l': left + '%',
+        '--d': delay + 's',
+        '--dur': dur + 's',
+        '--s': size + 'px',
+        '--r': rot + 'deg',
+      }
+    }
+
     onMounted(() => {
       loadData()
       loadRewardSlots()
@@ -211,11 +245,11 @@ createApp({
 
     return {
       data, segments, segmentsWithOffset, wheelBg, wheelRotation,
-      spinning, lastResult, rewards, canSpin,
+      spinning, lastResult, rewards, canSpin, showConfetti,
       labelStyle,
       spin,
       // settings
-      showSettings, editSlots,
+      showSettings, editSlots, confettiStyle,
       openSettings, closeSettings, addSlot, removeSlot, saveRewardSlots
     }
   }

@@ -786,15 +786,34 @@ footer { text-align: center; padding: 32px 0 24px; }
   height: 280px;
   margin: 0 auto 20px;
 }
+/* 外圈金环 */
+.wheel-container::before {
+  content: '';
+  position: absolute;
+  inset: -9px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #ffd700, #ffaa00, #b8860b, #daa520, #ffd700, #ffaa00, #ffd700);
+  z-index: -1;
+  box-shadow: 0 0 24px rgba(255,170,0,.2), 0 4px 20px rgba(0,0,0,.15);
+}
+html.dark .wheel-container::before {
+  box-shadow: 0 0 30px rgba(255,170,0,.15), 0 4px 20px rgba(0,0,0,.3);
+}
 .wheel-pointer {
   position: absolute;
   top: -14px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 1.8rem;
-  color: #e53e3e;
   z-index: 10;
-  filter: drop-shadow(0 1px 3px rgba(0,0,0,.3));
+  width: 0;
+  height: 0;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-top: 28px solid #ffd700;
+  filter: drop-shadow(0 2px 6px rgba(255,170,0,.6)) drop-shadow(0 0 2px rgba(0,0,0,.3));
+}
+html.dark .wheel-pointer {
+  filter: drop-shadow(0 2px 8px rgba(255,200,0,.8)) drop-shadow(0 0 2px rgba(0,0,0,.3));
 }
 .wheel-rotating {
   position: absolute;
@@ -837,13 +856,23 @@ footer { text-align: center; padding: 32px 0 24px; }
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: var(--card);
+  background: radial-gradient(circle at 40% 35%, #fff, #e8e0f0);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  font-size: 1.5rem;
+  box-shadow:
+    0 0 0 3px rgba(255,215,0,.5),
+    0 0 0 6px rgba(255,215,0,.2),
+    0 2px 12px rgba(0,0,0,.15);
   z-index: 2;
+}
+html.dark .wheel-center {
+  background: radial-gradient(circle at 40% 35%, #3a3a4a, #282830);
+  box-shadow:
+    0 0 0 3px rgba(255,215,0,.4),
+    0 0 0 6px rgba(255,215,0,.15),
+    0 2px 12px rgba(0,0,0,.3);
 }
 
 /* 图例 */
@@ -883,6 +912,13 @@ footer { text-align: center; padding: 32px 0 24px; }
   cursor: pointer;
   transition: opacity .15s, transform .15s;
 }
+.wheel-btn:not(:disabled) {
+  animation: wheel-glow 2s ease-in-out infinite;
+}
+@keyframes wheel-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(102,126,234,.3); }
+  50% { box-shadow: 0 0 24px rgba(102,126,234,.6), 0 0 48px rgba(118,75,162,.25); }
+}
 .wheel-btn:hover:not(:disabled) {
   opacity: .9;
   transform: scale(1.03);
@@ -890,6 +926,7 @@ footer { text-align: center; padding: 32px 0 24px; }
 .wheel-btn:disabled {
   opacity: .4;
   cursor: not-allowed;
+  animation: none;
 }
 
 /* 结果弹窗 */
@@ -916,14 +953,33 @@ footer { text-align: center; padding: 32px 0 24px; }
   box-shadow: 0 20px 60px rgba(0,0,0,.2);
   animation: pop-in .3s ease;
   min-width: 220px;
+  overflow: hidden;
+}
+/* 结果卡片顶部渐变 accent 条 */
+.result-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+}
+/* 结果图标放大效果 */
+.result-icon {
+  font-size: 3.5rem;
+  margin-bottom: 12px;
+  display: inline-block;
+  animation: result-icon-bounce .5s ease;
+}
+@keyframes result-icon-bounce {
+  0% { transform: scale(0) rotate(-20deg); }
+  60% { transform: scale(1.2) rotate(5deg); }
+  100% { transform: scale(1) rotate(0deg); }
 }
 @keyframes pop-in {
   0% { transform: scale(.7); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
-}
-.result-icon {
-  font-size: 3.5rem;
-  margin-bottom: 12px;
 }
 .result-title {
   font-size: 1.3rem;
@@ -947,6 +1003,36 @@ footer { text-align: center; padding: 32px 0 24px; }
   cursor: pointer;
 }
 .result-btn:hover { opacity: .85; }
+
+/* ========== 撒花彩蛋 ========== */
+.confetti-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 200;
+  overflow: hidden;
+}
+.confetti-particle {
+  position: absolute;
+  top: 45%;
+  left: var(--l, 50%);
+  width: var(--s, 8px);
+  height: var(--s, 8px);
+  background: var(--c, #ff6b6b);
+  border-radius: 2px;
+  animation: confetti-fall var(--dur, 2s) var(--d, 0s) ease-out forwards;
+  transform: rotate(var(--r, 0deg));
+}
+@keyframes confetti-fall {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(300px) rotate(720deg) scale(.3);
+  }
+}
 
 /* 抽奖记录 */
 .wheel-history {

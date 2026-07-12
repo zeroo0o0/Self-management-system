@@ -8,7 +8,7 @@
     "deepwork": 0,
     "taskCompletion": 3
   },
-  "spins": 40,
+  "spins": 39,
   "rewards": [
     {
       "icon": "🎯",
@@ -54,6 +54,11 @@
       "icon": "🍟",
       "label": "黄金薯条",
       "time": "07/03 15:48"
+    },
+    {
+      "icon": "🧀",
+      "label": "芝士薯条",
+      "time": "07/12 17:55"
     }
   ],
   "history": [],
