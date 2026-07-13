@@ -189,6 +189,32 @@ node server.js
 # http://localhost:3000
 ```
 
+## 🔒 个人云端部署（Tailscale）
+
+本项目不适合直接暴露到公网（无鉴权），推荐通过 **Tailscale** 建立加密虚拟局域网，只允许自己的设备访问。
+
+### 步骤
+
+1. **服务器**（Linux/云服务器）：
+
+   ```bash
+   curl -fsSL https://tailscale.com/install.sh | sh
+   sudo tailscale up      # 登录你的 GitHub/Google 账号
+   tailscale ip           # 记下 100.x.x.x 地址
+   ```
+
+2. **Server.js** 改为监听所有网卡：
+
+   ```js
+   app.listen(PORT, '0.0.0.0', ...)
+   ```
+
+3. **本地电脑/手机**：安装 Tailscale 客户端（Windows/macOS/Android/iOS 均支持），登录**同一个账号**
+
+4. **访问**：`http://服务器tailscale-ip:3000`
+
+> 所有流量走 WireGuard 加密，公网不可见，无需开放任何端口。
+
 ## 📄 开源许可
 
 本项目基于 **MIT 许可证** — 详见 [LICENSE](LICENSE)。
