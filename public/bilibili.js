@@ -5,6 +5,7 @@ const app = createApp({
     const url = ref('')
     const loading = ref(false)
     const error = ref('')
+    const todoMsg = ref('')
     const courses = ref([])
     const currentCourse = ref(null)
     // ====== 排序状态持久化 ======
@@ -160,6 +161,45 @@ const app = createApp({
       saveSort(sortAsc.value)
     }
 
+    // ====== 添加到待办 ======
+    async function addToTodo(video) {
+      todoMsg.value = ''
+      try {
+        // 获取今天日期
+        const todayRes = await fetch('/api/today')
+        const { date } = await todayRes.json()
+        if (!date) throw new Error('获取日期失败')
+
+        // 获取现有待办
+        const todosRes = await fetch('/api/todos/' + date)
+        const { todos } = await todosRes.json()
+
+        // 构造新待办
+        const newTodo = {
+          _key: Date.now() + '_' + Math.random(),
+          text: video.title,
+          done: false,
+          category: 'important',
+          priority: 5,
+          dueDate: ''
+        }
+        todos.push(newTodo)
+
+        // 写回
+        await fetch('/api/todos/' + date, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ todos, deepWork: [] })
+        })
+
+        todoMsg.value = '✅ 已添加到待办'
+        setTimeout(() => { todoMsg.value = '' }, 2500)
+      } catch (e) {
+        todoMsg.value = '❌ 添加失败: ' + e.message
+        setTimeout(() => { todoMsg.value = '' }, 3000)
+      }
+    }
+
     // ====== 选择历史课程 ======
     function selectCourse(course) {
       // 确保所有视频有 uid（兼容旧数据）
@@ -224,7 +264,7 @@ const app = createApp({
       sortAsc, sortedVideos, watchedCount, totalTime, videoCount,
       totalSeconds, watchedSeconds, watchedTimeStr, timeProgressPct,
       isWatched, toggleWatched, getVideoId,
-      fetchSeries, toggleSort, selectCourse, deleteCourse,
+      fetchSeries, toggleSort, addToTodo, todoMsg, selectCourse, deleteCourse,
       formatDate
     }
   }

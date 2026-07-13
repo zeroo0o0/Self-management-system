@@ -72,9 +72,12 @@
           <span class="bili-cb" @click="toggleWatched(getVideoId(v))">{{ isWatched(getVideoId(v)) ? '✅' : '⬜' }}</span>
           <span class="bili-video-title" :title="v.title">{{ v.title }}</span>
           <span class="bili-video-duration bili-duration-lg">{{ v.durationText }}</span>
+          <button class="bili-todo-btn" @click="addToTodo(v)" title="添加到待办">📋</button>
           <a class="bili-open-btn" :href="'https://www.bilibili.com/video/' + v.bvid + (v.page ? '?p=' + v.page : '')" target="_blank" rel="noopener" title="在B站打开">↗</a>
         </div>
       </div>
+      <!-- ====== 待办添加反馈 ====== -->
+      <div class="bili-todo-toast" v-if="todoMsg">{{ todoMsg }}</div>
     </div>
 
     <!-- ====== 导入历史 ====== -->

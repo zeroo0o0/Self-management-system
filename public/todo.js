@@ -6,6 +6,7 @@ const CATEGORIES = [
   { id: 'temporary',  label: '紧急不重要/无成长：抽空做', icon: '⚡',  color: '#FF9800', bg: '#FFF3E0', border: '#FFCC80' },
   { id: 'deadline',   label: '近期DDL',                icon: '🔥',  color: '#F44336', bg: '#FFEBEE', border: '#EF9A9A' },
   { id: 'longterm',   label: '长期任务/目标/想发展的点', icon: '🌳',  color: '#2196F3', bg: '#E3F2FD', border: '#90CAF9' },
+  { id: 'important',  label: '重要不紧急',              icon: '📚',  color: '#3F51B5', bg: '#E8EAF6', border: '#9FA8DA' },
 ]
 
 const app = createApp({

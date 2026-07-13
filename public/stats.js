@@ -6,6 +6,7 @@ const CATEGORY_META = {
   temporary: { label: '紧急不重要', icon: '⚡', color: '#FF9800' },
   deadline:  { label: '近期DDL',  icon: '🔥', color: '#F44336' },
   longterm:  { label: '长期任务',  icon: '🌳', color: '#2196F3' },
+  important: { label: '重要不紧急', icon: '📚', color: '#3F51B5' },
 }
 
 createApp({
