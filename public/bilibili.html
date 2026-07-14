@@ -76,9 +76,10 @@
           <a class="bili-open-btn" :href="'https://www.bilibili.com/video/' + v.bvid + (v.page ? '?p=' + v.page : '')" target="_blank" rel="noopener" title="在B站打开">↗</a>
         </div>
       </div>
-      <!-- ====== 待办添加反馈 ====== -->
-      <div class="bili-todo-toast" v-if="todoMsg">{{ todoMsg }}</div>
     </div>
+
+    <!-- ====== 浮动反馈 toast ====== -->
+    <div class="bili-floating-toast" v-if="todoMsg">{{ todoMsg }}</div>
 
     <!-- ====== 导入历史 ====== -->
     <div class="bili-history" v-if="courses.length > 0" style="margin-top: 24px;">

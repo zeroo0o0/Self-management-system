@@ -564,6 +564,17 @@ app.delete('/api/bilibili/courses/:id', (req, res) => {
   res.json({ ok: true })
 })
 
+// 更新课程 watched 状态（轻量）
+app.patch('/api/bilibili/courses/:id/watched', (req, res) => {
+  ensureDirs()
+  const data = readJSON(BILI_COURSES_FILE, { courses: [] })
+  const course = data.courses.find(c => c.id === req.params.id)
+  if (!course) return res.json({ ok: false, error: '课程不存在' })
+  course.watched = req.body.watched || []
+  writeJSON(BILI_COURSES_FILE, data)
+  res.json({ ok: true })
+})
+
 app.listen(PORT, () => {
   console.log(`🚀 打开 http://localhost:${PORT}`)
 })

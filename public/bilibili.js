@@ -18,13 +18,24 @@ const app = createApp({
     }
     const sortAsc = ref(loadSort())
 
-    // ====== 已看状态（localStorage） ======
+    // ====== 已看状态（localStorage + 服务端持久化） ======
     function getWatchedKey(id) { return '_bili_w_' + id }
-    function getWatched(id) {
+    function getWatched(id, serverWatched) {
+      // 优先用服务端数据（跨浏览器同步）
+      if (serverWatched && Array.isArray(serverWatched) && serverWatched.length > 0) {
+        return serverWatched
+      }
+      // 降级到 localStorage
       try { return JSON.parse(localStorage.getItem(getWatchedKey(id))) || [] } catch { return [] }
     }
     function saveWatched(id, arr) {
       localStorage.setItem(getWatchedKey(id), JSON.stringify(arr))
+      // 同步到服务端（fire-and-forget）
+      fetch('/api/bilibili/courses/' + encodeURIComponent(id) + '/watched', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ watched: arr })
+      }).catch(() => {})
     }
 
     const currentWatched = ref([])
@@ -122,7 +133,7 @@ const app = createApp({
         const existing = courses.value.find(c => c.url === u || c.seriesId === data.seriesId || c.videoId === data.videoId)
         if (existing) {
           currentCourse.value = existing
-          currentWatched.value = getWatched(existing.id)
+          currentWatched.value = getWatched(existing.id, existing.watched)
           return
         }
 
@@ -170,9 +181,9 @@ const app = createApp({
         const { date } = await todayRes.json()
         if (!date) throw new Error('获取日期失败')
 
-        // 获取现有待办
+        // 获取现有待办（含深度工作记录）
         const todosRes = await fetch('/api/todos/' + date)
-        const { todos } = await todosRes.json()
+        const { todos, deepWork } = await todosRes.json()
 
         // 构造新待办
         const newTodo = {
@@ -189,7 +200,7 @@ const app = createApp({
         await fetch('/api/todos/' + date, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ todos, deepWork: [] })
+          body: JSON.stringify({ todos, deepWork: deepWork || [] })
         })
 
         todoMsg.value = '✅ 已添加到待办'
@@ -207,7 +218,7 @@ const app = createApp({
         course.videos = course.videos.map(v => ({ ...v, uid: v.uid || v.bvid }))
       }
       currentCourse.value = course
-      currentWatched.value = getWatched(course.id)
+      currentWatched.value = getWatched(course.id, course.watched)
       url.value = course.url
     }
 
@@ -252,7 +263,7 @@ const app = createApp({
         // 自动选中第一个课程
         if (courses.value.length > 0) {
           currentCourse.value = courses.value[0]
-          currentWatched.value = getWatched(courses.value[0].id)
+          currentWatched.value = getWatched(courses.value[0].id, courses.value[0].watched)
         }
       } catch (e) {
         console.error('加载课程历史失败:', e)
