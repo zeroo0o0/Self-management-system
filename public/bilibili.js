@@ -39,6 +39,18 @@ const app = createApp({
     }
 
     const currentWatched = ref([])
+    // ====== 今日完成统计 ======
+    const todayCompleted = ref({ videos: [], totalDuration: 0 })
+
+    async function fetchTodayCompleted() {
+      try {
+        const res = await fetch('/api/bilibili/daily')
+        const data = await res.json()
+        todayCompleted.value = data
+      } catch (e) {
+        console.error('获取今日完成统计失败:', e)
+      }
+    }
 
     function getVideoId(v) {
       return v.uid || v.bvid
@@ -50,8 +62,37 @@ const app = createApp({
 
     function toggleWatched(id) {
       const idx = currentWatched.value.indexOf(id)
-      if (idx === -1) currentWatched.value.push(id)
-      else currentWatched.value.splice(idx, 1)
+      const video = currentCourse.value?.videos.find(v => getVideoId(v) === id)
+      if (idx === -1) {
+        currentWatched.value.push(id)
+        // 记录今日完成
+        if (video) {
+          fetch('/api/bilibili/daily/complete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              bvid: video.bvid,
+              duration: video.duration || 0,
+              title: video.title,
+              courseName: currentCourse.value.seriesName
+            })
+          }).then(r => r.json()).then(d => {
+            if (d.todayCompleted) todayCompleted.value = d.todayCompleted
+          }).catch(() => {})
+        }
+      } else {
+        currentWatched.value.splice(idx, 1)
+        // 取消今日完成记录
+        if (video) {
+          fetch('/api/bilibili/daily/complete', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ bvid: video.bvid })
+          }).then(r => r.json()).then(d => {
+            if (d.todayCompleted) todayCompleted.value = d.todayCompleted
+          }).catch(() => {})
+        }
+      }
       saveWatched(currentCourse.value.id, currentWatched.value)
     }
 
@@ -99,6 +140,18 @@ const app = createApp({
 
     const videoCount = computed(() => {
       return currentCourse.value ? currentCourse.value.videos.length : 0
+    })
+
+    // ====== 今日完成时长格式化 ======
+    const todayDurationStr = computed(() => {
+      const secs = todayCompleted.value.totalDuration || 0
+      if (!secs) return '0m'
+      const h = Math.floor(secs / 3600)
+      const m = Math.floor((secs % 3600) / 60)
+      return h > 0 ? h + 'h ' + m + 'm' : m + 'm'
+    })
+    const todayVideoCount = computed(() => {
+      return todayCompleted.value.videos?.length || 0
     })
 
     // ====== 获取合集 / 多P视频 ======
@@ -265,6 +318,8 @@ const app = createApp({
           currentCourse.value = courses.value[0]
           currentWatched.value = getWatched(courses.value[0].id, courses.value[0].watched)
         }
+        // 获取今日完成统计
+        await fetchTodayCompleted()
       } catch (e) {
         console.error('加载课程历史失败:', e)
       }
@@ -274,6 +329,7 @@ const app = createApp({
       url, loading, error, courses, currentCourse,
       sortAsc, sortedVideos, watchedCount, totalTime, videoCount,
       totalSeconds, watchedSeconds, watchedTimeStr, timeProgressPct,
+      todayCompleted, todayDurationStr, todayVideoCount,
       isWatched, toggleWatched, getVideoId,
       fetchSeries, toggleSort, addToTodo, todoMsg, selectCourse, deleteCourse,
       formatDate

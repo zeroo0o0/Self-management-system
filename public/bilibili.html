@@ -61,6 +61,14 @@
         <div class="bili-tp-bar">
           <div class="bili-tp-fill" :style="{ width: timeProgressPct + '%' }"></div>
         </div>
+        <!-- ====== 今日完成 ====== -->
+        <div class="bili-tp-today" v-if="todayVideoCount > 0">
+          <span class="bili-tp-today-icon">🔥</span>
+          <span class="bili-tp-today-text">
+            今日完成 <strong>{{ todayDurationStr }}</strong>
+            <span class="bili-tp-today-count">（{{ todayVideoCount }} 个视频）</span>
+          </span>
+        </div>
       </div>
       <div class="bili-meta">
         <span class="bili-total-time">📆 总时长 <strong>{{ totalTime }}</strong></span>

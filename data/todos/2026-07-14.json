@@ -1,0 +1,32 @@
+{
+  "todos": [
+    {
+      "_key": "1783992274569_0.8898877905785809",
+      "text": "李沐老师-论文精读",
+      "done": false,
+      "priority": 5,
+      "category": "daily",
+      "dueDate": "",
+      "subtasks": []
+    },
+    {
+      "_key": "1783992280222_0.4260778916899872",
+      "text": "06 矩阵计算【动手学深度学习v2】",
+      "done": false,
+      "priority": 5,
+      "category": "important",
+      "dueDate": "",
+      "subtasks": []
+    },
+    {
+      "_key": "1783992280222_0.5394301839846141",
+      "text": "05 线性代数【动手学深度学习v2】",
+      "done": false,
+      "priority": 5.1,
+      "category": "important",
+      "dueDate": "",
+      "subtasks": []
+    }
+  ],
+  "deepWork": []
+}

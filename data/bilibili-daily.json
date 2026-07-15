@@ -1,0 +1,21 @@
+{
+  "2026-07-14": {
+    "videos": [
+      {
+        "bvid": "BV1eK4y1U7Qy",
+        "duration": 2494,
+        "title": "05 线性代数【动手学深度学习v2】",
+        "courseName": "Bilibili 合集",
+        "completedAt": "2026-07-14T04:01:22.118Z"
+      },
+      {
+        "bvid": "BV1eZ4y1w7PY",
+        "duration": 875,
+        "title": "06 矩阵计算【动手学深度学习v2】",
+        "courseName": "Bilibili 合集",
+        "completedAt": "2026-07-14T04:01:23.021Z"
+      }
+    ],
+    "totalDuration": 3369
+  }
+}

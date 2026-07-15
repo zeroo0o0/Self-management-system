@@ -3494,6 +3494,38 @@ html.dark .bili-tp-bar {
   animation: bili-progress-shimmer 2.5s ease infinite;
   position: relative;
 }
+/* ====== 今日完成 ====== */
+.bili-tp-today {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(79,70,229,.12);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.bili-tp-today-icon {
+  font-size: .85rem;
+  flex-shrink: 0;
+}
+.bili-tp-today-text {
+  font-size: .8rem;
+  color: var(--text3);
+}
+.bili-tp-today-text strong {
+  color: #f59e0b;
+  font-weight: 700;
+}
+.bili-tp-today-count {
+  font-size: .75rem;
+  color: var(--text4);
+}
+html.dark .bili-tp-today {
+  border-top-color: rgba(129,140,248,.12);
+}
+html.dark .bili-tp-today-text strong {
+  color: #fbbf24;
+}
+
 .bili-tp-fill::after {
   content: '';
   position: absolute;

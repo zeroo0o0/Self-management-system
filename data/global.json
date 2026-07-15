@@ -1,14 +1,14 @@
 {
-  "xp": 100,
-  "level": 2,
-  "totalXPEarned": 2153,
-  "points": 3,
-  "totalPointsEarned": 3,
+  "xp": 300,
+  "level": 4,
+  "totalXPEarned": 2353,
+  "points": 10,
+  "totalPointsEarned": 10,
   "pointsDetail": {
-    "deepwork": 0,
-    "taskCompletion": 3
+    "deepwork": 3,
+    "taskCompletion": 7
   },
-  "spins": 37,
+  "spins": 41,
   "rewards": [
     {
       "icon": "🎯",

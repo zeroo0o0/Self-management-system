@@ -12,6 +12,7 @@ const DAILIES_FILE = path.join(DATA_DIR, 'dailies.json')
 const QUOTES_FILE = path.join(DATA_DIR, 'quotes.json')
 const REWARD_SLOTS_FILE = path.join(DATA_DIR, 'reward-slots.json')
 const BILI_COURSES_FILE = path.join(DATA_DIR, 'bilibili-courses.json')
+const BILI_DAILY_FILE = path.join(DATA_DIR, 'bilibili-daily.json')
 const LEGACY_FILE = path.join(DATA_DIR, 'db.json')
 
 app.use(express.json())
@@ -573,6 +574,49 @@ app.patch('/api/bilibili/courses/:id/watched', (req, res) => {
   course.watched = req.body.watched || []
   writeJSON(BILI_COURSES_FILE, data)
   res.json({ ok: true })
+})
+
+// ========== Bilibili 每日完成统计 ==========
+
+// 获取今日 Bilibili 完成记录
+app.get('/api/bilibili/daily', (req, res) => {
+  const today = getDateStr()
+  const data = readJSON(BILI_DAILY_FILE, {})
+  const todayData = data[today] || { videos: [], totalDuration: 0 }
+  res.json(todayData)
+})
+
+// 记录一个视频今日完成
+app.post('/api/bilibili/daily/complete', (req, res) => {
+  const today = getDateStr()
+  const { bvid, duration, title, courseName } = req.body
+  if (!bvid) return res.json({ ok: false, error: '缺少 bvid' })
+  const data = readJSON(BILI_DAILY_FILE, {})
+  if (!data[today]) data[today] = { videos: [], totalDuration: 0 }
+  // 避免重复
+  if (!data[today].videos.find(v => v.bvid === bvid)) {
+    data[today].videos.push({ bvid, duration: duration || 0, title: title || '', courseName: courseName || '', completedAt: new Date().toISOString() })
+    data[today].totalDuration += (duration || 0)
+  }
+  writeJSON(BILI_DAILY_FILE, data)
+  res.json({ ok: true, todayCompleted: data[today] })
+})
+
+// 取消一个视频的今日完成记录
+app.delete('/api/bilibili/daily/complete', (req, res) => {
+  const today = getDateStr()
+  const { bvid } = req.body
+  if (!bvid) return res.json({ ok: false, error: '缺少 bvid' })
+  const data = readJSON(BILI_DAILY_FILE, {})
+  if (data[today]) {
+    const idx = data[today].videos.findIndex(v => v.bvid === bvid)
+    if (idx !== -1) {
+      data[today].totalDuration -= data[today].videos[idx].duration || 0
+      data[today].videos.splice(idx, 1)
+    }
+  }
+  writeJSON(BILI_DAILY_FILE, data)
+  res.json({ ok: true, todayCompleted: data[today] || { videos: [], totalDuration: 0 } })
 })
 
 app.listen(PORT, () => {
