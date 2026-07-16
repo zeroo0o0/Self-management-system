@@ -3630,3 +3630,154 @@ html.dark .bili-duration-lg {
   color: #ef4444;
 }
 html.dark .bili-history-item:hover { background: var(--nav-bg); }
+
+/* ====== 学习时长柱状图 ====== */
+.bili-chart-section {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  margin-top: 18px;
+}
+.bili-chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.bili-chart-title {
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.bili-chart-tabs {
+  display: flex;
+  background: var(--nav-bg);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+.bili-chart-tab {
+  padding: 5px 14px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text3);
+  font-size: .78rem;
+  cursor: pointer;
+  transition: all .15s;
+  font-weight: 500;
+}
+.bili-chart-tab.active {
+  background: var(--card);
+  color: var(--text);
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+.bili-chart-tab:hover:not(.active) {
+  color: var(--text2);
+}
+.bili-chart-wrap {
+  display: flex;
+  gap: 8px;
+  height: 180px;
+}
+.bili-chart-yaxis {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+  padding-bottom: 36px;
+  flex-shrink: 0;
+  min-width: 28px;
+}
+.bili-chart-ylabel {
+  font-size: .68rem;
+  color: var(--text4);
+  text-align: right;
+  padding-right: 6px;
+  line-height: 0;
+  position: relative;
+  top: 1px;
+}
+.bili-chart-area {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+.bili-chart-grid {
+  position: absolute;
+  inset: 0 0 36px 0;
+  display: flex;
+  flex-direction: column-reverse;
+}
+.bili-chart-gridline {
+  flex: 1;
+  border-top: 1px solid var(--border-light);
+  position: relative;
+}
+.bili-chart-gridline:first-child {
+  border-top-color: var(--border);
+}
+.bili-chart-bars {
+  position: absolute;
+  inset: 0 0 36px 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+}
+.bili-chart-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  min-width: 0;
+}
+.bili-chart-bar-inner {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  max-height: 100%;
+}
+.bili-chart-bar-fill {
+  width: 60%;
+  max-width: 36px;
+  min-width: 8px;
+  min-height: 2px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, #818cf8, #4f46e5);
+  transition: height .4s ease;
+  cursor: default;
+  position: relative;
+}
+.bili-chart-bar-fill:hover {
+  opacity: .8;
+}
+.bili-chart-bar-label {
+  height: 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  margin-top: 2px;
+}
+.bili-chart-bar-weekday {
+  font-size: .65rem;
+  color: var(--text4);
+}
+.bili-chart-bar-date {
+  font-size: .6rem;
+  color: var(--text5);
+}
+html.dark .bili-chart-section {
+  border-color: var(--border-light);
+}
+html.dark .bili-chart-bar-fill {
+  background: linear-gradient(180deg, #a5b4fc, #818cf8);
+}
+html.dark .bili-chart-tab.active {
+  background: var(--nav-bg);
+}

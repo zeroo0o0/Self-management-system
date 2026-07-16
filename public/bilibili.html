@@ -105,6 +105,41 @@
       </div>
     </div>
 
+    <!-- ====== 学习时长统计柱状图 ====== -->
+    <div class="bili-chart-section" v-if="historyData.length > 0">
+      <div class="bili-chart-header">
+        <span class="bili-chart-title">📊 学习时长</span>
+        <div class="bili-chart-tabs">
+          <button class="bili-chart-tab" :class="{ active: historyRange === 'week' }" @click="switchRange('week')">近一周</button>
+          <button class="bili-chart-tab" :class="{ active: historyRange === 'month' }" @click="switchRange('month')">近一月</button>
+        </div>
+      </div>
+      <div class="bili-chart-wrap">
+        <div class="bili-chart-yaxis">
+          <div class="bili-chart-ylabel" v-for="h in gridLines" :key="h">
+            <span>{{ h / 3600 }}h</span>
+          </div>
+        </div>
+        <div class="bili-chart-area">
+          <div class="bili-chart-grid">
+            <div class="bili-chart-gridline" v-for="h in gridLines" :key="'g'+h"></div>
+          </div>
+          <div class="bili-chart-bars">
+            <div class="bili-chart-bar-col" v-for="(item, i) in historyData" :key="item.date">
+              <div class="bili-chart-bar-inner">
+                <div class="bili-chart-bar-fill" :style="barStyle(item)"
+                     :title="formatBarLabel(item.totalDuration)"></div>
+              </div>
+              <div class="bili-chart-bar-label">
+                <span class="bili-chart-bar-weekday">{{ item.weekday }}</span>
+                <span class="bili-chart-bar-date">{{ formatBarDate(item) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <footer>
       <p class="footer-note">📺 粘贴 Bilibili 合集链接导入课程，勾选跟踪学习进度</p>
     </footer>

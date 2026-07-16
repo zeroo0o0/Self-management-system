@@ -619,6 +619,30 @@ app.delete('/api/bilibili/daily/complete', (req, res) => {
   res.json({ ok: true, todayCompleted: data[today] || { videos: [], totalDuration: 0 } })
 })
 
+// 获取学习历史（近一周/近一月）
+app.get('/api/bilibili/daily/history', (req, res) => {
+  const range = req.query.range || 'week'
+  const data = readJSON(BILI_DAILY_FILE, {})
+  const now = new Date()
+  const days = range === 'month' ? 30 : 7
+  const result = []
+
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(now)
+    d.setDate(d.getDate() - i)
+    const key = getDateStr(d)
+    const dayData = data[key]
+    result.push({
+      date: key,
+      weekday: ['日', '一', '二', '三', '四', '五', '六'][d.getDay()],
+      totalDuration: dayData ? (dayData.totalDuration || 0) : 0,
+      videoCount: dayData ? (dayData.videos?.length || 0) : 0
+    })
+  }
+
+  res.json(result)
+})
+
 app.listen(PORT, () => {
   console.log(`🚀 打开 http://localhost:${PORT}`)
 })

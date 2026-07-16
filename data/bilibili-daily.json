@@ -17,5 +17,24 @@
       }
     ],
     "totalDuration": 3369
+  },
+  "2026-07-16": {
+    "videos": [
+      {
+        "bvid": "BV1KA411N7Px",
+        "duration": 1467,
+        "title": "07 自动求导【动手学深度学习v2】",
+        "courseName": "Bilibili 合集",
+        "completedAt": "2026-07-16T03:31:57.845Z"
+      },
+      {
+        "bvid": "BV1PX4y1g7KC",
+        "duration": 4184,
+        "title": "08 线性回归 + 基础优化算法【动手学深度学习v2】",
+        "courseName": "Bilibili 合集",
+        "completedAt": "2026-07-16T10:59:38.554Z"
+      }
+    ],
+    "totalDuration": 5651
   }
 }

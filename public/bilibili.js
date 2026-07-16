@@ -320,10 +320,62 @@ const app = createApp({
         }
         // 获取今日完成统计
         await fetchTodayCompleted()
+        // 获取学习历史
+        await fetchHistory()
       } catch (e) {
         console.error('加载课程历史失败:', e)
       }
     })
+
+    // ====== 学习历史柱状图 ======
+    const historyData = ref([])
+    const historyRange = ref('week')
+
+    async function fetchHistory() {
+      try {
+        const res = await fetch('/api/bilibili/daily/history?range=' + historyRange.value)
+        const data = await res.json()
+        historyData.value = data
+      } catch (e) {
+        console.error('获取学习历史失败:', e)
+      }
+    }
+
+    function switchRange(range) {
+      historyRange.value = range
+      fetchHistory()
+    }
+
+    const maxDailyHours = computed(() => {
+      const max = Math.max(...historyData.value.map(d => d.totalDuration), 0)
+      return Math.max(Math.ceil(max / 7200), 1)  // 至少 1，向上取 2h 整
+    })
+
+    const gridLines = computed(() => {
+      const lines = []
+      for (let h = 0; h <= maxDailyHours.value * 7200; h += 7200) {
+        lines.push(h)
+      }
+      return lines
+    })
+
+    function barStyle(item) {
+      const maxSecs = maxDailyHours.value * 7200
+      const pct = maxSecs > 0 ? (item.totalDuration / maxSecs) * 100 : 0
+      return { height: Math.max(pct, 0.5) + '%' }
+    }
+
+    function formatBarDate(item) {
+      const parts = item.date.split('-')
+      return parts[1] + '/' + parts[2]
+    }
+
+    function formatBarLabel(secs) {
+      if (!secs) return '0'
+      const h = Math.floor(secs / 3600)
+      const m = Math.floor((secs % 3600) / 60)
+      return h > 0 ? h + 'h' + (m > 0 ? m + 'm' : '') : m + 'm'
+    }
 
     return {
       url, loading, error, courses, currentCourse,
@@ -332,7 +384,10 @@ const app = createApp({
       todayCompleted, todayDurationStr, todayVideoCount,
       isWatched, toggleWatched, getVideoId,
       fetchSeries, toggleSort, addToTodo, todoMsg, selectCourse, deleteCourse,
-      formatDate
+      formatDate,
+      // 图表
+      historyData, historyRange, gridLines, maxDailyHours,
+      fetchHistory, switchRange, barStyle, formatBarDate, formatBarLabel
     }
   }
 })
