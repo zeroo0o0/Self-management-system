@@ -36,5 +36,17 @@
       }
     ],
     "totalDuration": 5651
+  },
+  "2026-07-17": {
+    "videos": [
+      {
+        "bvid": "BV1K64y1Q7wu",
+        "duration": 4806,
+        "title": "09 Softmax 回归 + 损失函数 + 图片分类数据集【动手学深度学习v2】",
+        "courseName": "Bilibili 合集",
+        "completedAt": "2026-07-17T08:34:58.079Z"
+      }
+    ],
+    "totalDuration": 4806
   }
 }

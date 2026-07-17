@@ -114,6 +114,22 @@
           <button class="bili-chart-tab" :class="{ active: historyRange === 'month' }" @click="switchRange('month')">近一月</button>
         </div>
       </div>
+      <!-- ====== 统计摘要 ====== -->
+      <div class="bili-chart-summary">
+        <div class="bili-chart-stat">
+          <span class="bili-chart-stat-num">{{ historyTotalStr }}</span>
+          <span class="bili-chart-stat-label">总学习时长</span>
+        </div>
+        <div class="bili-chart-stat">
+          <span class="bili-chart-stat-num">{{ historyTotalVideos }}</span>
+          <span class="bili-chart-stat-label">完成视频</span>
+        </div>
+        <div class="bili-chart-stat">
+          <span class="bili-chart-stat-num">{{ historyRange === 'week' ? 7 : 30 }}</span>
+          <span class="bili-chart-stat-label">统计天数</span>
+        </div>
+      </div>
+      <!-- ====== 柱状图 ====== -->
       <div class="bili-chart-wrap">
         <div class="bili-chart-yaxis">
           <div class="bili-chart-ylabel" v-for="h in gridLines" :key="h">
@@ -125,10 +141,13 @@
             <div class="bili-chart-gridline" v-for="h in gridLines" :key="'g'+h"></div>
           </div>
           <div class="bili-chart-bars">
-            <div class="bili-chart-bar-col" v-for="(item, i) in historyData" :key="item.date">
+            <div class="bili-chart-bar-col" v-for="(item, i) in historyData" :key="item.date"
+                 :class="{ 'bili-chart-bar-today': isToday(item.date) }">
               <div class="bili-chart-bar-inner">
                 <div class="bili-chart-bar-fill" :style="barStyle(item)"
-                     :title="formatBarLabel(item.totalDuration)"></div>
+                     :title="formatBarLabel(item.totalDuration)">
+                  <span class="bili-chart-bar-tip" v-if="item.totalDuration > 0">{{ formatBarLabel(item.totalDuration) }}</span>
+                </div>
               </div>
               <div class="bili-chart-bar-label">
                 <span class="bili-chart-bar-weekday">{{ item.weekday }}</span>

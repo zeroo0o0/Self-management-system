@@ -377,6 +377,27 @@ const app = createApp({
       return h > 0 ? h + 'h' + (m > 0 ? m + 'm' : '') : m + 'm'
     }
 
+    function isToday(dateStr) {
+      const now = new Date()
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+      const t = new Date(dateStr + 'T00:00:00')
+      return d.getTime() === t.getTime()
+    }
+
+    const historyTotalDuration = computed(() => {
+      return historyData.value.reduce((s, d) => s + (d.totalDuration || 0), 0)
+    })
+    const historyTotalVideos = computed(() => {
+      return historyData.value.reduce((s, d) => s + (d.videoCount || 0), 0)
+    })
+    const historyTotalStr = computed(() => {
+      const secs = historyTotalDuration.value
+      if (!secs) return '0m'
+      const h = Math.floor(secs / 3600)
+      const m = Math.floor((secs % 3600) / 60)
+      return h > 0 ? h + 'h ' + m + 'm' : m + 'm'
+    })
+
     return {
       url, loading, error, courses, currentCourse,
       sortAsc, sortedVideos, watchedCount, totalTime, videoCount,
@@ -387,7 +408,8 @@ const app = createApp({
       formatDate,
       // 图表
       historyData, historyRange, gridLines, maxDailyHours,
-      fetchHistory, switchRange, barStyle, formatBarDate, formatBarLabel
+      historyTotalDuration, historyTotalVideos, historyTotalStr,
+      fetchHistory, switchRange, barStyle, formatBarDate, formatBarLabel, isToday
     }
   }
 })
