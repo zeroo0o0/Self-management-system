@@ -78,6 +78,7 @@ const app = createApp({
             })
           }).then(r => r.json()).then(d => {
             if (d.todayCompleted) todayCompleted.value = d.todayCompleted
+            fetchHistory()
           }).catch(() => {})
         }
       } else {
@@ -90,6 +91,7 @@ const app = createApp({
             body: JSON.stringify({ bvid: video.bvid })
           }).then(r => r.json()).then(d => {
             if (d.todayCompleted) todayCompleted.value = d.todayCompleted
+            fetchHistory()
           }).catch(() => {})
         }
       }
@@ -273,6 +275,8 @@ const app = createApp({
       currentCourse.value = course
       currentWatched.value = getWatched(course.id, course.watched)
       url.value = course.url
+      // 切换课程时刷新柱状图
+      fetchHistory()
     }
 
     // ====== 删除课程 ======
@@ -397,6 +401,9 @@ const app = createApp({
       const m = Math.floor((secs % 3600) / 60)
       return h > 0 ? h + 'h ' + m + 'm' : m + 'm'
     })
+    const historyActiveDays = computed(() => {
+      return historyData.value.filter(d => (d.totalDuration || 0) > 0).length
+    })
 
     return {
       url, loading, error, courses, currentCourse,
@@ -408,7 +415,7 @@ const app = createApp({
       formatDate,
       // 图表
       historyData, historyRange, gridLines, maxDailyHours,
-      historyTotalDuration, historyTotalVideos, historyTotalStr,
+      historyTotalDuration, historyTotalVideos, historyTotalStr, historyActiveDays,
       fetchHistory, switchRange, barStyle, formatBarDate, formatBarLabel, isToday
     }
   }

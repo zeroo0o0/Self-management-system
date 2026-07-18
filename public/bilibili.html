@@ -114,19 +114,19 @@
           <button class="bili-chart-tab" :class="{ active: historyRange === 'month' }" @click="switchRange('month')">近一月</button>
         </div>
       </div>
-      <!-- ====== 统计摘要 ====== -->
+      <!-- ====== 统计摘要（仿 DeepSeek 风格） ====== -->
       <div class="bili-chart-summary">
         <div class="bili-chart-stat">
+          <span class="bili-chart-stat-label">学习时长</span>
           <span class="bili-chart-stat-num">{{ historyTotalStr }}</span>
-          <span class="bili-chart-stat-label">总学习时长</span>
         </div>
         <div class="bili-chart-stat">
+          <span class="bili-chart-stat-label">视频数</span>
           <span class="bili-chart-stat-num">{{ historyTotalVideos }}</span>
-          <span class="bili-chart-stat-label">完成视频</span>
         </div>
         <div class="bili-chart-stat">
-          <span class="bili-chart-stat-num">{{ historyRange === 'week' ? 7 : 30 }}</span>
-          <span class="bili-chart-stat-label">统计天数</span>
+          <span class="bili-chart-stat-label">有效学习天数</span>
+          <span class="bili-chart-stat-num">{{ historyActiveDays }}</span>
         </div>
       </div>
       <!-- ====== 柱状图 ====== -->

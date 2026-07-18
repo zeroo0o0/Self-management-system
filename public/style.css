@@ -3364,6 +3364,11 @@ html.dark .bili-input { background: var(--input-bg); color: var(--text); border-
 html.dark .bili-video-duration { background: var(--bar-bg2); color: var(--text4); }
 html.dark .bili-video-item:hover { background: var(--nav-bg); }
 html.dark .bili-video-list { border-color: var(--border-light); }
+html.dark .bili-chart-stat-label { color: var(--text2); }
+html.dark .bili-chart-bar-weekday { color: var(--text3); }
+html.dark .bili-chart-bar-date { color: var(--text4); }
+html.dark .bili-chart-bar-tip { color: var(--text3); }
+html.dark .bili-history-date { color: var(--text4); }
 
 /* ========== Bilibili 独立页面 ========== */
 .bili-course {
@@ -3677,28 +3682,35 @@ html.dark .bili-history-item:hover { background: var(--nav-bg); }
 .bili-chart-tab:hover:not(.active) {
   color: var(--text2);
 }
-/* 统计摘要 */
+/* 统计摘要 - 每个统计项独立圆角方框 */
 .bili-chart-summary {
   display: flex;
-  gap: 24px;
+  gap: 16px;
   margin-bottom: 24px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--border-light);
 }
 .bili-chart-stat {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-}
-.bili-chart-stat-num {
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: var(--text);
-  line-height: 1.2;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
 }
 .bili-chart-stat-label {
-  font-size: .72rem;
+  font-size: .78rem;
   color: var(--text4);
+  font-weight: 400;
+  white-space: nowrap;
+}
+.bili-chart-stat-num {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+  letter-spacing: -.02em;
 }
 /* 柱状图主体 */
 .bili-chart-wrap {
@@ -3716,13 +3728,14 @@ html.dark .bili-history-item:hover { background: var(--nav-bg); }
   padding-right: 2px;
 }
 .bili-chart-ylabel {
-  font-size: .7rem;
-  color: var(--text4);
+  font-size: .75rem;
+  color: var(--text2);
   text-align: right;
   line-height: 0;
   position: relative;
   top: 1px;
   padding-right: 4px;
+  font-weight: 500;
 }
 .bili-chart-area {
   flex: 1;
@@ -3733,16 +3746,18 @@ html.dark .bili-history-item:hover { background: var(--nav-bg); }
   inset: 0 0 40px 0;
   display: flex;
   flex-direction: column-reverse;
+  justify-content: space-between;
   pointer-events: none;
 }
 .bili-chart-gridline {
-  flex: 1;
-  border-top: 1px dashed var(--border-light);
+  width: 100%;
+  height: 0;
+  border-top: 1px solid var(--border);
+  opacity: .65;
   position: relative;
 }
 .bili-chart-gridline:first-child {
-  border-top-style: solid;
-  border-top-color: var(--border);
+  opacity: 1;
 }
 /* 柱子区域 */
 .bili-chart-bars {
@@ -3844,6 +3859,4 @@ html.dark .bili-chart-bar-today .bili-chart-bar-fill {
 html.dark .bili-chart-tab.active {
   background: var(--nav-bg);
 }
-html.dark .bili-chart-summary {
-  border-bottom-color: var(--border-light);
-}
+
